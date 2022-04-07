@@ -1,3 +1,5 @@
+import { ListNode, TreeNode } from "./struct"
+
 /**
   剑指 Offer 03. 数组中重复的数字
  */
@@ -54,14 +56,6 @@ function replaceSpace(s: string): string {
   return s.replace(' ', '%20')
 }
 
-class ListNode {
-  val: number
-  next: ListNode | null
-  constructor(val?: number, next?: ListNode | null) {
-    this.val = val === undefined ? 0 : val
-    this.next = next === undefined ? null : next
-  }
-}
 /**
  * 剑指 Offer 06. 从尾到头打印链表.
 
@@ -82,17 +76,6 @@ function reversePrint(head: ListNode | null): number[] {
   }
   result = result.reverse()
   return result
-}
-
-class TreeNode {
-  val: number
-  left: TreeNode | null
-  right: TreeNode | null
-  constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
-    this.val = val === undefined ? 0 : val
-    this.left = left === undefined ? null : left
-    this.right = right === undefined ? null : right
-  }
 }
 
 class A {
