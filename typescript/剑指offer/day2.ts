@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-04 22:55:55
  * @LastEditors: one
- * @LastEditTime: 2022-04-07 21:53:34
+ * @LastEditTime: 2022-04-08 11:33:43
  */
 
 import { ListNode, TreeNode } from './struct'
@@ -163,3 +163,38 @@ function recur(a: TreeNode, b: TreeNode) {
   // 根节点相同，递归比较左右子树是否相同
   return recur(a.left, b.left) && recur(a.right, b.right)
 }
+
+/**
+ * 递归
+ * 剑指 Offer 27. 二叉树的镜像
+ * @param root 
+ */
+function mirrorTree(root: TreeNode | null): TreeNode | null {
+  if(!root) return null;
+  let tempNode = root.left;
+  root.left = mirrorTree(root.right);
+  root.right = mirrorTree(tempNode);
+  return root;
+};
+
+/**
+ * 栈
+ * 剑指 Offer 27. 二叉树的镜像
+ * @param root 
+ */
+function mirrorTree2(root: TreeNode | null): TreeNode | null {
+  if(!root) return null;
+  const stack: TreeNode[] = [];
+  stack.push(root);
+  while(stack.length) {
+    const node = stack.pop();
+    if(node){
+      stack.push(node.left);
+      stack.push(node.right);
+      const temp = node.left;
+      node.left = node.right;
+      node.right = temp;
+    }
+  }
+  return root;
+};
