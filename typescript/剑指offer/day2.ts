@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-04 22:55:55
  * @LastEditors: one
- * @LastEditTime: 2022-04-10 16:17:12
+ * @LastEditTime: 2022-04-10 16:54:19
  */
 
 import { ListNode, TreeNode } from './struct'
@@ -325,9 +325,8 @@ function rotate(matrix: number[][]): void {
   }
 }
 /**
- * 原地旋转
- * 先上下旋转，再对角线旋转
-
+ * 原地旋转（N * N)矩阵
+ * 先上下旋转，再对角线旋转, 是顺时针旋转
  * 如果先对角线，再上线，则是逆时针旋转
  * 面试题 01.07. 旋转矩阵
  * @param matrix
@@ -354,21 +353,41 @@ function rotate2(matrix: number[][]): void {
                           结合起来就是m[i][j] = m[j][n - i - 1]
      */
   const n = matrix.length
-    // 上下反转
+  // 上下反转
   for (let i = 0; i < Math.floor(n / 2); i++) {
     for (let j = 0; j < n; j++) {
-      [matrix[i][j], matrix[n - i - 1][j]] = [matrix[n - i - 1][j], matrix[i][j]]
+      ;[matrix[i][j], matrix[n - i - 1][j]] = [matrix[n - i - 1][j], matrix[i][j]]
     }
   }
   // 对角线变换
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < i; j++) {
-      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]]
+      ;[matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]]
     }
   }
 }
 
 /**
+ * 旋转矩阵
+ * 类似方法一
+ * 有返回值，
+ * @param matrix 
+ * @returns 
+ */
+function rotate3(matrix: number[][]): number[][] {
+  if (matrix.length === 0) return []
+  const arr = [...Array(matrix[0].length)].map(_ => Array(matrix.length).fill(0))
+  matrix.forEach((r, rowIndex) => {
+    const column = r.length
+    r.forEach((c, columnIndex) => {
+      arr[column - columnIndex - 1][rowIndex] = c
+    })
+  })
+  return arr;
+}
+
+/**
+ * 方法一
  * 剑指 Offer 29. 顺时针打印矩阵
  * @param matrix
  */
@@ -412,6 +431,7 @@ function spiralOrder(matrix: number[][]): number[] {
   return res
 }
 /**
+ * 方法二
  * 优化，时间更短
  * 剑指 Offer 29. 顺时针打印矩阵
  * @param matrix
@@ -443,6 +463,35 @@ function spiralOrder2(matrix: number[][]): number[] {
       res[k++] = matrix[i][l]
     }
     l++
+  }
+  return res
+}
+/**
+ * 方法三： 削苹果，刀不动，苹果动。
+ * @param matrix
+ */
+function spiralOrder3(matrix: number[][]): number[] {
+  /**
+   * 逆时针转动矩阵
+   * @param matrix
+   * @returns
+   */
+  const rotate = (matrix: number[][]): number[][] => {
+    if (matrix.length === 0) return []
+    const arr = [...Array(matrix[0].length)].map(_ => Array(matrix.length).fill(0))
+
+    matrix.forEach((r, rowIndex) => {
+      const column = r.length
+      r.forEach((c, columnIndex) => {
+        arr[column - columnIndex - 1][rowIndex] = c
+      })
+    })
+    return arr
+  }
+  const res = []
+  while (matrix.length) {
+    res.push(...matrix.shift())
+    matrix = rotate(matrix)
   }
   return res
 }
