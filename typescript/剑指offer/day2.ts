@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-04 22:55:55
  * @LastEditors: one
- * @LastEditTime: 2022-04-10 15:20:36
+ * @LastEditTime: 2022-04-10 16:17:12
  */
 
 import { ListNode, TreeNode } from './struct'
@@ -307,7 +307,66 @@ function exchange(nums: number[]): number[] {
  * 面试题 01.07. 旋转矩阵
  * @param matrix
  */
-function rotate(matrix: number[][]): void {}
+function rotate(matrix: number[][]): void {
+  const n = matrix.length
+  /**
+   * 使用辅助数组
+   */
+  const t = [...Array(n)].map(_ => Array(n).fill(0))
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      t[i][j] = matrix[i][j]
+    }
+  }
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      matrix[j][n - i - 1] = t[i][j]
+    }
+  }
+}
+/**
+ * 原地旋转
+ * 先上下旋转，再对角线旋转
+
+ * 如果先对角线，再上线，则是逆时针旋转
+ * 面试题 01.07. 旋转矩阵
+ * @param matrix
+ */
+function rotate2(matrix: number[][]): void {
+  /**
+   * 方法一： 复制数组，一个一个变换
+   * 第i行j列的元素，经过旋转变为倒数第i列，第j行的元素
+     即 m[i][j] = m[j][n - i - 1]
+   */
+  /**
+    * 方法二：原地变化，同时变换4个元素。
+    * 矩阵有4个部分，分别代入公式，会进入循环，
+     起点为m[i][j], 
+     m[j][n - i - 1], 
+     m[n - i - 1][n - j - 1],
+     m[n - j - 1][n - (n - i - 1) - 1]即m[n - j - 1][i], 
+     最后则是m[i][n - (n - j - 1) - 1]即m[i][j]
+    */
+  /**
+     * 方法三：分解变换
+     * 可以分解为两种变换，对角线变换m[i][j] = m[j][i]
+                          上下反转变换m[i][j] = m[n - i - 1][j]
+                          结合起来就是m[i][j] = m[j][n - i - 1]
+     */
+  const n = matrix.length
+    // 上下反转
+  for (let i = 0; i < Math.floor(n / 2); i++) {
+    for (let j = 0; j < n; j++) {
+      [matrix[i][j], matrix[n - i - 1][j]] = [matrix[n - i - 1][j], matrix[i][j]]
+    }
+  }
+  // 对角线变换
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < i; j++) {
+      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]]
+    }
+  }
+}
 
 /**
  * 剑指 Offer 29. 顺时针打印矩阵
@@ -351,15 +410,15 @@ function spiralOrder(matrix: number[][]): number[] {
     j++
   }
   return res
-};
+}
 /**
  * 优化，时间更短
  * 剑指 Offer 29. 顺时针打印矩阵
- * @param matrix 
- * @returns 
+ * @param matrix
+ * @returns
  */
 function spiralOrder2(matrix: number[][]): number[] {
-if (!matrix || matrix.length === 0 || matrix[0].length === 0) return []
+  if (!matrix || matrix.length === 0 || matrix[0].length === 0) return []
   let l = 0,
     t = 0,
     r = matrix[0].length - 1,
@@ -369,21 +428,21 @@ if (!matrix || matrix.length === 0 || matrix[0].length === 0) return []
     res = []
   while (k < all) {
     for (let i = l; i <= r; i++) {
-      res[k++] = matrix[t][i];
+      res[k++] = matrix[t][i]
     }
-    t++;
-    for(let i = t; i <= b; i++){
-      res[k++] = matrix[i][r];
+    t++
+    for (let i = t; i <= b; i++) {
+      res[k++] = matrix[i][r]
     }
-    r--;
-    for(let i = r; i >= l && k < all; i--){
-      res[k++] = matrix[b][i];
+    r--
+    for (let i = r; i >= l && k < all; i--) {
+      res[k++] = matrix[b][i]
     }
-    b--;
-    for(let i = b; i >= t && k < all; i--){
-      res[k++] = matrix[i][l];
+    b--
+    for (let i = b; i >= t && k < all; i--) {
+      res[k++] = matrix[i][l]
     }
-    l++;
+    l++
   }
   return res
-};
+}
