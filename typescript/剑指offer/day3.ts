@@ -1,3 +1,4 @@
+import { ListNode } from './struct'
 /**
  * 867. 转置矩阵
  * @param matrix
@@ -140,13 +141,16 @@ function isMatch(s: string, p: string): boolean {
   dp[0][0] = true // 空字符串，表示匹配成功
   for (let i = 0; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      if (p[j - 1] !== '*') { // 如果p[j](实际上是p[j - 1]) 不是 * 。dp[i][j]取决于s[i], p[j]是否匹配，以及dp[i - 1][j - 1]
+      if (p[j - 1] !== '*') {
+        // 如果p[j](实际上是p[j - 1]) 不是 * 。dp[i][j]取决于s[i], p[j]是否匹配，以及dp[i - 1][j - 1]
         if (match(i, j)) {
           dp[i][j] = dp[i - 1][j - 1]
         }
-      } else {// 如果p[j] 是 * 。
+      } else {
+        // 如果p[j] 是 * 。
         dp[i][j] = dp[i][j - 2] // 1. 如果去掉*p[j]和前面的字母p[j - 1]（相当于字母p[j - 1]出现0次），看看s[i]和p[j - 2]是否匹配（即dp[i][j - 2]）
-        if (match(i, j - 1)) { // 2. 如果p[j]（*号）前面的字母p[j - 1]和s[i]相等，那么p[j]（*号）可以表示p[j - 1]出现了1次。 dp[i][j] = dp[i - 1]dp[j]
+        if (match(i, j - 1)) {
+          // 2. 如果p[j]（*号）前面的字母p[j - 1]和s[i]相等，那么p[j]（*号）可以表示p[j - 1]出现了1次。 dp[i][j] = dp[i - 1]dp[j]
           // 以上两个结果取||运算，表示0次或1次匹配成功都算。
           dp[i][j] = dp[i - 1][j] || dp[i][j]
         }
@@ -155,4 +159,34 @@ function isMatch(s: string, p: string): boolean {
   }
 
   return dp[m][n]
+}
+/**
+ * 剑指 Offer 24. 反转链表
+定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+
+ 
+
+示例:
+
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+ 
+
+限制：
+
+0 <= 节点个数 <= 5000
+ * @param head 
+ */
+function reverseList(head: ListNode | null): ListNode | null {
+  if(!head || !head.next) return head;
+  let p = head.next, q = head.next.next;
+  head.next = null; // head变为尾结点，需要置为null，否则会循环
+  while(q){
+    p.next = head;
+    head = p;
+    p = q;
+    q = q.next;
+  } 
+  p.next = head;
+  return p;
 }
