@@ -190,3 +190,88 @@ function reverseList(head: ListNode | null): ListNode | null {
   p.next = head;
   return p;
 }
+
+/**
+ * 剑指 Offer 18. 删除链表的节点
+给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+
+返回删除后的链表的头节点。
+
+注意：此题对比原题有改动
+
+示例 1:
+
+输入: head = [4,5,1,9], val = 5
+输出: [4,1,9]
+解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
+示例 2:
+
+输入: head = [4,5,1,9], val = 1
+输出: [4,5,9]
+解释: 给定你链表中值为 1 的第三个节点，那么在调用了你的函数之后，该链表应变为 4 -> 5 -> 9.
+ 
+
+说明：
+
+题目保证链表中节点的值互不相同
+若使用 C 或 C++ 语言，你不需要 free 或 delete 被删除的节点
+ * @param head 
+ * @param val 
+ */
+function deleteNode(head: ListNode | null, val: number): ListNode | null {
+  if(!head) return head;
+  if(head.val === val) return head.next; // 此处处理head为需要删除的节点。 或者不要这行，
+  let p = new ListNode(-1), q= head;
+  p.next = head; // 在这行后面加上head = p. 最后return head.next;
+  while(q){
+    if(q.val === val){
+      q = q.next;
+      p.next = q;
+    }else {
+      p = p.next;
+      q = q.next;
+    }
+  }
+  return head;
+};
+
+/**
+ * 剑指 Offer 40. 最小的k个数
+输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+
+示例 1：
+
+输入：arr = [3,2,1], k = 2
+输出：[1,2] 或者 [2,1]
+示例 2：
+
+输入：arr = [0,1,2,1], k = 1
+输出：[0]
+ 
+
+限制：
+
+0 <= k <= arr.length <= 10000
+0 <= arr[i] <= 10000
+ * @param arr 
+ * @param k 
+ */
+function getLeastNumbers(arr: number[], k: number): number[] {
+  /**
+    冒泡k次。取前k个数
+   */
+   for(let i = 0; i < k; i++){
+    //  找到从i往后的最小数的下标
+     let min = i;
+     for (let j = i; j < arr.length; j++) {
+       if(arr[j] < arr[min]){
+         min = j
+       }
+     }
+    //  交换arr[i]和arr[min]
+    let temp = arr[i]
+    arr[i] = arr[min]
+    arr[min] = temp
+   }
+   return arr.slice(0, k)
+};
