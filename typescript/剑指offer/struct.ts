@@ -7,8 +7,6 @@ export class ListNode {
   }
 }
 
-
-
 export class TreeNode {
   val: number
   left: TreeNode | null
@@ -90,34 +88,33 @@ export class MinHeap<T> {
   shiftDown(index: number) {
     const [leftChildIndex, rightChildIndex] = this.getChildIndex(index)
     // 1. 叶子节点
-    if(leftChildIndex >= this.heap.length){
-      return;
+    if (leftChildIndex >= this.heap.length) {
+      return
     }
     // 2. 两个子节点
-    if(rightChildIndex < this.heap.length){
-      const minIndex = this.getMin(leftChildIndex, rightChildIndex);
-      if(this.heap[index] > this.heap[minIndex]){
+    if (rightChildIndex < this.heap.length) {
+      const minIndex = this.getMin(leftChildIndex, rightChildIndex)
+      if (this.heap[index] > this.heap[minIndex]) {
         this.swap(minIndex, index)
         this.shiftDown(minIndex)
       }
-      return;
+      return
     }
     // 3. 单节点（肯定是左节点）
-    if(this.heap[leftChildIndex] < this.heap[index]){
+    if (this.heap[leftChildIndex] < this.heap[index]) {
       this.swap(leftChildIndex, index)
-      this.shiftDown(leftChildIndex);
+      this.shiftDown(leftChildIndex)
     }
-
   }
 
   /**
    * 获取两个节点中较小的那个的下标
-   * @param i 
-   * @param j 
-   * @returns 
+   * @param i
+   * @param j
+   * @returns
    */
-  getMin(i: number, j: number){
-    if(this.heap[i] < this.heap[j]) return i
+  getMin(i: number, j: number) {
+    if (this.heap[i] < this.heap[j]) return i
     return j
   }
   /**
@@ -174,7 +171,6 @@ export class MinHeap<T> {
   }
 }
 
-
 /**
  * 大根堆：
    方法和小根堆一样，只是判断大小反着来
@@ -182,10 +178,12 @@ export class MinHeap<T> {
 export class MaxHeap<T> {
   heap: T[]
   data: T[]
-  constructor(data: T[]) {
+  constructor(data?: T[]) {
     this.heap = []
-    this.data = data
-    this.buildHeap()
+    if (data) {
+      this.data = data
+      this.buildHeap()
+    }
   }
 
   /**
@@ -234,34 +232,33 @@ export class MaxHeap<T> {
   shiftDown(index: number) {
     const [leftChildIndex, rightChildIndex] = this.getChildIndex(index)
     // 1. 叶子节点
-    if(leftChildIndex >= this.heap.length){
-      return;
+    if (leftChildIndex >= this.heap.length) {
+      return
     }
     // 2. 两个子节点
-    if(rightChildIndex < this.heap.length){
-      const maxIndex = this.getMax(leftChildIndex, rightChildIndex);
-      if(this.heap[index] < this.heap[maxIndex]){
+    if (rightChildIndex < this.heap.length) {
+      const maxIndex = this.getMax(leftChildIndex, rightChildIndex)
+      if (this.heap[index] < this.heap[maxIndex]) {
         this.swap(maxIndex, index)
         this.shiftDown(maxIndex)
       }
-      return;
+      return
     }
     // 3. 单节点（肯定是左节点）
-    if(this.heap[leftChildIndex] > this.heap[index]){
+    if (this.heap[leftChildIndex] > this.heap[index]) {
       this.swap(leftChildIndex, index)
-      this.shiftDown(leftChildIndex);
+      this.shiftDown(leftChildIndex)
     }
-
   }
 
   /**
    * 获取两个节点中较大的那个的下标
-   * @param i 
-   * @param j 
-   * @returns 
+   * @param i
+   * @param j
+   * @returns
    */
-  getMax(i: number, j: number){
-    if(this.heap[i] > this.heap[j]) return i
+  getMax(i: number, j: number) {
+    if (this.heap[i] > this.heap[j]) return i
     return j
   }
   /**

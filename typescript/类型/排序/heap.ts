@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:39:31
  * @LastEditors: one
- * @LastEditTime: 2022-04-15 15:46:34
+ * @LastEditTime: 2022-04-15 15:54:03
  */
 /**
    小根堆
@@ -168,10 +168,12 @@ class MinHeap<T> {
 class MaxHeap<T> {
   heap: T[]
   data: T[]
-  constructor(data: T[]) {
+  constructor(data?: T[],) {
     this.heap = []
-    this.data = data
-    this.buildHeap()
+    if(data){
+      this.data = data
+      this.buildHeap()
+    }
   }
 
   /**

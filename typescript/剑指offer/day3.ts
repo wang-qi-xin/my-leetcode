@@ -1,4 +1,4 @@
-import { ListNode } from './struct'
+import { ListNode, MaxHeap } from './struct'
 /**
  * 867. 转置矩阵
  * @param matrix
@@ -336,31 +336,48 @@ function swap(arr: number[], index: number, i: number) {
   arr[i] = temp
 }
 
-function testQuickSort() {
-  const range = 10_000_000
-  const arr1 = []
-  const arr2 = []
-  let i = 0
-  while (i < range) {
-    i++
-    const random = Math.random() * range
-    arr1.push(random)
-    arr2.push(random)
+
+/**
+ * 堆排序
+ * 剑指 Offer 40. 最小的k个数
+ * @param arr
+ * @param k
+ * @returns
+ */
+function getLeastNumbers3(arr: number[], k: number): number[] {
+  /**
+    堆排序
+    : 使用大根堆。
+    1. 先给大根堆放入k个元素，堆顶就是这k个元素里的最大元素
+    2. 遍历后面的元素，只有当arr[i] 比 堆顶元素小，就pop() 堆顶元素。
+    3. 然后入堆arr[i]
+    4. 最后返回堆元素转成的数组
+
+    最小堆不太适合。
+    如果要使用：
+    方法一： 所有元素取反。按大根堆的方法使用。最后返回的数据需要再取反。
+    方法二：
+        k = arr.length - k;
+        1. 先给小根堆放入k个元素，堆顶就是这k个元素里的最小元素
+        2. 遍历后面的元素，只有当arr[i] 比 堆顶元素大，就pop() 堆顶元素。
+        3. 然后入堆arr[i]
+        4. 把pop()出来的元素放入res[] .
+        5. 如果arr[i] < 堆顶元素。就直接存入res[]
+        6. 返回res[]
+   */
+  const Mheap = new MaxHeap<number>()
+  for(let i = 0; i < k; i++){
+    Mheap.insert(arr[i])
   }
-  // console.log(arr1.slice(0, 20))
-  let start = Date.now()
-  // ** 优化快排。
-  quickSort(arr1, 0, arr1.length - 1, 10)
-  let end = Date.now()
-  console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
+  for(let i = k; i < arr.length; i++){
+    if(arr[i] < Mheap.peek()){
+      Mheap.pop()
+      Mheap.insert(arr[i]);
+    }
+  }
 
-  // console.log(arr2.slice(0, 20))
-  start = Date.now()
-  arr2.sort((a, b) => a - b)
-  end = Date.now()
-  console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
-
+  return Mheap.heap
 }
-testQuickSort()
 
+console.log(getLeastNumbers3([3,6,1,5,2,9], 3));
 
