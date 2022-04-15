@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:07:56
  * @LastEditors: one
- * @LastEditTime: 2022-04-15 11:07:57
+ * @LastEditTime: 2022-04-15 15:39:29
  */
 function quickSort(arr: number[], l: number, r: number) {
   if (l < r) {
@@ -40,7 +40,7 @@ function swap(arr: number[], index: number, i: number) {
 }
 
 function testQuickSort() {
-  const range = 10000000
+  const range = 2_0000
   const arr1 = []
   const arr2 = []
   let i = 0
@@ -50,7 +50,7 @@ function testQuickSort() {
     arr1.push(random)
     arr2.push(random)
   }
-  // console.log(arr1.slice(0, 20))
+  console.log(arr1.slice(0, 20))
   let start = Date.now()
   quickSort(arr1, 0, arr1.length - 1)
   let end = Date.now()
@@ -62,3 +62,4 @@ function testQuickSort() {
   end = Date.now()
   console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
 }
+testQuickSort()

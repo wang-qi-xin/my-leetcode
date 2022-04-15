@@ -299,7 +299,7 @@ function getLeastNumbers2(arr: number[], k: number): number[] {
 function quickSort(arr: number[], l: number, r: number, k: number) {
   if (l < r) {
     const pos = partition(arr, l, r)
-    if (pos  + 1 === k) {
+    if (pos + l + 1 === k) {
       return
     }
     if (pos + 1 < k) {
@@ -336,27 +336,31 @@ function swap(arr: number[], index: number, i: number) {
   arr[i] = temp
 }
 
-// function testQuickSort() {
-//   const range = 10000000
-//   const arr1 = []
-//   const arr2 = []
-//   let i = 0
-//   while (i < range) {
-//     i++
-//     const random = Math.random() * range
-//     arr1.push(random)
-//     arr2.push(random)
-//   }
-//   // console.log(arr1.slice(0, 20))
-//   let start = Date.now()
-//   quickSort(arr1, 0, arr1.length - 1)
-//   let end = Date.now()
-//   console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
+function testQuickSort() {
+  const range = 10_000_000
+  const arr1 = []
+  const arr2 = []
+  let i = 0
+  while (i < range) {
+    i++
+    const random = Math.random() * range
+    arr1.push(random)
+    arr2.push(random)
+  }
+  // console.log(arr1.slice(0, 20))
+  let start = Date.now()
+  // ** 优化快排。
+  quickSort(arr1, 0, arr1.length - 1, 10)
+  let end = Date.now()
+  console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
 
-//   // console.log(arr2.slice(0, 20))
-//   start = Date.now()
-//   arr2.sort((a, b) => a - b)
-//   end = Date.now()
-//   console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
-// }
+  // console.log(arr2.slice(0, 20))
+  start = Date.now()
+  arr2.sort((a, b) => a - b)
+  end = Date.now()
+  console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
+
+}
+testQuickSort()
+
 

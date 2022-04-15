@@ -1,25 +1,11 @@
-export class ListNode {
-  val: number
-  next: ListNode | null
-  constructor(val?: number, next?: ListNode | null) {
-    this.val = val === undefined ? 0 : val
-    this.next = next === undefined ? null : next
-  }
-}
-
-
-
-export class TreeNode {
-  val: number
-  left: TreeNode | null
-  right: TreeNode | null
-  constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
-    this.val = val === undefined ? 0 : val
-    this.left = left === undefined ? null : left
-    this.right = right === undefined ? null : right
-  }
-}
-
+/*
+ * @Description:
+ * @Version: 2.0
+ * @Autor: one
+ * @Date: 2022-04-15 11:39:31
+ * @LastEditors: one
+ * @LastEditTime: 2022-04-15 15:46:34
+ */
 /**
    小根堆
    主要方法：
@@ -35,7 +21,7 @@ export class TreeNode {
 
  */
 
-export class MinHeap<T> {
+class MinHeap<T> {
   heap: T[]
   data: T[]
   constructor(data: T[]) {
@@ -179,7 +165,7 @@ export class MinHeap<T> {
  * 大根堆：
    方法和小根堆一样，只是判断大小反着来
  */
-export class MaxHeap<T> {
+class MaxHeap<T> {
   heap: T[]
   data: T[]
   constructor(data: T[]) {
@@ -317,3 +303,32 @@ export class MaxHeap<T> {
     return this.heap[0]
   }
 }
+
+function testHeap() {
+  const range = 2_000_000
+  let arr1 = []
+  const arr2 = []
+  let i = 0
+  while (i < range) {
+    i++
+    const random = Math.random() * range
+    arr1.push(random)
+    arr2.push(random)
+  }
+  // console.log(arr1.slice(0, 20))
+  let start = Date.now()
+  const h = new MaxHeap(arr1)
+  arr1.length = 0
+  while (h.heap.length) {
+    arr1.push(h.pop())
+  }
+  let end = Date.now()
+  console.log(arr1.slice(0, 20), `\n minHeap spendTime = ${end - start}ms`)
+
+  // console.log(arr2.slice(0, 20))
+  start = Date.now()
+  arr2.sort((a, b) => b - a)
+  end = Date.now()
+  console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
+}
+testHeap()
