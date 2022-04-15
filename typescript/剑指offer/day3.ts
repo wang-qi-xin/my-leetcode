@@ -278,23 +278,38 @@ function getLeastNumbers(arr: number[], k: number): number[] {
   return arr.slice(0, k)
 }
 
+/**
+ * 快排
+ * 剑指 Offer 40. 最小的k个数
+ * @param arr
+ * @param k
+ * @returns
+ */
 function getLeastNumbers2(arr: number[], k: number): number[] {
   /**
     快排，取前k个
    */
   //  arr.sort((a, b) => a - b);
-  // 实现快排
-  quickSort(arr, 0, arr.length - 1)
+  // 实现快排,
+  // 优化快排， 当基准等于k时直接返回
+  quickSort(arr, 0, arr.length - 1, k)
   return arr.slice(0, k)
 }
 
-function quickSort(arr: number[], l: number, r: number) {
+function quickSort(arr: number[], l: number, r: number, k: number) {
   if (l < r) {
     const pos = partition(arr, l, r)
-    quickSort(arr, l, pos - 1)
-    quickSort(arr, pos + 1, r)
+    if (pos  + 1 === k) {
+      return
+    }
+    if (pos + 1 < k) {
+      // 前（pos+1)个数都是前k小的数。所以只排右半边
+      quickSort(arr, pos + 1, r, k)
+    } else {
+      quickSort(arr, l, pos - 1, k)
+    }
   }
-  return arr
+  return
 }
 
 function partition(arr: number[], l: number, r: number): number {
@@ -321,26 +336,27 @@ function swap(arr: number[], index: number, i: number) {
   arr[i] = temp
 }
 
-function testQuickSort() {
-  const range = 10000000
-  const arr1 = []
-  const arr2 = []
-  let i = 0
-  while (i < range) {
-    i++
-    const random = Math.random() * range
-    arr1.push(random)
-    arr2.push(random)
-  }
-  // console.log(arr1.slice(0, 20))
-  let start = Date.now()
-  quickSort(arr1, 0, arr1.length - 1)
-  let end = Date.now()
-  console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
+// function testQuickSort() {
+//   const range = 10000000
+//   const arr1 = []
+//   const arr2 = []
+//   let i = 0
+//   while (i < range) {
+//     i++
+//     const random = Math.random() * range
+//     arr1.push(random)
+//     arr2.push(random)
+//   }
+//   // console.log(arr1.slice(0, 20))
+//   let start = Date.now()
+//   quickSort(arr1, 0, arr1.length - 1)
+//   let end = Date.now()
+//   console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
 
-  // console.log(arr2.slice(0, 20))
-  start = Date.now()
-  arr2.sort((a, b) => a - b)
-  end = Date.now()
-  console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
-}
+//   // console.log(arr2.slice(0, 20))
+//   start = Date.now()
+//   arr2.sort((a, b) => a - b)
+//   end = Date.now()
+//   console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
+// }
+
