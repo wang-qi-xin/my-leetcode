@@ -178,17 +178,18 @@ function isMatch(s: string, p: string): boolean {
  * @param head 
  */
 function reverseList(head: ListNode | null): ListNode | null {
-  if(!head || !head.next) return head;
-  let p = head.next, q = head.next.next;
-  head.next = null; // head变为尾结点，需要置为null，否则会循环
-  while(q){
-    p.next = head;
-    head = p;
-    p = q;
-    q = q.next;
-  } 
-  p.next = head;
-  return p;
+  if (!head || !head.next) return head
+  let p = head.next,
+    q = head.next.next
+  head.next = null // head变为尾结点，需要置为null，否则会循环
+  while (q) {
+    p.next = head
+    head = p
+    p = q
+    q = q.next
+  }
+  p.next = head
+  return p
 }
 
 /**
@@ -219,21 +220,22 @@ function reverseList(head: ListNode | null): ListNode | null {
  * @param val 
  */
 function deleteNode(head: ListNode | null, val: number): ListNode | null {
-  if(!head) return head;
-  if(head.val === val) return head.next; // 此处处理head为需要删除的节点。 或者不要这行，
-  let p = new ListNode(-1), q= head;
-  p.next = head; // 在这行后面加上head = p. 最后return head.next;
-  while(q){
-    if(q.val === val){
-      q = q.next;
-      p.next = q;
-    }else {
-      p = p.next;
-      q = q.next;
+  if (!head) return head
+  if (head.val === val) return head.next // 此处处理head为需要删除的节点。 或者不要这行，
+  let p = new ListNode(-1),
+    q = head
+  p.next = head // 在这行后面加上head = p. 最后return head.next;
+  while (q) {
+    if (q.val === val) {
+      q = q.next
+      p.next = q
+    } else {
+      p = p.next
+      q = q.next
     }
   }
-  return head;
-};
+  return head
+}
 
 /**
  * 剑指 Offer 40. 最小的k个数
@@ -258,20 +260,87 @@ function deleteNode(head: ListNode | null, val: number): ListNode | null {
  */
 function getLeastNumbers(arr: number[], k: number): number[] {
   /**
-    冒泡k次。取前k个数
+    冒泡k次。取前k个数(时间复杂度o(n^2))
    */
-   for(let i = 0; i < k; i++){
+  for (let i = 0; i < k; i++) {
     //  找到从i往后的最小数的下标
-     let min = i;
-     for (let j = i; j < arr.length; j++) {
-       if(arr[j] < arr[min]){
-         min = j
-       }
-     }
+    let min = i
+    for (let j = i; j < arr.length; j++) {
+      if (arr[j] < arr[min]) {
+        min = j
+      }
+    }
     //  交换arr[i]和arr[min]
     let temp = arr[i]
     arr[i] = arr[min]
     arr[min] = temp
-   }
-   return arr.slice(0, k)
-};
+  }
+  return arr.slice(0, k)
+}
+
+function getLeastNumbers2(arr: number[], k: number): number[] {
+  /**
+    快排，取前k个
+   */
+  //  arr.sort((a, b) => a - b);
+  // 实现快排
+  quickSort(arr, 0, arr.length - 1)
+  return arr.slice(0, k)
+}
+
+function quickSort(arr: number[], l: number, r: number) {
+  if (l < r) {
+    const pos = partition(arr, l, r)
+    quickSort(arr, l, pos - 1)
+    quickSort(arr, pos + 1, r)
+  }
+  return arr
+}
+
+function partition(arr: number[], l: number, r: number): number {
+  /**
+   1. 定基准。
+   2. 将比基准小的放在一边，大的放另一边。
+   3. 返回基准的下标
+   */
+  let pivot = r
+  let index = l
+  for (let i = l; i < r; i++) {
+    if (arr[pivot] > arr[i]) {
+      swap(arr, index, i)
+      index++
+    }
+  }
+  swap(arr, index, pivot)
+  return index
+}
+
+function swap(arr: number[], index: number, i: number) {
+  const temp = arr[index]
+  arr[index] = arr[i]
+  arr[i] = temp
+}
+
+function testQuickSort() {
+  const range = 10000000
+  const arr1 = []
+  const arr2 = []
+  let i = 0
+  while (i < range) {
+    i++
+    const random = Math.random() * range
+    arr1.push(random)
+    arr2.push(random)
+  }
+  // console.log(arr1.slice(0, 20))
+  let start = Date.now()
+  quickSort(arr1, 0, arr1.length - 1)
+  let end = Date.now()
+  console.log(arr1.slice(0, 20), `\n quickSort spendTime = ${end - start}ms`)
+
+  // console.log(arr2.slice(0, 20))
+  start = Date.now()
+  arr2.sort((a, b) => a - b)
+  end = Date.now()
+  console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
+}
