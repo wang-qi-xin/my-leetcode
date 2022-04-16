@@ -336,7 +336,6 @@ function swap(arr: number[], index: number, i: number) {
   arr[i] = temp
 }
 
-
 /**
  * 堆排序
  * 剑指 Offer 40. 最小的k个数
@@ -366,18 +365,81 @@ function getLeastNumbers3(arr: number[], k: number): number[] {
         6. 返回res[]
    */
   const Mheap = new MaxHeap<number>()
-  for(let i = 0; i < k; i++){
+  for (let i = 0; i < k; i++) {
     Mheap.insert(arr[i])
   }
-  for(let i = k; i < arr.length; i++){
-    if(arr[i] < Mheap.peek()){
+  for (let i = k; i < arr.length; i++) {
+    if (arr[i] < Mheap.peek()) {
       Mheap.pop()
-      Mheap.insert(arr[i]);
+      Mheap.insert(arr[i])
     }
   }
 
   return Mheap.heap
 }
 
-console.log(getLeastNumbers3([3,6,1,5,2,9], 3));
+/**
+ * 剑指 Offer 30. 包含min函数的栈
+ */
+class MinStack {
+  stackA: any[]
+  stackB: any[]
+  /**
+   * 声明两个栈
+   * A 正常保存数据。
+   * B 用来保存最小的数
+   */
+  constructor() {
+    this.stackA = []
+    this.stackB = []
+  }
+  /**
+   * 返回arr的末尾数字
+   * @param arr 
+   * @returns 
+   */
+  peek(arr: any[]) {
+    return arr[arr.length - 1]
+  }
+  /**
+   * 直接入A
+   * 如果B 中有数，则比较B顶元素和x的大小
+   * 如果比B顶元素小，则入栈
+   * @param x 
+   */
+  push(x: number): void {
+    this.stackA.push(x)
+    if (this.stackB.length === 0) {
+      this.stackB.push(x)
+    } else {
+      const min = this.peek(this.stackB)
+      if (x <= min) {
+        this.stackB.push(x)
+      }
+    }
+  }
+  /**
+   * 直接踢出A顶元素
+   * 如果踢出的元素==B顶元素，B也要踢出元素
+   * 再次比较AB栈顶元素，如果A栈顶元素小于B栈顶元素
+   * 则入B栈
+   */
+  pop(): void {
+    const top = this.stackA.pop()
+    if (top === this.peek(this.stackB)) {
+      this.stackB.pop()
+      const newATop = this.peek(this.stackA)
+      if (newATop < this.peek(this.stackB)) {
+        this.stackB.push(newATop)
+      }
+    }
+  }
 
+  top(): number {
+    return this.peek(this.stackA)
+  }
+
+  min(): number {
+    return this.peek(this.stackB)
+  }
+}
