@@ -443,3 +443,65 @@ class MinStack {
     return this.peek(this.stackB)
   }
 }
+/**
+ * 剑指 Offer 30. 包含min函数的栈
+ * 优化：不使用辅助栈
+ */
+class MinStack2 {
+    stack: any[]
+    minValue: number
+    /**
+     * stack 存原始数与当前位置之前的最小值，minValue的差值。(x - minValue)
+     */
+    constructor() {
+      this.stack = []
+      this.minValue = 0
+    }
+
+    /**
+     * x = [1, 4, 2, -5, 3]
+     * [0, 3, 1, -6, 8]
+     * -5
+     * @param x 
+     */
+    push(x: number): void {
+      if(this.stack.length === 0){
+        this.stack.push(0)
+        this.minValue = x;
+      }else {
+        const diff = x - this.minValue;
+        this.stack.push(diff)
+        if(diff <= 0){ // 相当于x比当前最小值小，所以更新minValue为x
+          this.minValue = x
+        }
+      }
+    }
+    peek(): number {
+      return this.stack[this.stack.length - 1]
+    }
+    pop(): void {
+      const diff = this.stack.pop()
+      // diff小于0，说明在push阶段，更新过minValue（也就是刚刚弹出的元素其实就是最小值）
+      if(diff < 0){ 
+        // 更新最小值（变大了）
+        this.minValue = this.minValue - diff;
+      }
+    }
+
+    top(): number {
+      // 顶部差值小于0，说明minValue就是当前剩余元素里的最小值
+      if(this.peek() < 0){
+        return this.minValue;
+      }else {
+        return this.minValue + this.peek()
+      }
+    }
+
+    min(): number {
+      if(this.stack.length){
+        return this.minValue;
+      }else {
+        return -1
+      }
+    }
+}
