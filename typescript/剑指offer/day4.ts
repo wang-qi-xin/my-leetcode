@@ -24,7 +24,7 @@ function maxSubArray(nums: number[]): number {
   for (let i = 1; i < nums.length; i++) {
     if (nums[i] < nums[i] + nums[i - 1]) {
       nums[i] = nums[i - 1] + nums[i]
-    } 
+    }
     max = Math.max(max, nums[i])
   }
   return max
@@ -32,8 +32,8 @@ function maxSubArray(nums: number[]): number {
 
 /**
  * 剑指 Offer 31. 栈的压入、弹出序列
- * @param pushed 
- * @param popped 
+ * @param pushed
+ * @param popped
  */
 function validateStackSequences(pushed: number[], popped: number[]): boolean {
   /**
@@ -43,13 +43,65 @@ function validateStackSequences(pushed: number[], popped: number[]): boolean {
     3. 不等于时，就压入pushed里的元素
    */
   const stack = []
-  let j = 0;
-  for(let i = 0; i < pushed.length;i++){
+  let j = 0
+  for (let i = 0; i < pushed.length; i++) {
     stack.push(pushed[i])
-    while(stack.length !== 0 && stack[stack.length - 1] === popped[j]){
+    while (stack.length !== 0 && stack[stack.length - 1] === popped[j]) {
       stack.pop()
       j++
     }
   }
-  return stack.length === 0;
-};
+  return stack.length === 0
+}
+
+/**
+ * 剑指 Offer 38. 字符串的排列
+输入一个字符串，打印出该字符串中字符的所有排列。
+
+ 
+
+你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
+
+ 
+
+示例:
+
+输入：s = "abc"
+输出：["abc","acb","bac","bca","cab","cba"]
+ 
+
+限制：
+
+1 <= s 的长度 <= 8
+ * @param s 
+ */
+function permutation(s: string): string[] {
+  const res = []
+  const list = s.split("")
+  /**
+    dfs。固定某位，搜索下一位。
+    末尾时，判断res是否在结果集set中
+   */
+  const swap = (i, j) => {
+    const temp = list[i]
+    list[i] = list[j]
+    list[j] = temp
+  }
+  const dfs = (x: number) => {
+    if (x === s.length - 1) {
+      res.push(list.join(""))
+      return
+    }
+    const set = new Set()
+    for (let i = x; i < s.length - 1; i++) {
+      // 利用set判断是否有重复元素，有的话剪枝
+      if(set.has(list[i])) continue
+      set.add(list[i])
+      swap(i, x)
+      dfs(x + 1)
+      swap(i, x)
+    }
+  }
+  dfs(0)
+  return res
+}
