@@ -29,3 +29,27 @@ function maxSubArray(nums: number[]): number {
   }
   return max
 }
+
+/**
+ * 剑指 Offer 31. 栈的压入、弹出序列
+ * @param pushed 
+ * @param popped 
+ */
+function validateStackSequences(pushed: number[], popped: number[]): boolean {
+  /**
+    使用栈来模拟
+    1. 判断栈顶元素是否是popped对应元素（题目规定元素不相同）
+    2. 如果等于，就一直弹出元素，直到元素不相同
+    3. 不等于时，就压入pushed里的元素
+   */
+  const stack = []
+  let j = 0;
+  for(let i = 0; i < pushed.length;i++){
+    stack.push(pushed[i])
+    while(stack.length !== 0 && stack[stack.length - 1] === popped[j]){
+      stack.pop()
+      j++
+    }
+  }
+  return stack.length === 0;
+};
