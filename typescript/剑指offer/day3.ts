@@ -1,4 +1,4 @@
-import { ListNode, MaxHeap } from './struct'
+import { Heap, ListNode } from './struct'
 /**
  * 867. 转置矩阵
  * @param matrix
@@ -364,7 +364,7 @@ function getLeastNumbers3(arr: number[], k: number): number[] {
         5. 如果arr[i] < 堆顶元素。就直接存入res[]
         6. 返回res[]
    */
-  const Mheap = new MaxHeap<number>()
+  const Mheap = new Heap<number>({mode: "big"})
   for (let i = 0; i < k; i++) {
     Mheap.insert(arr[i])
   }
@@ -395,8 +395,8 @@ class MinStack {
   }
   /**
    * 返回arr的末尾数字
-   * @param arr 
-   * @returns 
+   * @param arr
+   * @returns
    */
   peek(arr: any[]) {
     return arr[arr.length - 1]
@@ -405,7 +405,7 @@ class MinStack {
    * 直接入A
    * 如果B 中有数，则比较B顶元素和x的大小
    * 如果比B顶元素小，则入栈
-   * @param x 
+   * @param x
    */
   push(x: number): void {
     this.stackA.push(x)
@@ -448,60 +448,143 @@ class MinStack {
  * 优化：不使用辅助栈
  */
 class MinStack2 {
-    stack: any[]
-    minValue: number
-    /**
-     * stack 存原始数与当前位置之前的最小值，minValue的差值。(x - minValue)
-     */
-    constructor() {
-      this.stack = []
-      this.minValue = 0
-    }
+  stack: any[]
+  minValue: number
+  /**
+   * stack 存原始数与当前位置之前的最小值，minValue的差值。(x - minValue)
+   */
+  constructor() {
+    this.stack = []
+    this.minValue = 0
+  }
 
-    /**
-     * x = [1, 4, 2, -5, 3]
-     * [0, 3, 1, -6, 8]
-     * -5
-     * @param x 
-     */
-    push(x: number): void {
-      if(this.stack.length === 0){
-        this.stack.push(0)
-        this.minValue = x;
-      }else {
-        const diff = x - this.minValue;
-        this.stack.push(diff)
-        if(diff <= 0){ // 相当于x比当前最小值小，所以更新minValue为x
-          this.minValue = x
-        }
+  /**
+   * x = [1, 4, 2, -5, 3]
+   * [0, 3, 1, -6, 8]
+   * -5
+   * @param x
+   */
+  push(x: number): void {
+    if (this.stack.length === 0) {
+      this.stack.push(0)
+      this.minValue = x
+    } else {
+      const diff = x - this.minValue
+      this.stack.push(diff)
+      if (diff <= 0) {
+        // 相当于x比当前最小值小，所以更新minValue为x
+        this.minValue = x
       }
     }
-    peek(): number {
-      return this.stack[this.stack.length - 1]
+  }
+  peek(): number {
+    return this.stack[this.stack.length - 1]
+  }
+  pop(): void {
+    const diff = this.stack.pop()
+    // diff小于0，说明在push阶段，更新过minValue（也就是刚刚弹出的元素其实就是最小值）
+    if (diff < 0) {
+      // 更新最小值（变大了）
+      this.minValue = this.minValue - diff
     }
-    pop(): void {
-      const diff = this.stack.pop()
-      // diff小于0，说明在push阶段，更新过minValue（也就是刚刚弹出的元素其实就是最小值）
-      if(diff < 0){ 
-        // 更新最小值（变大了）
-        this.minValue = this.minValue - diff;
-      }
-    }
+  }
 
-    top(): number {
-      // 顶部差值小于0，说明minValue就是当前剩余元素里的最小值
-      if(this.peek() < 0){
-        return this.minValue;
-      }else {
-        return this.minValue + this.peek()
-      }
+  top(): number {
+    // 顶部差值小于0，说明minValue就是当前剩余元素里的最小值
+    if (this.peek() < 0) {
+      return this.minValue
+    } else {
+      return this.minValue + this.peek()
     }
+  }
 
-    min(): number {
-      if(this.stack.length){
-        return this.minValue;
-      }else {
-        return -1
-      }
+  min(): number {
+    if (this.stack.length) {
+      return this.minValue
+    } else {
+      return -1
     }
+  }
 }
+/**
+ * 剑指 Offer 41. 数据流中的中位数
+如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+
+例如，
+
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+double findMedian() - 返回目前所有元素的中位数。
+示例 1：
+
+输入：
+["MedianFinder","addNum","addNum","findMedian","addNum","findMedian"]
+[[],[1],[2],[],[3],[]]
+输出：[null,null,null,1.50000,null,2.00000]
+示例 2：
+
+输入：
+["MedianFinder","addNum","findMedian","addNum","findMedian"]
+[[],[2],[],[3],[]]
+输出：[null,null,2.00000,null,2.50000]
+ 
+
+限制：
+
+最多会对 addNum、findMedian 进行 50000 次调用。
+ */
+class MedianFinder {
+  minHeap: Heap<number>
+  maxHeap: Heap<number>
+  /**
+   * 1. 初始化两个堆，一个大根堆(放小元素)，一个小根堆（放大元素）
+     2. 每次添加元素，都比较两个堆顶元素大小。
+     3. 如果num小于在
+   */
+  constructor() {
+    this.minHeap = new Heap<number>({ mode: 'little' })
+    this.maxHeap = new Heap<number>({ mode: 'big' })
+  }
+
+  addNum(num: number): void {
+    if (this.minHeap.size() === this.maxHeap.size()) {
+      this.maxHeap.insert(num)
+      this.minHeap.insert(this.maxHeap.pop())
+    } else {
+      this.minHeap.insert(num)
+      this.maxHeap.insert(this.minHeap.pop())
+    }
+  }
+
+  findMedian(): number {
+    const diff = this.minHeap.size() - this.maxHeap.size()
+    if (diff === 0) {
+      return (this.minHeap.peek() + this.maxHeap.peek()) / 2
+    }
+    if (diff === 1) {
+      return this.minHeap.peek()
+    }
+    return this.maxHeap.peek()
+  }
+}
+
+// const a = new MedianFinder()
+// a.addNum(-1)
+// console.log(a.findMedian(), a)
+
+// a.addNum(-2)
+// console.log(a.findMedian(), a)
+
+// a.addNum(-3)
+// console.log(a.findMedian(), a)
+
+// a.addNum(-4)
+// console.log(a.findMedian(), a)
+
+// a.addNum(-5)
+// console.log(a.findMedian(), a)

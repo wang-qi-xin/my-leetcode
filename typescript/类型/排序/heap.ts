@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:39:31
  * @LastEditors: one
- * @LastEditTime: 2022-04-15 15:54:03
+ * @LastEditTime: 2022-04-17 13:37:28
  */
 /**
    小根堆
@@ -76,34 +76,33 @@ class MinHeap<T> {
   shiftDown(index: number) {
     const [leftChildIndex, rightChildIndex] = this.getChildIndex(index)
     // 1. 叶子节点
-    if(leftChildIndex >= this.heap.length){
-      return;
+    if (leftChildIndex >= this.heap.length) {
+      return
     }
     // 2. 两个子节点
-    if(rightChildIndex < this.heap.length){
-      const minIndex = this.getMin(leftChildIndex, rightChildIndex);
-      if(this.heap[index] > this.heap[minIndex]){
+    if (rightChildIndex < this.heap.length) {
+      const minIndex = this.getMin(leftChildIndex, rightChildIndex)
+      if (this.heap[index] > this.heap[minIndex]) {
         this.swap(minIndex, index)
         this.shiftDown(minIndex)
       }
-      return;
+      return
     }
     // 3. 单节点（肯定是左节点）
-    if(this.heap[leftChildIndex] < this.heap[index]){
+    if (this.heap[leftChildIndex] < this.heap[index]) {
       this.swap(leftChildIndex, index)
-      this.shiftDown(leftChildIndex);
+      this.shiftDown(leftChildIndex)
     }
-
   }
 
   /**
    * 获取两个节点中较小的那个的下标
-   * @param i 
-   * @param j 
-   * @returns 
+   * @param i
+   * @param j
+   * @returns
    */
-  getMin(i: number, j: number){
-    if(this.heap[i] < this.heap[j]) return i
+  getMin(i: number, j: number) {
+    if (this.heap[i] < this.heap[j]) return i
     return j
   }
   /**
@@ -160,7 +159,6 @@ class MinHeap<T> {
   }
 }
 
-
 /**
  * 大根堆：
    方法和小根堆一样，只是判断大小反着来
@@ -168,9 +166,9 @@ class MinHeap<T> {
 class MaxHeap<T> {
   heap: T[]
   data: T[]
-  constructor(data?: T[],) {
+  constructor(data?: T[]) {
     this.heap = []
-    if(data){
+    if (data) {
       this.data = data
       this.buildHeap()
     }
@@ -222,34 +220,33 @@ class MaxHeap<T> {
   shiftDown(index: number) {
     const [leftChildIndex, rightChildIndex] = this.getChildIndex(index)
     // 1. 叶子节点
-    if(leftChildIndex >= this.heap.length){
-      return;
+    if (leftChildIndex >= this.heap.length) {
+      return
     }
     // 2. 两个子节点
-    if(rightChildIndex < this.heap.length){
-      const maxIndex = this.getMax(leftChildIndex, rightChildIndex);
-      if(this.heap[index] < this.heap[maxIndex]){
+    if (rightChildIndex < this.heap.length) {
+      const maxIndex = this.getMax(leftChildIndex, rightChildIndex)
+      if (this.heap[index] < this.heap[maxIndex]) {
         this.swap(maxIndex, index)
         this.shiftDown(maxIndex)
       }
-      return;
+      return
     }
     // 3. 单节点（肯定是左节点）
-    if(this.heap[leftChildIndex] > this.heap[index]){
+    if (this.heap[leftChildIndex] > this.heap[index]) {
       this.swap(leftChildIndex, index)
-      this.shiftDown(leftChildIndex);
+      this.shiftDown(leftChildIndex)
     }
-
   }
 
   /**
    * 获取两个节点中较大的那个的下标
-   * @param i 
-   * @param j 
-   * @returns 
+   * @param i
+   * @param j
+   * @returns
    */
-  getMax(i: number, j: number){
-    if(this.heap[i] > this.heap[j]) return i
+  getMax(i: number, j: number) {
+    if (this.heap[i] > this.heap[j]) return i
     return j
   }
   /**
@@ -306,6 +303,167 @@ class MaxHeap<T> {
   }
 }
 
+type modeType = 'big' | 'little'
+interface heapOptionType<T> {
+  data?: T[]
+  mode?: modeType
+}
+
+/**
+ * 堆，默认小根堆
+ */
+class Heap<T> {
+  heap: T[]
+  data: T[]
+  mode: modeType
+  constructor(option: heapOptionType<T>) {
+    this.heap = []
+    // 默认小根堆
+    this.mode = option.mode ? option.mode : 'little'
+    if (option.data) {
+      this.data = option.data
+      this.buildHeap()
+    }
+  }
+
+  /**
+   * 建堆
+   */
+  buildHeap() {
+    this.data.forEach(v => {
+      this.insert(v)
+    })
+  }
+
+  /**
+   * 插入元素value
+   * @param value
+   */
+  insert(value: T) {
+    this.heap.push(value)
+    this.shiftUp(this.heap.length - 1)
+  }
+  compare(a: T, b: T): boolean {
+    if (this.mode === 'little') return a > b
+    return a < b
+  }
+  /**
+    * 从index开始上移节点。
+
+    * 如果比父元素大(小)，就与父元素交换
+
+    * 直到该元素达到堆顶或，比父元素小
+    * @param index 
+    */
+  shiftUp(index: number) {
+    const parentIndex = this.getParentIndex(index)
+    if (this.compare(this.heap[parentIndex], this.heap[index])) {
+      this.swap(parentIndex, index)
+      this.shiftUp(parentIndex)
+    }
+  }
+  /**
+   * 从index开始下移节点
+
+   * 比较两个子节点的数值
+
+   * 哪个大，就与哪个比较，如果index比子节点小就交换
+
+   * 然后递归下移
+   * @param index 
+   */
+  shiftDown(index: number) {
+    const [leftChildIndex, rightChildIndex] = this.getChildIndex(index)
+    // 1. 叶子节点
+    if (leftChildIndex >= this.heap.length) {
+      return
+    }
+    // 2. 两个子节点
+    if (rightChildIndex < this.heap.length) {
+      const maxIndex = this.getIndex(leftChildIndex, rightChildIndex)
+      if (this.compare(this.heap[index], this.heap[maxIndex])) {
+        this.swap(maxIndex, index)
+        this.shiftDown(maxIndex)
+      }
+      return
+    }
+    // 3. 单节点（肯定是左节点）
+    if (this.compare(this.heap[leftChildIndex], this.heap[index])) {
+      this.swap(leftChildIndex, index)
+      this.shiftDown(leftChildIndex)
+    }
+  }
+
+  /**
+   * 获取两个节点中较大(小)的那个的下标
+   * @param i
+   * @param j
+   * @returns
+   */
+  getIndex(i: number, j: number) {
+    if (this.mode === 'big') {
+      if (this.heap[i] > this.heap[j]) return i
+      return j
+    }
+    if (this.heap[i] > this.heap[j]) return j
+    return i
+  }
+  /**
+   * 获取index节点的两个子节点下标
+   * @param index
+   * @returns
+   */
+  getChildIndex(index: number): [number, number] {
+    return [index * 2 + 1, index * 2 + 2]
+  }
+  /**
+   * 交换堆中任意两个节点
+   * @param parentIndex
+   * @param index
+   */
+  swap(parentIndex: number, index: number) {
+    const temp = this.heap[parentIndex]
+    this.heap[parentIndex] = this.heap[index]
+    this.heap[index] = temp
+  }
+
+  /**
+   * 获取index位置节点的父节点下标
+   * @param index
+   * @returns
+   */
+  getParentIndex(index: number) {
+    return (index - 1) >> 1
+  }
+  /**
+   * 弹出堆顶元素
+   */
+  pop() {
+    if (this.heap.length === 0) {
+      throw new Error('没有元素了')
+    }
+    if (this.heap.length === 1) {
+      return this.heap.pop()
+    }
+    const max = this.heap[0]
+    // 把堆底元素填充到堆顶元素
+    this.heap[0] = this.heap.pop()
+    // 然后开始下移
+    this.shiftDown(0)
+    return max
+  }
+
+  /**
+   * 返回堆顶最小元素
+   * @returns
+   */
+  peek() {
+    return this.heap[0]
+  }
+}
+
+const h = new Heap({data: [1,2,3,4,5], mode: "little"})
+
 function testHeap() {
   const range = 2_000_000
   let arr1 = []
@@ -333,4 +491,4 @@ function testHeap() {
   end = Date.now()
   console.log(arr2.slice(0, 20), `\n sort spendTime = ${end - start}ms`)
 }
-testHeap()
+// testHeap()
