@@ -47,32 +47,98 @@ Node.random 为空（null）或指向链表中的节点。
 const map = new Map()
 var copyRandomList = function (head) {
   // 递归
-  if(head == null) return null;
-  let newHead = new Node(head.val, null, null);
+  if (head == null) return null
+  let newHead = new Node(head.val, null, null)
   // 每次copy一个节点，并把这两个节点放入map中
   map.set(head, newHead)
   newHead.next = copyRandomList(head.next)
   // 当回溯时，所有的节点已经copy结束
-  newHead.random = map.get(head.random);
-  return newHead;
+  newHead.random = map.get(head.random)
+  return newHead
 }
 /**
- * 
- * @param {*} head 
- * @returns 
+ *
+ * @param {*} head
+ * @returns
  */
 var copyRandomList = function (head) {
-  if(head == null) return null;
-  let p = head;
-  while(p){
+  if (head == null) return null
+  let p = head
+  while (p) {
     map.set(p, new Node(p.val))
-    p = p.next;
+    p = p.next
   }
-  p = head;
-  while(p) {
+  p = head
+  while (p) {
     map.get(p).next = map.get(p.next)
     map.get(p).random = map.get(p.random)
-    p = p.next;
+    p = p.next
   }
   return map.get(head)
 }
+// Definition for a Node.
+function Node(val, left, right) {
+  this.val = val
+  this.left = left
+  this.right = right
+}
+/**
+剑指 Offer 36. 二叉搜索树与双向链表
+ * @param {Node} root
+ * @return {Node}
+ */
+var treeToDoublyList = function (root) {
+  /**
+   * 1. head用来存储头节点。pre用来存储当前中序遍历到的节点
+     2. dfs(left) 
+     3. 如果pre是null，说明这是头节点，head = cur
+     4. 否则，说明当前节点前驱节点就是pre。进行关联
+     5. 令pre执行当前节点。
+     6. dfs(right)
+
+     7. 递归结束以后，head指向头节点，pre执行尾结点。然后进行关联。
+     8. 返回头节点
+   */
+  const dfs = (cur) => {
+    if(!cur) return
+    dfs(cur.left)
+    if(!pre){
+      head = cur
+    }else {
+      pre.right = cur
+      cur.left = pre
+    }
+    pre = cur
+    dfs(cur.right)
+  }
+  if(!root) return
+  let pre = null, head = null;
+  dfs(root)
+  pre.right = head;
+  head.left = pre;
+  return head;
+}
+// function printTree(root) {
+//   if (!root) {
+//     return
+//   }
+//   console.log(root.val)
+//   printTree(root.left)
+//   printTree(root.right)
+// }
+// function testtreeToDoublyList() {
+//   let root = new Node(-1)
+//   let head = root
+//   const nodeList = [4, 2, 5, 1, 3].map(e => {
+//     return new Node(e)
+//   })
+//   head.right = nodeList[0]
+//   nodeList[0].left = nodeList[1]
+//   nodeList[0].right = nodeList[2]
+//   nodeList[1].left = nodeList[3]
+//   nodeList[1].right = nodeList[4]
+//   head = treeToDoublyList(head.right)
+
+//   printTree(head.right)
+// }
+// testtreeToDoublyList()
