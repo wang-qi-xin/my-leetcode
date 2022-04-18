@@ -158,3 +158,33 @@ function countDigitOne(n: number): number {
 
   return res
 }
+
+/**
+ * 剑指 Offer 39. 数组中出现次数超过一半的数字
+ * @param nums
+ */
+function majorityElement(nums: number[]): number {
+  /**
+   * 投票法
+       1. 众数将其它数字全部抵消，之后剩余的那个就是众数（本题一定有）
+       2. 票数vote初始为0，众数x假设为nums[0]
+       3. 如果遇到某个数n等于众数x，则vote+=1
+       4. 不等于则抵消，也就是vote-=1
+       5. 最后x一定是众数
+   */
+  let vote = 0,
+    x = 0
+  for (let i = 0; i < nums.length; i++) {
+    if (vote === 0) {
+      x = nums[i]
+    }
+    if (nums[i] === x) {
+      vote += 1
+    } else {
+      vote -= 1
+    }
+  }
+
+  return x
+}
+
