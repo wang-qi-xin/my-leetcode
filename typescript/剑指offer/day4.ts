@@ -77,7 +77,7 @@ function validateStackSequences(pushed: number[], popped: number[]): boolean {
  */
 function permutation(s: string): string[] {
   const res = []
-  const list = s.split("")
+  const list = s.split('')
   /**
     dfs。固定某位，搜索下一位。
     末尾时，判断res是否在结果集set中
@@ -89,13 +89,13 @@ function permutation(s: string): string[] {
   }
   const dfs = (x: number) => {
     if (x === s.length - 1) {
-      res.push(list.join(""))
+      res.push(list.join(''))
       return
     }
     const set = new Set()
     for (let i = x; i < s.length - 1; i++) {
       // 利用set判断是否有重复元素，有的话剪枝
-      if(set.has(list[i])) continue
+      if (set.has(list[i])) continue
       set.add(list[i])
       swap(i, x)
       dfs(x + 1)
@@ -103,5 +103,58 @@ function permutation(s: string): string[] {
     }
   }
   dfs(0)
+  return res
+}
+
+/**
+ * 剑指 Offer 43. 1～n 整数中 1 出现的次数
+输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+
+ 
+
+示例 1：
+
+输入：n = 12
+输出：5
+示例 2：
+
+输入：n = 13
+输出：6
+ 
+
+限制：
+
+1 <= n < 2^31
+ * @param n 
+ */
+function countDigitOne(n: number): number {
+  /**
+  1. 获取x的每一位的数字
+  2. 对于5678. 当cur=7时， low = 8， high = 56, dight = 10^1
+  3. 当cur等于0时，该位的1只取决于high * dight，（比如103， 110 ~ 119 ，1的个数为 1 * 10^1）
+  4. 当cur等于1时，该位的1取决于high*dight + low + 1 (比如123的1， 从100 ~ 123 ， 1的个数为 0 * 10^2 + 23 + 1)
+  5. 当cur等于2~9时，该位的1取决于（high+1） * dight （比如234的2， 该位的1，从100~199）（234的3， 该位的1，从210~219 110~119 共20个）
+   */
+  let res = 0,
+    cur = n % 10,
+    low = 0,
+    high = Math.floor(n / 10),
+    dight = 1
+  while (cur !== 0 || high !== 0) {
+    if (cur === 0) {
+      res += high * dight
+    } else if (cur === 1) {
+      res += high * dight + low + 1
+    } else {
+      res += (high + 1) * dight
+    }
+    low += cur * dight
+    cur = high % 10
+    high = Math.floor(high / 10)
+    dight *= 10
+  }
+
   return res
 }
