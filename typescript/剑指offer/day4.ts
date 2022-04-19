@@ -200,9 +200,9 @@ function findNthDigit(n: number): number {
     n -= count
     start *= 10
     digit += 1
-    count += 9 * digit * start
+    count = 9 * digit * start
   }
-  const num = start + Math.floor((n - 1) / digit) 
+  const num = start + Math.floor((n - 1) / digit)
   return +`${num}`[(n - 1) % digit]
 }
 // let a = []
@@ -211,3 +211,44 @@ function findNthDigit(n: number): number {
 // }
 // console.log(a.join(''))
 
+/**
+ * 剑指 Offer 33. 二叉搜索树的后序遍历序列
+ 递归
+ * @param postorder
+ */
+function verifyPostorder(postorder: number[]): boolean {
+  const recur = (i, j) => {
+    if(i >= j) return true; // 无节点，或单节点返回true
+    let p = i;
+    while(postorder[p] < postorder[j]) p++; // 找第一个大于根节点（当前数组末尾的值）m，左边的是根节点的左子树，右边（包括自己）是右子树
+    let m = p
+    while(postorder[p] > postorder[j]) p++; // p后面一直到j - 1，都应该大于根节点。
+    return p === j && recur(i, m - 1) && recur(m, j - 1);
+  }
+  return recur(0, postorder.length - 1)
+}
+
+/**
+ * 剑指 Offer 33. 二叉搜索树的后序遍历序列
+ 辅助单调栈
+ * @param postorder
+ */
+function verifyPostorder2(postorder: number[]): boolean {
+  /**
+   * 1. 逆序遍历。即根，右，左的顺序
+   * 2. 如果当前节点比根节点大，则返回false（在赋值root时，已经跳过了root的右子树节点。初始为max_value）
+   * 3. 当栈不为空，并且栈顶元素比当前元素小，说明栈中的元素都是根节点的右子树。根节点也在栈中，while循环，直到将根节点赋值root
+   * 4. 将当前元素入栈。（一定是当前根节点的左子树，小于root）
+   */
+  const stack = []
+  let root = Number.MAX_VALUE;
+  for(let i = postorder.length - 1; i >= 0; i--){
+    if(postorder[i] > root) return false
+    while(stack.length !== 0 && stack[stack.length - 1] > postorder[i]){
+      root = stack.pop()
+    }
+    stack.push(postorder[i])
+  }
+  return true;
+}
+console.log(verifyPostorder([4, 6, 7, 5]))
