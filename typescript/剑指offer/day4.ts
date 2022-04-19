@@ -188,3 +188,26 @@ function majorityElement(nums: number[]): number {
   return x
 }
 
+/**
+ * 剑指 Offer 44. 数字序列中某一位的数字
+ * @param n
+ */
+function findNthDigit(n: number): number {
+  let count = 9, // 数位，跟n做对比
+    digit = 1, // 位数，三位数那么digit = 3
+    start = 1 // 1 10 100 。。。
+  while (n > count) {
+    n -= count
+    start *= 10
+    digit += 1
+    count += 9 * digit * start
+  }
+  const num = start + Math.floor((n - 1) / digit) 
+  return +`${num}`[(n - 1) % digit]
+}
+// let a = []
+// for (let i = 0; i < 1000; i++) {
+//   a.push(findNthDigit(i))
+// }
+// console.log(a.join(''))
+
