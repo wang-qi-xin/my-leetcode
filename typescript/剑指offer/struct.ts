@@ -86,7 +86,7 @@ export class Heap<T> {
   insert(value: T) {
     this.heap.push(value)
     if (this.size() === 1) return
-    this.shiftUp(this.heap.length - 1)
+    this.shiftUp(this.size() - 1)
   }
   /**
     * 从index开始上移节点。
@@ -125,11 +125,11 @@ export class Heap<T> {
     }
     // 2. 两个子节点
     if (rightChildIndex < this.heap.length) {
-      const maxIndex = this.getIndex(leftChildIndex, rightChildIndex)
-      const compareResult = this.compareFn(this.heap[index], this.heap[maxIndex])
+      const swapIndex = this.getIndex(leftChildIndex, rightChildIndex)
+      const compareResult = this.compareFn(this.heap[index], this.heap[swapIndex])
       if (compareResult > 0 || compareResult === true) {
-        this.swap(maxIndex, index)
-        this.shiftDown(maxIndex)
+        this.swap(swapIndex, index)
+        this.shiftDown(swapIndex)
       }
       return
     }
@@ -149,10 +149,11 @@ export class Heap<T> {
    */
   getIndex(i: number, j: number): number {
     if (this.mode === 'big') {
-      if (this.heap[i] > this.heap[j]) return i
+      if (this.compareFn(this.heap[i], this.heap[j]) < 0) return i
       return j
     }
-    if (this.heap[i] > this.heap[j]) return j
+    // 小根堆: i - j > 0 说明i > j 返回j
+    if (this.compareFn(this.heap[i], this.heap[j]) > 0) return j
     return i
   }
   /**
