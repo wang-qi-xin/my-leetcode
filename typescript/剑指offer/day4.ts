@@ -251,4 +251,23 @@ function verifyPostorder2(postorder: number[]): boolean {
   }
   return true;
 }
-console.log(verifyPostorder([4, 6, 7, 5]))
+// console.log(verifyPostorder([4, 6, 7, 5]))
+
+/**
+ * 剑指 Offer 50. 第一个只出现一次的字符
+ * @param s 
+ */
+function firstUniqChar(s: string): string {
+  if(s === "") return " "
+  const map = new Map<string, boolean>()
+  for(let i = 0; i < s.length; i++){
+    const c = s.charAt(i);
+    map.set(c, !map.has(c))
+  }
+  for(let [k, v] of map.entries()){
+    if(v) return k
+  }
+  return " "
+};
+
+console.log(firstUniqChar("cc"))
