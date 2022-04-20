@@ -1,3 +1,5 @@
+import { TreeNode } from './struct'
+
 /**
  * 剑指 Offer 42. 连续子数组的最大和
 输入一个整型数组，数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
@@ -218,12 +220,12 @@ function findNthDigit(n: number): number {
  */
 function verifyPostorder(postorder: number[]): boolean {
   const recur = (i, j) => {
-    if(i >= j) return true; // 无节点，或单节点返回true
-    let p = i;
-    while(postorder[p] < postorder[j]) p++; // 找第一个大于根节点（当前数组末尾的值）m，左边的是根节点的左子树，右边（包括自己）是右子树
+    if (i >= j) return true // 无节点，或单节点返回true
+    let p = i
+    while (postorder[p] < postorder[j]) p++ // 找第一个大于根节点（当前数组末尾的值）m，左边的是根节点的左子树，右边（包括自己）是右子树
     let m = p
-    while(postorder[p] > postorder[j]) p++; // p后面一直到j - 1，都应该大于根节点。
-    return p === j && recur(i, m - 1) && recur(m, j - 1);
+    while (postorder[p] > postorder[j]) p++ // p后面一直到j - 1，都应该大于根节点。
+    return p === j && recur(i, m - 1) && recur(m, j - 1)
   }
   return recur(0, postorder.length - 1)
 }
@@ -241,33 +243,60 @@ function verifyPostorder2(postorder: number[]): boolean {
    * 4. 将当前元素入栈。（一定是当前根节点的左子树，小于root）
    */
   const stack = []
-  let root = Number.MAX_VALUE;
-  for(let i = postorder.length - 1; i >= 0; i--){
-    if(postorder[i] > root) return false
-    while(stack.length !== 0 && stack[stack.length - 1] > postorder[i]){
+  let root = Number.MAX_VALUE
+  for (let i = postorder.length - 1; i >= 0; i--) {
+    if (postorder[i] > root) return false
+    while (stack.length !== 0 && stack[stack.length - 1] > postorder[i]) {
       root = stack.pop()
     }
     stack.push(postorder[i])
   }
-  return true;
+  return true
 }
 // console.log(verifyPostorder([4, 6, 7, 5]))
 
 /**
  * 剑指 Offer 50. 第一个只出现一次的字符
- * @param s 
+ * @param s
  */
 function firstUniqChar(s: string): string {
-  if(s === "") return " "
+  if (s === '') return ' '
   const map = new Map<string, boolean>()
-  for(let i = 0; i < s.length; i++){
-    const c = s.charAt(i);
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charAt(i)
     map.set(c, !map.has(c))
   }
-  for(let [k, v] of map.entries()){
-    if(v) return k
+  for (let [k, v] of map.entries()) {
+    if (v) return k
   }
-  return " "
-};
+  return ' '
+}
 
-console.log(firstUniqChar("cc"))
+// console.log(firstUniqChar("cc"))
+
+/**
+ * 剑指 Offer 34. 二叉树中和为某一值的路径
+ * 回溯
+ * @param root
+ * @param target
+ */
+function pathSum(root: TreeNode | null, target: number): number[][] {
+  const res: number[][] = []
+  const path: number[] = []
+  const dfs = (node: TreeNode | null, cur: number) => {
+    if (!node) return
+    // 加入节点路径
+    path.push(node.val)
+    // 叶子结点，且路径和为target
+    if (!node.left && !node.right && cur + node.val === target) {
+      res.push([...path])
+    } else {
+      dfs(node.left, cur + node.val)
+      dfs(node.right, cur + node.val)
+    }
+    // 恢复
+    path.pop()
+  }
+  dfs(root, 0)
+  return res
+}
