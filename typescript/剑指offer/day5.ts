@@ -94,3 +94,29 @@ function minNumber(nums: number[]): string {
   quickSort(arr, (a, b) => +(a + b) - +(b + a))
   return arr.join("")
 };
+
+/**
+ * 剑指 Offer 46. 把数字翻译成字符串
+ * @param num 
+ */
+function translateNum(num: number): number {
+  /**
+   * 有条件的斐波那契数列。f(n) = f(n - 1) + f(n - 2)
+   * 当n和n-1组成的数字x，不能翻译（即x < 10 或 x > 25）
+   * 就不能算上f(n - 2)
+   */
+  const arr = `${num}`.split("")
+  let dp = [1, 1]
+  for(let i = 1; i < arr.length; i++){
+    const n = +(arr[i - 1] + arr[i])
+    if(n >= 10 && n < 26){
+      dp[i + 1] = dp[i] + dp[i - 1]
+    }else {
+      dp[i + 1] =dp[i]
+    }
+  }
+  return dp.pop()
+  
+};
+
+// console.log(translateNum(12258))
