@@ -149,3 +149,36 @@ function maxValue(grid: number[][]): number {
 //     [4, 2, 1]
 //   ])
 // )
+
+/**
+ * 剑指 Offer 48. 最长不含重复字符的子字符串
+ * 动态规划 + Map
+ * @param s
+ */
+function lengthOfLongestSubstring(s: string): number {
+  /**
+    1. 长度为s.length的数组dp。
+    2. 一个map用来判断是否有重复字符(存储c和index)
+    3. 遍历s，寻找s[i]是否在map中。如果没有，则index=-1.该元素首次出现
+    4. 把该元素和下标存入map。
+    5. 如果有有重复的s[i]，找到其index。判断i - index 与dp[i - 1]的大小，谁小取谁。（dp[i - 1]小，说明index到i之前还有重复的，不连续）
+    6. 用max取dp的最大值
+   */
+  let max = 0,
+    map = new Map(),
+    len = s.length,
+    temp = 0
+
+  for (let i = 0; i < len; i++) {
+    const c = s.charAt(i)
+    let index = -1
+    if(map.has(c)) index = map.get(c)
+    map.set(c, i)
+    temp = temp < i - index ? temp + 1 : i - index
+    max = Math.max(max, temp)
+  }
+
+  return max
+}
+
+// console.log(lengthOfLongestSubstring(" s op"))
