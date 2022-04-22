@@ -323,42 +323,36 @@ function reversePairs(nums: number[]): number {
 }
 /**
  * 剑指 Offer 51. 数组中的逆序对(困难)
- * 方法二，动态规划
+ * 方法二，归并
  * @param nums
  */
 function reversePairs2(nums: number[]): number {
-  /**
-  从后向前遍历（或逆转数组）
-  1. 从当前位向后遍历，遇到的第一个比它小的数字j。dp[i] = 1 + j 
-   */
-  let dp = [0]
-  nums.reverse()
-  for (let i = 1; i < nums.length; i++) {
-    let min = i - 1
-    for (let j = i - 1; j >= 0; j--) {
-      if (nums[i] > nums[j]) {
-        min = j
-        break
+  let temp = nums.slice()
+  const mergeSort = (left: number, right: number) => {
+    if (left >= right) return 0
+    const mid = left + ((right - left) >> 1)
+    let res = mergeSort(left, mid) + mergeSort(mid + 1, right)
+    let i = left,
+      j = mid + 1
+    for (let k = left; k <= right; k++) {
+      temp[k] = nums[k]
+    }
+    for (let k = left; k <= right; k++) {
+      if (i === mid + 1) {
+        nums[k] = temp[j++]
+      } else if (j === right + 1 || temp[i] <= temp[j]) {
+        nums[k] = temp[i++]
+      } else {
+        nums[k] = temp[j++]
+        res += mid - i + 1
       }
     }
-    if (nums[i] > nums[min]) {
-      console.log(min, nums[min])
-
-      dp[i] = 1 + dp[min]
-    } else {
-      dp[i] = 0
-    }
+    return res
   }
-  let res = 0
-  console.log(dp)
-
-  dp.forEach(v => {
-    res += v
-  })
-  return res
+  return mergeSort(0, nums.length - 1)
 }
-
-// console.log(reversePairs2([7,5,6,4]))
+// const a = [7,5,6,4]
+// console.log(reversePairs2(a))
 /**
  * 剑指 Offer II 074. 合并区间
 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。
@@ -389,20 +383,19 @@ function merge(intervals: number[][]): number[][] {
     return a[0] - b[0]
   })
   const res = [intervals[0]]
-  let num = 0;
-  for(let i = 0; i < intervals.length; i++){
-    if(res[num][1] >= intervals[i][0]){
+  let num = 0
+  for (let i = 0; i < intervals.length; i++) {
+    if (res[num][1] >= intervals[i][0]) {
       // 重合。
       res[num][1] = Math.max(res[num][1], intervals[i][1])
-    }else {
+    } else {
       res[++num] = intervals[i]
     }
   }
   return res
 }
-console.log(
-  merge([
-    [1, 4]
-    
-  ])
-)
+// console.log(
+//   merge([
+//     [1, 4]
+//   ])
+// )
