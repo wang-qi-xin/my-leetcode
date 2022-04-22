@@ -87,17 +87,17 @@ function twoSum(nums: number[], target: number): number[] {
 
 /**
  * 剑指 Offer 45. 把数组排成最小的数
- * @param nums 
+ * @param nums
  */
 function minNumber(nums: number[]): string {
   const arr = nums.map(n => `${n}`)
   quickSort(arr, (a, b) => +(a + b) - +(b + a))
-  return arr.join("")
-};
+  return arr.join('')
+}
 
 /**
  * 剑指 Offer 46. 把数字翻译成字符串
- * @param num 
+ * @param num
  */
 function translateNum(num: number): number {
   /**
@@ -105,18 +105,47 @@ function translateNum(num: number): number {
    * 当n和n-1组成的数字x，不能翻译（即x < 10 或 x > 25）
    * 就不能算上f(n - 2)
    */
-  const arr = `${num}`.split("")
+  const arr = `${num}`.split('')
   let dp = [1, 1]
-  for(let i = 1; i < arr.length; i++){
+  for (let i = 1; i < arr.length; i++) {
     const n = +(arr[i - 1] + arr[i])
-    if(n >= 10 && n < 26){
+    if (n >= 10 && n < 26) {
       dp[i + 1] = dp[i] + dp[i - 1]
-    }else {
-      dp[i + 1] =dp[i]
+    } else {
+      dp[i + 1] = dp[i]
     }
   }
   return dp.pop()
-  
-};
+}
 
 // console.log(translateNum(12258))
+
+/**
+ * 剑指 Offer 47. 礼物的最大价值
+ * @param grid
+ */
+function maxValue(grid: number[][]): number {
+  if (grid.length < 1 || grid[0].length < 1) return 0
+  /**
+   * 使用dp
+     dp[i][j] 只和它正上方dp[i - 1][j]与左边dp[i][j - 1]有关
+     由于不涉及dp[i][j]的其它位置，所以可以使用一维数组来优化。
+   */
+  const m = grid.length
+  const n = grid[0].length
+  const dp = [...Array(n + 1)].map(i => 0)
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      dp[j + 1] = Math.max(dp[j + 1], dp[j]) + grid[i][j]
+    }
+  }
+  return dp.pop()
+}
+
+// console.log(
+//   maxValue([
+//     [1, 3, 1],
+//     [1, 5, 1],
+//     [4, 2, 1]
+//   ])
+// )
