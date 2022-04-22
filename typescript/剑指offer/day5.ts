@@ -1,3 +1,4 @@
+import { quickSort } from '../类型/排序/quickSort'
 import { Heap, ListNode } from './struct'
 
 /**
@@ -28,16 +29,16 @@ function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
    */
 
   const head = new ListNode(-1)
-  let p = head;
-  while(minHeap.size()){
+  let p = head
+  while (minHeap.size()) {
     const node = minHeap.pop()
-    if(node.next){
+    if (node.next) {
       minHeap.insert(node.next)
     }
-    p.next = node;
+    p.next = node
     p = p.next
   }
-  return head.next;
+  return head.next
 }
 
 /**
@@ -45,21 +46,51 @@ function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
  */
 const testmergeKLists = () => {
   // const l = [[1,4,5],[1,3,4],[2,6]]
-  const l = [[-8,-7,-7,-5,1,1,3,4],[-2],[-10,-10,-7,0,1,3],[2]]
+  const l = [[-8, -7, -7, -5, 1, 1, 3, 4], [-2], [-10, -10, -7, 0, 1, 3], [2]]
   // const l = [[]]
   const list = l.map(a => {
     let head = new ListNode(a[0])
     let p = head
-    for(let i = 1; i < a.length; i++){
+    for (let i = 1; i < a.length; i++) {
       p.next = new ListNode(a[i])
       p = p.next
     }
     return head
   })
   let sortList = mergeKLists(list)
-  while(sortList){
+  while (sortList) {
     console.log(sortList.val)
     sortList = sortList.next
   }
 }
 // testmergeKLists()
+
+/**
+ * 剑指 Offer 57. 和为s的两个数字
+ * @param nums
+ * @param target
+ */
+function twoSum(nums: number[], target: number): number[] {
+  let i = 0,
+    j = nums.length - 1
+  while (i < j) {
+    const s = nums[i] + nums[j]
+    if (s === target) return [nums[i], nums[j]]
+    if (s < target) {
+      i++
+    } else {
+      j--
+    }
+  }
+  return []
+}
+
+/**
+ * 剑指 Offer 45. 把数组排成最小的数
+ * @param nums 
+ */
+function minNumber(nums: number[]): string {
+  const arr = nums.map(n => `${n}`)
+  quickSort(arr, (a, b) => +(a + b) - +(b + a))
+  return arr.join("")
+};
