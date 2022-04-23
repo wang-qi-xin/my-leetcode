@@ -256,4 +256,30 @@ function add(a: number, b: number): number {
   }
   return a
 };
-console.log(add(19, 1))
+// console.log(add(19, 1))
+
+/**
+ * 剑指 Offer 66. 构建乘积数组
+ * @param a 
+ */
+function constructArr(a: number[]): number[] {
+  const len = a.length
+  if(len === 0) return []
+  const d1 = [1]
+  let temp = 1
+  for(let i = 1; i < len; i++){
+    // dp[i] 存储 a[0] -> a[i - 1]的乘积
+    d1[i] = d1[i - 1] * a[i - 1]
+  }
+  for(let i = len - 2; i >= 0; i--){
+    // 从倒数第二个数开始
+    // 令temp 暂存a[i + 1] -> a[len - 1] 的乘积
+    // dp[i] 目前是a[0] -> a[i - 1]的乘积，再乘以temp(a[i + 1] -> a[len - 1])
+    // 也就是a[0] -> a[len - 1]的乘积
+    temp *= a[i + 1]
+    d1[i] *= temp
+  }
+  return d1
+};
+
+constructArr([1,2,3,4,5])
