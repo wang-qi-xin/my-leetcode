@@ -207,3 +207,28 @@ function kthLargest(root: TreeNode | null, k: number): number {
    return res;
 
 };
+
+/**
+ * 剑指 Offer 49. 丑数
+ * 动态规划
+ * @param n 
+ */
+function nthUglyNumber(n: number): number {
+  /**
+   * 丑数n，一定是由较小的三个丑数 * 2， 3 ，5，然后取最小值
+   * 分别用a, b, c记录这三个丑数的下标。
+   * 初始时都是0。（dp[0] === 1)
+   * 每次更新dp[i]（第i - 1个丑数）时，需要更新a, b, c
+   * 注意：有可能a * 2 === b * 3. 所以有可能a , b 都需要加1
+   */
+  const dp = [1]
+  let [a, b, c] = [0, 0, 0]
+  for(let i = 1; i < n; i++){
+    const [n2, n3, n5] = [dp[a] * 2, dp[b] * 3, dp[c] * 5]
+    dp[i] = Math.min(n2, n3, n5)
+    if(dp[i] === n2) a += 1
+    if(dp[i] === n3) b += 1
+    if(dp[i] === n5) c += 1
+  }
+  return dp[n - 1]
+};
