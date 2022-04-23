@@ -232,3 +232,28 @@ function nthUglyNumber(n: number): number {
   }
   return dp[n - 1]
 };
+
+/**
+ * 剑指 Offer 65. 不用加减乘除做加法
+ * @param a 
+ * @param b 
+ */
+function add(a: number, b: number): number {
+  /**
+  n = a ^ b 获取非进位二进制数
+  c = a & b << 1 (两个位置都是1，需要进位，左移1位)
+  然后令a = n, b = c
+  继续循环。直到b == 0
+
+  原理。a + b  = n + c, 对n + c循环使用位运算，直到c === 0. 此时a + b = n + 0 = n
+        n 是非进位二进制数。
+        c 是需要进位的二进制数。
+   */
+  while(b){
+    let n = a ^ b, c = (a & b) << 1
+    a = n
+    b = c
+  }
+  return a
+};
+console.log(add(19, 1))
