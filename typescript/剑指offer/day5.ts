@@ -1,5 +1,5 @@
 import { quickSort } from '../类型/排序/quickSort'
-import { Heap, ListNode } from './struct'
+import { Heap, ListNode, TreeNode } from './struct'
 
 /**
  * 剑指 Offer II 078. 合并排序链表（困难）
@@ -182,3 +182,28 @@ function lengthOfLongestSubstring(s: string): number {
 }
 
 // console.log(lengthOfLongestSubstring(" s op"))
+
+/**
+ * 剑指 Offer 54. 二叉搜索树的第k大节点
+ * @param root 
+ * @param k 
+ */
+function kthLargest(root: TreeNode | null, k: number): number {
+  /**
+   * 1. 先右，再中，再左遍历
+   * 2. 每次访问节点时，k--
+   * 3. 当k === 0;说明已经找到结果了。终止递归
+   * 4. 当k === 1. 当前访问节点就是结果。保存起来res
+   */
+   let res = 0;
+   const recur = (node: TreeNode) => {
+     if(!node) return 
+     recur(node.right)
+     if(k === 0) return
+     if(--k === 0) res = node.val
+     recur(node.left)
+   }
+   recur(root)
+   return res;
+
+};
