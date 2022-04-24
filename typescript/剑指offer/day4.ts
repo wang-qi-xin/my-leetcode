@@ -1,4 +1,4 @@
-import { TreeNode } from './struct'
+import { TreeNode } from '../utils/数据结构/struct'
 
 /**
  * 剑指 Offer 42. 连续子数组的最大和

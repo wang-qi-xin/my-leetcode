@@ -1,4 +1,4 @@
-import { Heap, ListNode } from './struct'
+import { Heap, ListNode } from '../utils/数据结构/struct'
 /**
  * 867. 转置矩阵
  * @param matrix

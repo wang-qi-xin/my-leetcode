@@ -4,10 +4,10 @@
  * @Autor: one
  * @Date: 2022-04-04 22:55:55
  * @LastEditors: one
- * @LastEditTime: 2022-04-10 16:54:19
+ * @LastEditTime: 2022-04-24 11:05:54
  */
 
-import { ListNode, TreeNode } from './struct'
+import { ListNode, TreeNode } from '../utils/数据结构/struct'
 
 /** 深度优先遍历
  * 剑指 Offer 12. 矩阵中的路径

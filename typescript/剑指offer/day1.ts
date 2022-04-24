@@ -1,4 +1,4 @@
-import { ListNode, TreeNode } from "./struct"
+import { ListNode, TreeNode } from "../utils/数据结构/struct"
 
 /**
   剑指 Offer 03. 数组中重复的数字

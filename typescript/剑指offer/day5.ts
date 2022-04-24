@@ -1,5 +1,5 @@
-import { quickSort } from '../类型/排序/quickSort'
-import { Heap, ListNode, TreeNode } from './struct'
+import { quickSort } from '../utils/排序/quickSort'
+import { Heap, ListNode, TreeNode } from '../utils/数据结构/struct'
 
 /**
  * 剑指 Offer II 078. 合并排序链表（困难）
