@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-24 11:03:53
+ * @LastEditTime: 2022-04-24 12:11:01
  */
 
 /**
@@ -36,3 +36,44 @@ function dicesProbability(n: number): number[] {
   return dp
 }
 // console.log(dicesProbability(1))
+
+/**
+ * 剑指 Offer 67. 把字符串转换成整数
+ * @param str
+ */
+function strToInt(str: string): number {
+  str = str.trim()
+  let sign = 1
+  let c = str.charAt(0)
+  // 取符号位
+  if (c === '+' || c === '-') {
+    sign = c === '+' ? 1 : -1
+    str = str.substring(1)
+  }
+  let s = ''
+  /**
+   * 判断是否是数字
+   * @param c 
+   * @returns 
+   */
+  const isNumber = (c: string) => {
+    if (c === '0') return true
+    return Boolean(+c)
+  }
+  // 如果碰到了非数字，就break
+  for (let i = 0; i < str.length; i++) {
+    let c = str.charAt(i)
+    if (isNumber(c)) {
+      s += c
+    } else {
+      break
+    }
+  }
+  let result = sign * +s
+  const MAX = Math.pow(2, 31) - 1
+  const MIN = -Math.pow(2, 31)
+  if(result > MAX) result = MAX
+  if(result < MIN) result = MIN
+  return result
+}
+// console.log(strToInt(' -42'))
