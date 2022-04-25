@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-24 12:11:01
+ * @LastEditTime: 2022-04-25 17:01:21
  */
 
 /**
@@ -53,8 +53,8 @@ function strToInt(str: string): number {
   let s = ''
   /**
    * 判断是否是数字
-   * @param c 
-   * @returns 
+   * @param c
+   * @returns
    */
   const isNumber = (c: string) => {
     if (c === '0') return true
@@ -72,8 +72,62 @@ function strToInt(str: string): number {
   let result = sign * +s
   const MAX = Math.pow(2, 31) - 1
   const MIN = -Math.pow(2, 31)
-  if(result > MAX) result = MAX
-  if(result < MIN) result = MIN
+  if (result > MAX) result = MAX
+  if (result < MIN) result = MIN
   return result
 }
 // console.log(strToInt(' -42'))
+
+/**
+ * 剑指 Offer 61. 扑克牌中的顺子
+  （排序+筛选）太慢了
+ * @param nums
+ */
+function isStraight(nums: number[]): boolean {
+  /**
+   1. 先排序
+   2. 把0截出来 z = 0的数目
+   3. 遍历非0.用res 记录后一位与前一位的（差 - 1）
+   4. 如果res <= z, 就是顺子
+   */
+  nums.sort((a, b) => a - b)
+  let z = 0,
+    res = 0
+  for (let i = 0; i < 5; i++) {
+    if (nums[i] !== 0) break
+    z += 1
+  }
+  for(let i = z; i < 4; i++){
+    // 如果出现重复的非零数字，直接返回false
+    if(nums[i + 1] === nums[i]) return false
+    res += (nums[i + 1] - nums[i]) - 1
+  }
+  return res <= z
+}
+
+/**
+ * 剑指 Offer 61. 扑克牌中的顺子
+   (利用Set)
+ * @param nums 
+ * @returns 
+ */
+function isStraight2(nums: number[]): boolean {
+  /**
+   1. 跳过0
+   2. 重复数，直接返回false
+   3. 取最大值max，最小值min
+   4. 如果max - min < 5 说明是顺子
+   */
+  let max = 0, min = 14
+  let set = new Set()
+  for(let i = 0; i < 5; i++){
+    let n = nums[i]
+    if(n === 0) continue
+    if(set.has(n)) return false
+    min = Math.min(min, n)
+    max = Math.max(max, n)
+    set.add(n)
+  }
+  return (max - min) < 5
+}
+// isStraight2([0,0,2,2,5])
