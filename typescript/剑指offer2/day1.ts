@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-25 17:01:21
+ * @LastEditTime: 2022-04-25 20:44:24
  */
 
 /**
@@ -131,3 +131,23 @@ function isStraight2(nums: number[]): boolean {
   return (max - min) < 5
 }
 // isStraight2([0,0,2,2,5])
+
+/**
+ * 剑指 Offer 63. 股票的最大利润
+    动态规划
+ * @param prices 
+ */
+function maxProfit(prices: number[]): number {
+  let max = 0;
+  for(let i = prices.length - 2; i >= 0 ;i--){
+    let c = prices[i + 1] - prices[i]
+    if(c > 0){
+      max = Math.max(max, c)
+      prices[i] = prices[i + 1]
+    }
+  }
+  return max
+};
+
+console.log(maxProfit([7,1,5,3,5]));
+
