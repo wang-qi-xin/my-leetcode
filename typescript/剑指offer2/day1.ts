@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-25 20:44:24
+ * @LastEditTime: 2022-04-25 20:52:45
  */
 
 /**
@@ -149,5 +149,17 @@ function maxProfit(prices: number[]): number {
   return max
 };
 
-console.log(maxProfit([7,1,5,3,5]));
+// console.log(maxProfit([7,1,5,3,5]));
 
+/**
+ * 剑指 Offer 64. 求1+2+…+n
+ * @param n 
+ */
+function sumNums(n: number): number {
+  // 递归，但是不使用if判断n == 0.
+  // 使用&&运算符来判断
+  let res =  n && (sumNums(n - 1) + n)
+  return res
+};
+
+// console.log(sumNums(1))
