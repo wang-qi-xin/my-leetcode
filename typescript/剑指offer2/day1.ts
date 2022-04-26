@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-25 20:52:45
+ * @LastEditTime: 2022-04-26 12:12:03
  */
 
 /**
@@ -163,3 +163,24 @@ function sumNums(n: number): number {
 };
 
 // console.log(sumNums(1))
+
+/**
+ * 剑指 Offer 14- I. 剪绳子
+ * @param n 
+ */
+function cuttingRope(n: number): number {
+  if(n <= 3) return n - 1
+
+  // 将n尽可能分为长度为3的片段
+  // 如果最后一段不够3，
+  // 即b = 1, b = 2 两种情况
+  // 1. b == 1: 把b分给其中一个3， 因为3 * 3 * 1 小于3 * 4
+  // 2. b == 2: 返回3^a * 2
+  let a = Math.floor(n / 3), b = n % 3
+  
+  if(b === 0) return Math.pow(3, a)
+  if(b === 1) return Math.pow(3, a - 1) * 4
+  return Math.pow(3, a) * 2
+};
+
+// console.log(cuttingRope(10))
