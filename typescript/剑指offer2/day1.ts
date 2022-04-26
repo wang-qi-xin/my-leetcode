@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-26 12:12:03
+ * @LastEditTime: 2022-04-26 12:23:31
  */
 
 /**
@@ -97,10 +97,10 @@ function isStraight(nums: number[]): boolean {
     if (nums[i] !== 0) break
     z += 1
   }
-  for(let i = z; i < 4; i++){
+  for (let i = z; i < 4; i++) {
     // 如果出现重复的非零数字，直接返回false
-    if(nums[i + 1] === nums[i]) return false
-    res += (nums[i + 1] - nums[i]) - 1
+    if (nums[i + 1] === nums[i]) return false
+    res += nums[i + 1] - nums[i] - 1
   }
   return res <= z
 }
@@ -118,17 +118,18 @@ function isStraight2(nums: number[]): boolean {
    3. 取最大值max，最小值min
    4. 如果max - min < 5 说明是顺子
    */
-  let max = 0, min = 14
+  let max = 0,
+    min = 14
   let set = new Set()
-  for(let i = 0; i < 5; i++){
+  for (let i = 0; i < 5; i++) {
     let n = nums[i]
-    if(n === 0) continue
-    if(set.has(n)) return false
+    if (n === 0) continue
+    if (set.has(n)) return false
     min = Math.min(min, n)
     max = Math.max(max, n)
     set.add(n)
   }
-  return (max - min) < 5
+  return max - min < 5
 }
 // isStraight2([0,0,2,2,5])
 
@@ -138,49 +139,79 @@ function isStraight2(nums: number[]): boolean {
  * @param prices 
  */
 function maxProfit(prices: number[]): number {
-  let max = 0;
-  for(let i = prices.length - 2; i >= 0 ;i--){
+  let max = 0
+  for (let i = prices.length - 2; i >= 0; i--) {
     let c = prices[i + 1] - prices[i]
-    if(c > 0){
+    if (c > 0) {
       max = Math.max(max, c)
       prices[i] = prices[i + 1]
     }
   }
   return max
-};
+}
 
 // console.log(maxProfit([7,1,5,3,5]));
 
 /**
  * 剑指 Offer 64. 求1+2+…+n
- * @param n 
+ * @param n
  */
 function sumNums(n: number): number {
   // 递归，但是不使用if判断n == 0.
   // 使用&&运算符来判断
-  let res =  n && (sumNums(n - 1) + n)
+  let res = n && sumNums(n - 1) + n
   return res
-};
+}
 
 // console.log(sumNums(1))
 
 /**
  * 剑指 Offer 14- I. 剪绳子
- * @param n 
+ * @param n
  */
 function cuttingRope(n: number): number {
-  if(n <= 3) return n - 1
+  if (n <= 3) return n - 1
 
   // 将n尽可能分为长度为3的片段
   // 如果最后一段不够3，
   // 即b = 1, b = 2 两种情况
   // 1. b == 1: 把b分给其中一个3， 因为3 * 3 * 1 小于3 * 4
   // 2. b == 2: 返回3^a * 2
-  let a = Math.floor(n / 3), b = n % 3
-  
-  if(b === 0) return Math.pow(3, a)
-  if(b === 1) return Math.pow(3, a - 1) * 4
+  let a = Math.floor(n / 3),
+    b = n % 3
+
+  if (b === 0) return Math.pow(3, a)
+  if (b === 1) return Math.pow(3, a - 1) * 4
   return Math.pow(3, a) * 2
-};
+}
 
 // console.log(cuttingRope(10))
+
+/**
+ * 剑指 Offer 14- II. 剪绳子 II
+ * @param n
+ */
+function cuttingRope2(n: number): number {
+  if (n <= 3) return n - 1
+
+  // 将n尽可能分为长度为3的片段
+  // 如果最后一段不够3，
+  // 即b = 1, b = 2 两种情况
+  // 1. b == 1: 把b分给其中一个3， 因为3 * 3 * 1 小于3 * 4
+  // 2. b == 2: 返回3^a * 2
+
+  // 由于可能越界，所以不能使用pow函数
+  // 使用for循环，每次都对1000000007取余
+  let a = Math.floor(n / 3),
+    b = n % 3,
+    p = 1000000007,
+    res = 1
+  for(let i = 0; i < a - 1; i++){
+    res = (3 * res) % p
+  }
+
+  if (b === 0) return 3 * res % p
+  if (b === 1) return 4 * res % p
+  return (6 * res) % p
+}
+// console.log(cuttingRope2(1000))
