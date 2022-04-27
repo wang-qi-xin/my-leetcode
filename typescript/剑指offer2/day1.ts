@@ -4,8 +4,10 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-26 12:23:31
+ * @LastEditTime: 2022-04-27 10:29:39
  */
+
+import { TreeNode } from '../utils/数据结构/struct'
 
 /**
  * 剑指 Offer 60. n个骰子的点数
@@ -206,12 +208,30 @@ function cuttingRope2(n: number): number {
     b = n % 3,
     p = 1000000007,
     res = 1
-  for(let i = 0; i < a - 1; i++){
+  for (let i = 0; i < a - 1; i++) {
     res = (3 * res) % p
   }
 
-  if (b === 0) return 3 * res % p
-  if (b === 1) return 4 * res % p
+  if (b === 0) return (3 * res) % p
+  if (b === 1) return (4 * res) % p
   return (6 * res) % p
 }
 // console.log(cuttingRope2(1000))
+
+/**
+ * 剑指 Offer 32 - I. 从上到下打印二叉树
+ * @param root
+ */
+function levelOrder(root: TreeNode | null): number[] {
+  if (!root) return []
+  const stack: TreeNode[] = [],
+    res: number[] = []
+  stack.push(root)
+  while (stack.length) {
+    const node = stack.shift()
+    res.push(node.val)
+    if (node.left) stack.push(node.left)
+    if (node.right) stack.push(node.right)
+  }
+  return res
+}
