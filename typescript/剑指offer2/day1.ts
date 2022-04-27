@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-27 10:41:23
+ * @LastEditTime: 2022-04-27 10:50:24
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -248,13 +248,43 @@ function levelOrder2(root: TreeNode | null): number[][] {
   stack.push(root)
   while (stack.length) {
     const temp: number[] = []
-    for(let i = stack.length; i > 0; i--){
+    for (let i = stack.length; i > 0; i--) {
       const node = stack.shift()
       temp.push(node.val)
       if (node.left) stack.push(node.left)
       if (node.right) stack.push(node.right)
     }
     res.push(temp)
+  }
+  return res
+}
+
+/**
+ * 剑指 Offer 32 - III. 从上到下打印二叉树 III
+    之 字型打印
+
+ * @param root 
+ */
+function levelOrder3(root: TreeNode | null): number[][] {
+  if (!root) return []
+  const stack: TreeNode[] = [],
+    res: number[][] = []
+  let d: boolean = false // d == true 代表从左往右
+  stack.push(root)
+  while (stack.length) {
+    const temp: number[] = []
+    for (let i = stack.length; i > 0; i--) {
+      const node = stack.shift()
+      if (d) {
+        temp.unshift(node.val)
+      } else {
+        temp.push(node.val)
+      }
+      if (node.left) stack.push(node.left)
+      if (node.right) stack.push(node.right)
+    }
+    res.push(temp)
+    d = !d
   }
   return res
 }
