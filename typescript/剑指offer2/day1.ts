@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-27 10:53:13
+ * @LastEditTime: 2022-04-27 11:18:59
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -291,9 +291,48 @@ function levelOrder3(root: TreeNode | null): number[][] {
 
 /**
  * 剑指 Offer 55 - I. 二叉树的深度
- * @param root 
+ * @param root
  */
 function maxDepth(root: TreeNode | null): number {
-  if(!root) return 0
+  if (!root) return 0
   return 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
-};
+}
+
+/**
+ * 剑指 Offer 56 - I. 数组中数字出现的次数
+ 位运算
+ * @param nums 
+ */
+function singleNumbers(nums: number[]): number[] {
+  /**
+   * 难点在于时间复杂度O(N), 且有两个不同的数字
+     1. 如何将这两个数字区分开呢？
+        两个不同的数字a,b，二进制中一定有一位不一样，导致a ^ b = x, x中某一位为1
+     2. 如何找到a ^ b 这个数字？
+        遍历nums，n ^= nums[i]
+        最后的数字n = a ^ b
+     3. 如何找不同的那一位二进制数 ？
+        令d = 1
+        循环d & x ，直到d & x 不等于 0
+        每次d <<= 1
+     4. 遍历nums
+        根据d & nums[i] === 0 来区分数字
+        相同的两个数字必然被分到同一组 
+   */
+
+  const x = nums.reduce((p, c) => p ^ c, 0)
+  let d = 1
+  while ((d & x) === 0) {
+    d <<= 1
+  }
+  let a = 0,
+    b = 0
+  for (let i = 0; i < nums.length; i++) {
+    if ((nums[i] & d) === 0) {
+      a ^= nums[i]
+    } else {
+      b ^= nums[i]
+    }
+  }
+  return [a, b]
+}
