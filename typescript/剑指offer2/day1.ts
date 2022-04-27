@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-27 10:50:24
+ * @LastEditTime: 2022-04-27 10:53:13
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -288,3 +288,12 @@ function levelOrder3(root: TreeNode | null): number[][] {
   }
   return res
 }
+
+/**
+ * 剑指 Offer 55 - I. 二叉树的深度
+ * @param root 
+ */
+function maxDepth(root: TreeNode | null): number {
+  if(!root) return 0
+  return 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
+};
