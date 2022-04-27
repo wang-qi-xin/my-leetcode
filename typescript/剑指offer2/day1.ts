@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-27 10:29:39
+ * @LastEditTime: 2022-04-27 10:41:23
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -232,6 +232,29 @@ function levelOrder(root: TreeNode | null): number[] {
     res.push(node.val)
     if (node.left) stack.push(node.left)
     if (node.right) stack.push(node.right)
+  }
+  return res
+}
+
+/**
+ * 剑指 Offer 32 - II. 从上到下打印二叉树 II
+  (每一层一个数组，结果是二维数组)
+ * @param root
+ */
+function levelOrder2(root: TreeNode | null): number[][] {
+  if (!root) return []
+  const stack: TreeNode[] = [],
+    res: number[][] = []
+  stack.push(root)
+  while (stack.length) {
+    const temp: number[] = []
+    for(let i = stack.length; i > 0; i--){
+      const node = stack.shift()
+      temp.push(node.val)
+      if (node.left) stack.push(node.left)
+      if (node.right) stack.push(node.right)
+    }
+    res.push(temp)
   }
   return res
 }
