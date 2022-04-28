@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-27 11:18:59
+ * @LastEditTime: 2022-04-28 19:37:26
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -336,3 +336,30 @@ function singleNumbers(nums: number[]): number[] {
   }
   return [a, b]
 }
+
+/**
+ * 剑指 Offer 56 - II. 数组中数字出现的次数 II
+  (统计二进制数的每一位的1出现的个数)
+  (然后把该数组转为十进制数res)
+  (每一位都跟3取余，这样就把出现了3次的重复数过滤了)
+ 在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+ * @param nums 
+ */
+function singleNumber(nums: number[]): number {
+  const a = [...Array(32)].map(i => 0)
+  
+  for (let i = 0; i < nums.length; i++) {
+    let n = nums[i];
+    for (let j = 0; j < 32; j++) {
+      a[j] += n & 1
+      n >>= 1
+    }
+  }
+  let res = 0, m = 3
+  for (let i = 0; i < 32; i++) {
+    res <<= 1
+    res |= a[31 - i] % m
+  }
+  return res;
+};
+// singleNumber([1,2,1,1])
