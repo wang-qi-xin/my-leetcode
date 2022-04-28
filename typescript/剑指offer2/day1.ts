@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-28 19:37:26
+ * @LastEditTime: 2022-04-28 20:11:54
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -363,3 +363,35 @@ function singleNumber(nums: number[]): number {
   return res;
 };
 // singleNumber([1,2,1,1])
+
+/**
+ * 剑指 Offer 57 - II. 和为s的连续正数序列
+ (滑动窗口)
+ * @param target 
+ */
+function findContinuousSequence(target: number): number[][] {
+  const res: number[][] = []
+  let i = 1, j = 2, sum = 3
+  // sum 表示从i + (i + 1) + 。。。 j的和。
+  // 如果sum == target, res.push([i, i + 1, ... , j])，然后i, j 都加1, sum += j - i + 1
+  // 如果sum > target, sum -= i, 然后让i += 1 
+  // 否则j += 1, sum += j ----- 注意顺序
+  while(i < j) {
+    if(sum === target){
+      const arr = [...Array(j - i + 1)].map((_, index) => index + i)
+      res.push(arr)
+      i++
+      j++
+      sum += j - i + 1
+    }else if(sum > target){
+      sum -= i
+      i++
+    } else{
+      j++
+      sum += j
+    }
+  }
+  return res;
+};
+
+// findContinuousSequence(15)
