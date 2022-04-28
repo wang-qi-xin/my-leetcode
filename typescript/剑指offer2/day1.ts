@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-28 20:18:53
+ * @LastEditTime: 2022-04-28 20:38:27
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -421,3 +421,27 @@ function findContinuousSequence2(target: number): number[][] {
 };
 
 // findContinuousSequence(15)
+
+/**
+ * 剑指 Offer 58 - I. 翻转单词顺序
+ * @param s 
+ */
+function reverseWords(s: string): string {
+  // return s.trim().split(" ").map(v => v.trim()).filter(v => v !== "").reverse().join(" ")
+
+  // 双指针逆向
+  s = s.trim()
+  // i 指向单词前面的空格， j 指向单词末尾
+  let i = s.length - 1, j = i
+  let res = ""
+  while(i >= 0) {
+    // 1. 让i指向单词前面的空格
+    while(i >= 0 && s.charAt(i) !== " ") i--
+    // 2. i + 1, 到j + 1就是一个单词
+    res += s.substring(i + 1, j + 1) + " "
+    // 3. 让i跳过空格，指向下一个单词末尾
+    while(i >= 0 && s.charAt(i) === " ") i--
+    j = i;
+  }
+  return res.trim()
+};
