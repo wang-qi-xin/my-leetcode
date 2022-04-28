@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-28 20:11:54
+ * @LastEditTime: 2022-04-28 20:18:53
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -390,6 +390,32 @@ function findContinuousSequence(target: number): number[][] {
       j++
       sum += j
     }
+  }
+  return res;
+};
+
+/**
+ * 剑指 Offer 57 - II. 和为s的连续正数序列
+ (数学法， 等差1的数列和问题)
+ * @param target 
+ */
+function findContinuousSequence2(target: number): number[][] {
+  const res: number[][] = []
+  let i = 1, j = 2
+  // 左右边界为i, j
+  // 可以算出该序列的数列和sum
+  // 令sum = target
+  // 共3个变量i, j, target
+  // target已知。
+  // 令i = 1, 2, 3, ...
+  // 则可以求出j。当j为正整数时，添加[i, i+ 1, ..., j]到res
+  while(i < j) {
+    j = (-1 + Math.sqrt(1 + 4 * (2 * target + i ** 2 - i))) / 2
+    if(i < j && j === Math.floor(j)){
+      const arr = [...Array(j - i + 1)].map((_, index) => i + index)
+      res.push(arr)
+    }
+    i++
   }
   return res;
 };
