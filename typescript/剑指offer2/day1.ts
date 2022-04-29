@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-28 20:38:27
+ * @LastEditTime: 2022-04-29 19:02:06
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -444,4 +444,26 @@ function reverseWords(s: string): string {
     j = i;
   }
   return res.trim()
+};
+
+/**
+ * 剑指 Offer 53 - I. 在排序数组中查找数字 I
+ * @param nums 
+ * @param target 
+ */
+function search(nums: number[], target: number): number {
+  const binarySearch = (t: number): number => {
+    let i = 0, j = nums.length - 1
+    while(i <= j){
+      const mid = i + ((j - i) >> 1)
+      if(nums[mid] <= t){
+        i = mid + 1
+      }else {
+        j = mid - 1
+      }
+    }
+    return i
+  }
+
+  return binarySearch(target) - binarySearch(target - 1)
 };
