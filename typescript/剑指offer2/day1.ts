@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-04-29 19:02:06
+ * @LastEditTime: 2022-05-01 17:29:09
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -347,21 +347,22 @@ function singleNumbers(nums: number[]): number[] {
  */
 function singleNumber(nums: number[]): number {
   const a = [...Array(32)].map(i => 0)
-  
+
   for (let i = 0; i < nums.length; i++) {
-    let n = nums[i];
+    let n = nums[i]
     for (let j = 0; j < 32; j++) {
       a[j] += n & 1
       n >>= 1
     }
   }
-  let res = 0, m = 3
+  let res = 0,
+    m = 3
   for (let i = 0; i < 32; i++) {
     res <<= 1
     res |= a[31 - i] % m
   }
-  return res;
-};
+  return res
+}
 // singleNumber([1,2,1,1])
 
 /**
@@ -371,28 +372,30 @@ function singleNumber(nums: number[]): number {
  */
 function findContinuousSequence(target: number): number[][] {
   const res: number[][] = []
-  let i = 1, j = 2, sum = 3
+  let i = 1,
+    j = 2,
+    sum = 3
   // sum 表示从i + (i + 1) + 。。。 j的和。
   // 如果sum == target, res.push([i, i + 1, ... , j])，然后i, j 都加1, sum += j - i + 1
-  // 如果sum > target, sum -= i, 然后让i += 1 
+  // 如果sum > target, sum -= i, 然后让i += 1
   // 否则j += 1, sum += j ----- 注意顺序
-  while(i < j) {
-    if(sum === target){
+  while (i < j) {
+    if (sum === target) {
       const arr = [...Array(j - i + 1)].map((_, index) => index + i)
       res.push(arr)
       i++
       j++
       sum += j - i + 1
-    }else if(sum > target){
+    } else if (sum > target) {
       sum -= i
       i++
-    } else{
+    } else {
       j++
       sum += j
     }
   }
-  return res;
-};
+  return res
+}
 
 /**
  * 剑指 Offer 57 - II. 和为s的连续正数序列
@@ -401,7 +404,8 @@ function findContinuousSequence(target: number): number[][] {
  */
 function findContinuousSequence2(target: number): number[][] {
   const res: number[][] = []
-  let i = 1, j = 2
+  let i = 1,
+    j = 2
   // 左右边界为i, j
   // 可以算出该序列的数列和sum
   // 令sum = target
@@ -409,22 +413,22 @@ function findContinuousSequence2(target: number): number[][] {
   // target已知。
   // 令i = 1, 2, 3, ...
   // 则可以求出j。当j为正整数时，添加[i, i+ 1, ..., j]到res
-  while(i < j) {
+  while (i < j) {
     j = (-1 + Math.sqrt(1 + 4 * (2 * target + i ** 2 - i))) / 2
-    if(i < j && j === Math.floor(j)){
+    if (i < j && j === Math.floor(j)) {
       const arr = [...Array(j - i + 1)].map((_, index) => i + index)
       res.push(arr)
     }
     i++
   }
-  return res;
-};
+  return res
+}
 
 // findContinuousSequence(15)
 
 /**
  * 剑指 Offer 58 - I. 翻转单词顺序
- * @param s 
+ * @param s
  */
 function reverseWords(s: string): string {
   // return s.trim().split(" ").map(v => v.trim()).filter(v => v !== "").reverse().join(" ")
@@ -432,38 +436,65 @@ function reverseWords(s: string): string {
   // 双指针逆向
   s = s.trim()
   // i 指向单词前面的空格， j 指向单词末尾
-  let i = s.length - 1, j = i
-  let res = ""
-  while(i >= 0) {
+  let i = s.length - 1,
+    j = i
+  let res = ''
+  while (i >= 0) {
     // 1. 让i指向单词前面的空格
-    while(i >= 0 && s.charAt(i) !== " ") i--
+    while (i >= 0 && s.charAt(i) !== ' ') i--
     // 2. i + 1, 到j + 1就是一个单词
-    res += s.substring(i + 1, j + 1) + " "
+    res += s.substring(i + 1, j + 1) + ' '
     // 3. 让i跳过空格，指向下一个单词末尾
-    while(i >= 0 && s.charAt(i) === " ") i--
-    j = i;
+    while (i >= 0 && s.charAt(i) === ' ') i--
+    j = i
   }
   return res.trim()
-};
+}
 
 /**
  * 剑指 Offer 53 - I. 在排序数组中查找数字 I
- * @param nums 
- * @param target 
+ * @param nums
+ * @param target
  */
 function search(nums: number[], target: number): number {
   const binarySearch = (t: number): number => {
-    let i = 0, j = nums.length - 1
-    while(i <= j){
+    let i = 0,
+      j = nums.length - 1
+    while (i <= j) {
       const mid = i + ((j - i) >> 1)
-      if(nums[mid] <= t){
+      if (nums[mid] < t) {
         i = mid + 1
-      }else {
+      } else {
         j = mid - 1
       }
     }
     return i
   }
 
-  return binarySearch(target) - binarySearch(target - 1)
-};
+  return binarySearch(target + 1) - binarySearch(target)
+}
+
+/**
+ * 剑指 Offer 53 - II. 0～n-1中缺失的数字
+ * @param nums
+ */
+function missingNumber(nums: number[]): number {
+  /**
+   1. 二分查找。
+   2. 如果mid 不等于nums[mid] ，此时nums[mid]一定大于mid。缺失的数字一定位于left-mid之间
+      令right=mid - 1
+   3. 否则说明mid之前的数字都不缺
+   4. left = mid + 1
+   */
+  let left = 0,
+    right = nums.length - 1
+  while (left <= right) {
+    const mid = left + ((right - left) >> 1)
+    if (mid !== nums[mid]) {
+      right = mid
+    } else {
+      left = mid + 1
+    }
+  }
+  return left
+}
