@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-05-01 17:29:09
+ * @LastEditTime: 2022-05-02 22:09:25
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -498,3 +498,48 @@ function missingNumber(nums: number[]): number {
   }
   return left
 }
+
+/**
+ * 剑指 Offer 59 - I. 滑动窗口的最大值
+ * @param nums
+ * @param k
+ */
+function maxSlidingWindow(nums: number[], k: number): number[] {
+  /**
+    1. 维护一个单调双端队列，队列中只保留当前窗口的元素，且递减
+    2. 当访问元素nums[i]时，把队列里面比nums[i]小的全部弹出。
+        nums[i - k] 也就是从窗口里踢出的元素，如果该元素等于deque[0]，就把deque[0]弹出
+    3. 每一轮都把队首的元素保存至结果集
+   */
+
+  let res: number[] = [],
+    deque: number[] = []
+  for (let i = 0; i < k; i++) {
+    while (deque.length && deque[deque.length - 1] <= nums[i]) {
+      deque.pop()
+    }
+    deque.push(nums[i])
+  }
+  // 防止nums = []
+  if (deque.length) res.push(deque[0])
+
+  for (let i = k; i < nums.length; i++) {
+    if (nums[i - k] === deque[0]) {
+      deque.shift()
+    }
+
+    //  < 不能用<=,
+    // 若是当前窗口里有某个数字x，而nums[i] == x, 就会把x从队列弹出
+    // 当后面某一轮，窗口弹出某个等于x的数，就会把这个数也从队列弹出
+    while (deque.length && deque[deque.length - 1] < nums[i]) {
+      deque.pop()
+    }
+
+    deque.push(nums[i])
+    res.push(deque[0])
+  }
+
+  return res
+}
+
+// console.log(maxSlidingWindow([-7, -8, 7, 5, 7, 1, 6, 0], 4))
