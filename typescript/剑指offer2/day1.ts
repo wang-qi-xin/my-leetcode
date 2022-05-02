@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-23 17:17:32
  * @LastEditors: one
- * @LastEditTime: 2022-05-02 22:09:25
+ * @LastEditTime: 2022-05-02 23:54:32
  */
 
 import { TreeNode } from '../utils/数据结构/struct'
@@ -543,3 +543,49 @@ function maxSlidingWindow(nums: number[], k: number): number[] {
 }
 
 // console.log(maxSlidingWindow([-7, -8, 7, 5, 7, 1, 6, 0], 4))
+
+/**
+ * 剑指 Offer 59 - II. 队列的最大值
+ */
+class MaxQueue {
+  queue: number[]
+  deque: number[]
+  constructor() {
+    this.queue = []
+    this.deque = []
+  }
+
+  /**
+   * 获取当前队列的最大值
+   * @returns 
+   */
+  max_value(): number {
+    if(this.deque.length) return this.deque[0]
+    return -1
+  }
+  /**
+   * 在队尾添加元素
+   * @param value 
+   */
+  push_back(value: number): void {
+    this.queue.push(value)
+    // 把双端队列deque里比value小的全部弹出
+    while(this.deque.length && this.deque[this.deque.length - 1] < value){
+      this.deque.pop()
+    }
+    this.deque.push(value)
+  }
+  /**
+   * 弹出队首元素
+   * @returns 
+   */
+  pop_front(): number {
+    if(this.queue.length === 0) return -1
+    const pop = this.queue.shift()
+    // 如果弹出的队首元素等于双端队列deque的队首元素（最大值），就把deque的队首弹出
+    if(pop === this.deque[0]){
+      this.deque.shift()
+    }
+    return pop
+  }
+}
