@@ -76,5 +76,60 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
       break
     }
   }
-  return root;
+  return root
+}
+
+/**
+ * 剑指 Offer II 081. 允许重复选择元素的组合
+   回溯+剪枝
+ * @param candidates
+ * @param target
+ */
+function combinationSum(candidates: number[], target: number): number[][] {
+  /**
+  回溯+剪枝
+  对于数组中的每一位数字，有两个状态，选或不选。
+  1. dfs函数，接收参数start(当前访问的下标)，total(访问candidates[i]之前的数字和), track(和为total的元素数组)
+  2. 如果total > target: return，（剪枝）
+  3. 如果total == target：result.push(track) return (找到了一组答案)
+  4. 遍历从start开始的所有元素：
+      1. 对于每个元素，将total += candidates[i], track.push(candidates[i]), 对该位继续递归。（表示每一位可以添加多次）
+      2. 然后将total -= candidates[i], track.pop()
+   */
+  const result: number[][] = [],
+    len = candidates.length
+
+  /**
+   * dfs函数
+   * @param start 当前访问的下标
+   * @param total 访问candidates[i]之前的数字和
+   * @param track 和为total的元素数组
+   * @returns
+   */
+  const dfs = (start: number, total: number, track: number[]) => {
+    // 如果total > target: return，（剪枝）
+    if (total > target) return
+
+    // 如果total == target：result.push(track) return (找到了一组答案)
+    if (total === target) {
+      result.push([...track])
+      return
+    }
+
+    // 遍历从start开始的所有元素：
+    for (let i = start; i < len; i++) {
+      const n = candidates[i]
+
+      // 对于每个元素，将total += candidates[i], track.push(candidates[i]), 对该位继续递归。（表示每一位可以添加多次）
+      total += n
+      track.push(n)
+      dfs(i, total, track)
+
+      // 然后将total -= candidates[i], track.pop() (表示该位添加0次)
+      total -= n
+      track.pop()
+    }
+  }
+  dfs(0, 0, [])
+  return result
 }
