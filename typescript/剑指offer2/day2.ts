@@ -39,3 +39,42 @@ function isBalanced(root: TreeNode | null): boolean {
   // recur(root) 如果等于-1， 则root不是平衡二叉树
   return recur(root) !== -1
 }
+
+/**
+ * 剑指 Offer 68 - I. 二叉搜索树的最近公共祖先
+ * @param root
+ * @param p
+ * @param q
+ */
+function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
+  /**
+   前提是q比p大
+   1. 由于该树是搜索树，假如p和q一个大于root，一个小于root，那么root刚好就是p和q的最近公共祖先
+   2. 如果p，q都比root小，则判断root的left
+   3. 否则判断root.right
+   */
+  if (p.val > q.val) {
+    const t = p
+    p = q
+    q = t
+  }
+  // 不需要用递归
+  // if (p.val < root.val && q.val > root.val) return root
+  // if (p.val === root.val || q.val === root.val) return root
+  // if (q.val < root.val) return lowestCommonAncestor(root.left, p, q)
+  // return lowestCommonAncestor(root.right, p, q)
+
+  while (root) {
+    if (root.val > q.val) {
+      // root大于p和q， 说明p, q都在root的左子树里
+      root = root.left
+    } else if (root.val < p.val) {
+      //  root小于p和q， p, q都在root的右子树里
+      root = root.right
+    } else {
+      // 说明root刚好大于p，且小于q，root就是p和q的最近公共祖先
+      break
+    }
+  }
+  return root;
+}
