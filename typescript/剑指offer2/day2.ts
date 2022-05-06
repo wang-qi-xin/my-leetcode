@@ -1,4 +1,5 @@
 import { TreeNode } from '../utils/数据结构/struct'
+import { binarySearch } from '../utils/查找/binarySearch'
 
 /**
  * 剑指 Offer 55 - II. 平衡二叉树
@@ -509,3 +510,84 @@ function generateParenthesis(n: number): string[] {
 }
 
 // console.log(generateParenthesis(2))
+
+/**
+ * 剑指 Offer II 007. 数组中和为 0 的三个数
+ * @param nums
+ */
+function threeSum(nums: number[]): number[][] {
+  /**
+  1. 先排序
+  2. 双指针执行首尾i, j
+  3. 在 i + 1 , j -1 中进行二分查找 -(nums[i] + nums[j])
+  4. 如果找到了，就把这三个数添加到res中
+  5. i++, 和j--, 直到不重复
+   */
+  nums.sort((a, b) => a - b)
+  console.log(nums)
+
+  const res: number[][] = []
+  const recur = (i: number, j: number) => {
+    if (j <= i || nums[i] >0 || nums[j] < 0) return
+    const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
+    if (target != -1) {
+      console.log(target, nums[target + i + 1])
+      res.push([nums[i], nums[target + i + 1], nums[j]])
+    }
+    let n = 1
+    while (i + n < j && nums[i] === nums[i + n]) n++
+    recur(i + n, j)
+    n = 1
+    while (i < j - n && nums[j] === nums[j - n]) n++
+    recur(i, j - n)
+  }
+  recur(0, nums.length - 1)
+
+  // for (let i = 0, j = nums.length - 1; i < j; ) {
+  //   const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
+  //   if (target != -1) {
+  //     res.push([nums[i], nums[target + i + 1], nums[j]])
+  //   }
+  //   // 如果nums[i], nums[j] 有一个不是重复元素，那就只需要把该元素的下标移动一位就可以了
+  //   if (nums[i] !== nums[i + 1]) {
+  //     i++
+  //     continue
+  //   }
+  //   if (nums[j] !== nums[j - 1]) {
+  //     j--
+  //     continue
+  //   }
+  //   // 否则i++, 和j--, 直到不重复
+  //   while (i < j && nums[i] === nums[i + 1]) i++
+  //   while (i < j && nums[j] === nums[j - 1]) j--
+  //   i++
+  //   j--
+  // }
+  // for (let i = 0, j = nums.length - 1; i < j; ) {
+  //   const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
+  //   if (target != -1) {
+  //     res.push([nums[i], nums[target + i + 1], nums[j]])
+  //   }
+  //   // 如果nums[i], nums[j] 有一个不是重复元素，那就只需要把该元素的下标移动一位就可以了
+  //   if (nums[j] !== nums[j - 1]) {
+  //     j--
+  //     continue
+  //   }
+  //   if (nums[i] !== nums[i + 1]) {
+  //     i++
+  //     continue
+  //   }
+  //   // 否则i++, 和j--, 直到不重复
+  //   while (i < j && nums[i] === nums[i + 1]) i++
+  //   while (i < j && nums[j] === nums[j - 1]) j--
+  //   i++
+  //   j--
+  // }
+  console.log(res)
+
+  return res
+}
+
+threeSum([-1, 0, 1, 2, -1, -4])
+// threeSum([-1, -1, -1, 1, 1, 0, 2])
+// threeSum([-2, 0, 1, 1, 2])
