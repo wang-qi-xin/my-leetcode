@@ -188,3 +188,95 @@ function addBinary(a: string, b: string): string {
    }
    return res.reverse().join("")
 };
+
+
+/**
+ * 剑指 Offer II 082. 含有重复元素集合的组合
+ * @param candidates 
+ * @param target 
+ */
+function combinationSum2(candidates: number[], target: number): number[][] {
+  /**
+  回溯+剪枝
+
+  由于candidates含有重复元素，且答案要求不能含有重复的答案。
+
+  一般的回溯+剪枝无法满足要求
+  1. dfs函数接受start参数，表示当前累计到多少位，total 表示总和。track[] 保存结果集。
+  2. 如果total > target 直接返回。（剪枝）
+  3. 如果total == target, 将track添加到result[]
+  4. 令n = candidates[i] ,将n添加到track中，total += n; 进入下一层递归 dfs(i, total, track)
+  5. track.pop(), total -= n
+
+  // 满足要求
+  1. 将candidates进行排序。这样假如candidates[i] > target, 后面的就不用再判断了。
+  2. 用二维数组list保存元素的位置，大小，数量。
+  3. 访问list, 访问到某一位list[i]时，x = list[i][0] 表示数字大小，size = list[i][1]表示数量
+     对于x这个数字，可以选择的情况有0次，1次，，，n次。（前提是n <= size && n * x <= target）
+  4. 当target === 0, 表示找到了一个正确的结果集
+     当target < 0 , 表示当前结果集里的数字大于target，直接返回(剪枝)
+  5. 否则，令n = Math.min(size, target / x)
+     然后循环n次，每次令target -= x, track.push(x),  dfs(i + 1, target), 表示x数被添加了n次
+     然后再循环n次，每次令target += x, dfs(i + 1, target), 
+   */
+  
+  // 1. 排序
+  candidates.sort((a, b) => a - b)
+
+  // 2. 使用map保存每个数字出现的次数
+  const map = new Map<number, number[]>()
+  for(let i = 0, pos = -1, len = candidates.length; i < len; i++) {
+    const n = candidates[i]
+    // 如果map里有这个数字，
+    if(map.size !== 0 && map.get(pos)[0] === n){
+      map.set(pos, [n, map.get(pos)[1] + 1])
+    }else {
+      map.set(++pos, [n, 1])
+    }
+  }
+
+  // 所有结果
+  const result: number[][] = []
+  // 一个结果
+  const track: number[] = []
+
+  /**
+   * 
+   * @param pos 当前访问到第几个元素（不重复元素）
+   * @param target 访问当前元素时，还需要的求和target
+   * @returns 
+   */
+  const dfs = (pos: number, target: number) => {
+    // 正确结果
+    if(target === 0){
+      result.push([...track])
+      return 
+    }
+
+    // 没有元素要访问，获取当前需要的求和target, 已经小于当前要访问的数字，所以肯定不可能再对该数字求和
+    if(pos === map.size || target < map.get(pos)[0]){
+      return
+    }
+
+    // 表示不选该数字
+    dfs(pos + 1, target)
+
+
+    // x 当前访问的数字， size 数字x出现的次数， n 表示要选择该数字的次数（不大于size， 也不大于target / x）
+    const l = map.get(pos), x = l[0], size = l[1], n = Math.min(size, target / x)
+    for(let i = 0; i < n; i++){
+      target -= x
+      track.push(x)
+      dfs(pos + 1, target)
+    }
+
+    // 选择该数字的情况全部遍历，从track中把该数字全部弹出
+    for(let i = 0; i < n; i++){
+      track.pop()
+    }
+  }
+  dfs(0, target)
+  return result
+};
+
+// combinationSum2([1,2,1,1,3,3,2], 8)
