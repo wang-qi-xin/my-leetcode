@@ -133,3 +133,25 @@ function combinationSum(candidates: number[], target: number): number[][] {
   dfs(0, 0, [])
   return result
 }
+
+/**
+ * 剑指 Offer II 003. 前 n 个数字二进制中 1 的个数
+ * @param n
+ */
+function countBits(n: number): number[] {
+  /**
+  动态规划
+
+  1. 假如i = 4, 二进制位100, 将其二进制左移一位, 后面可以补0， 或1
+      两个数字分别为1000(8)和1001(9), 刚好是4 的二倍 和二倍 +1
+  2. 如果反过来看, i = 9, 二进制1001, 将其二进制右移一位，则为100(4), 所以9的二进制1的个数, 等于4的二进制1的个数 + 1
+                  i = 8, 二进制1000, 将其二进制右移一位，则为100(4), 所以8的二进制1的个数, 等于4的二进制1的个数
+      加不加1，取决于i是奇数还是偶数。可以用i & 1来判断是否+1（i是奇数，则i & 1 等于 1）
+   */
+  const result = [0]
+  for (let i = 1; i <= n; i++) {
+    result[i] = result[i >> 1] + (i & 1)
+  }
+  return result
+}
+
