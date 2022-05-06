@@ -290,6 +290,7 @@ function combinationSum2(candidates: number[], target: number): number[][] {
  */
 function singleNumber(nums: number[]): number {
   /**
+   方法一: 使用幂计算二进制为十进制，需要判断负数
    1. 使用arr保存每一位二进制的和
    2. 遍历所有的数字n
    3. 将n的每一位二进制数与arr中的对应位相加
@@ -340,3 +341,30 @@ function singleNumber(nums: number[]): number {
 }
 
 // singleNumber([-2,-2,1,1,4,1,4,4,-4,-2])
+
+/**
+ * 剑指 Offer II 004. 只出现一次的数字
+ * @param nums 
+ */
+function singleNumber2(nums: number[]): number {
+  /**
+    与方法一相比
+   * 不用特殊判断负数，取反码
+   */
+  const arr = [...Array(32)].map(_ => 0)
+  for(let i = 0, len = nums.length; i < len; i++){
+    for(let j = 0; j < 32; j++){
+      arr[j] += nums[i] & 1
+      nums[i] >>= 1
+    }
+  }
+  let res = 0, m = 3
+  for(let i = 0; i < 32; i++){
+    // 使用左移运算，或运算来讲二进制转为十进制。这样就不用特殊判断负数了
+    res <<= 1
+    
+    res |= arr[31 - i] % m
+  }
+  return res
+}
+// console.log(singleNumber2([-2,-2,1,1,4,1,4,4,-4,-2]))
