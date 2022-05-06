@@ -448,7 +448,6 @@ function maxProduct(words: string[]): number {
 
 // console.log(maxProduct(["abcw","baz","foo","bar","fxyz","abcdef"]))
 
-
 /**
  * 剑指 Offer II 006. 排序数组中两个数字之和
   (双指针)
@@ -456,14 +455,57 @@ function maxProduct(words: string[]): number {
  * @param target 
  */
 function twoSum(numbers: number[], target: number): number[] {
-  for(let i = 0, j = numbers.length - 1; i < j;){
+  for (let i = 0, j = numbers.length - 1; i < j; ) {
     const sum = numbers[i] + numbers[j]
-    if(target === sum) {
+    if (target === sum) {
       return [i, j]
     } else if (target > sum) {
       i++
     } else {
-      j --
+      j--
     }
   }
-};
+}
+
+/**
+ * 剑指 Offer II 085. 生成匹配的括号s
+   (回溯+剪枝)
+ * @param n
+ */
+function generateParenthesis(n: number): string[] {
+  /**
+   回溯+剪枝
+
+   如果每个符合匹配规则的字符串，长度一定是2*n, 且(和)相等。
+      1. 并且在从前向后添加括号时，如果(的个数>n, 该字符串路径path一定不符合规则，直接返回。（剪枝）
+      2. 如果在添加第i个括号时，如果)的个数大于(的个数，直接返回。（剪枝）
+      3. 长度为2*n, 且(和)相等时，path就是一条合格的路径，将其添加到res中
+   */
+  const res: string[] = []
+
+  /**
+   *
+   * @param len 当前路径长度
+   * @param path 当前路径
+   * @param left 当前路径中(的个数
+   * @param right 当前路径中)的个数
+   * @returns
+   */
+  const dfs = (len: number, path: string, left: number, right: number) => {
+    // 长度超出，或左括号数量超过n， 或右括号比左括号多一个
+    if (len > 2 * n || left > n || right > left) return
+
+    // 长度满足，且左右括号数量相等
+    if (len === 2 * n && left == right) {
+      res.push(path)
+      return
+    }
+
+    dfs(len + 1, path + '(', left + 1, right)
+    dfs(len + 1, path + ')', left, right + 1)
+  }
+  dfs(0, '', 0, 0)
+  return res
+}
+
+// console.log(generateParenthesis(2))
