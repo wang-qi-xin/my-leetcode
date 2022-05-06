@@ -155,3 +155,36 @@ function countBits(n: number): number[] {
   return result
 }
 
+/**
+ * 剑指 Offer II 002. 二进制加法
+ （模拟法）
+ * @param a 
+ * @param b 
+ */
+function addBinary(a: string, b: string): string {
+  /**
+   从地位到高位逐位相加，再加上进位carry
+   carry初始为0，若结束时，carryr=1，则需要在最高位补1
+
+   1. 取a和b的较长的长度len
+   2. 从前向后，循环len次。（把a, b 逆转之后）
+   3. carry = carry + a[i] + b[i], 此时carry = [0, 1, 2, 3], carry为奇数则res[i] = 1, 所以res[i] = carry % 2, 
+   4. carry = carry >> 1.  carry只要>= 2, 则需要进位。
+   */
+   const A = a.split("").reverse(),
+   B = b.split("").reverse()
+   const lena = A.length, lenb = B.length,
+   len = Math.max(lena, lenb),
+    res: number[] = []
+   let carry = 0
+   for(let i = 0; i < len; i++){
+     const ca = A[i] ? +A[i] : 0, cb = B[i] ? +B[i] : 0
+     carry += ca + cb
+     res[i] = carry % 2
+     carry >>= 1
+   }
+   if(carry){
+     res[len] = 1
+   }
+   return res.reverse().join("")
+};
