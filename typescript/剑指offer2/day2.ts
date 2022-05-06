@@ -410,3 +410,40 @@ function permute(nums: number[]): number[][] {
 }
 
 // permute([2, 3])
+
+/**
+ * 剑指 Offer II 005. 单词长度的最大乘积
+  (使用二进制掩码表示单词中的字母, 进而可以快速比较两个单词是否有公共字母)
+ * @param words
+ */
+function maxProduct(words: string[]): number {
+  /**
+   核心点是如何快速判断两个单词是否含有公共字母
+
+   由于word只含有小写字母，a-z 所以用26位二进制来表示。
+   比如word[i] = "acd", 则masks[i] = 13(二进制为1101)
+      word[j] = "bc"， 则masks[j] = 6(二进制为110)
+
+  判断word[i]与word[j]是否含有公共字母，只需要判断word[i] & word[j] 是否为0
+   */
+
+  const masks: number[] = []
+  for (let i = 0, len = words.length; i < len; i++) {
+    const word = words[i]
+    for (let j = 0; j < word.length; j++) {
+      const c = word.charCodeAt(j) - 97
+      masks[i] |= 1 << c
+    }
+  }
+  let max = 0
+  for (let i = 0, len = words.length; i < len - 1; i++) {
+    for (let j = i + 1; j < len; j++) {
+      if ((masks[i] & masks[j]) === 0) {
+        max = Math.max(max, words[i].length * words[j].length)
+      }
+    }
+  }
+  return max
+}
+
+console.log(maxProduct(["abcw","baz","foo","bar","fxyz","abcdef"]))
