@@ -335,8 +335,8 @@ function singleNumber(nums: number[]): number {
   for (let i = 31; i >= 0; i--) {
     res += arr[i] * Math.pow(2, 31 - i)
   }
-  console.log(res * sign);
-  
+  console.log(res * sign)
+
   return res * sign
 }
 
@@ -344,27 +344,69 @@ function singleNumber(nums: number[]): number {
 
 /**
  * 剑指 Offer II 004. 只出现一次的数字
- * @param nums 
+ * @param nums
  */
 function singleNumber2(nums: number[]): number {
   /**
     与方法一相比
    * 不用特殊判断负数，取反码
+     速度会慢一点
    */
   const arr = [...Array(32)].map(_ => 0)
-  for(let i = 0, len = nums.length; i < len; i++){
-    for(let j = 0; j < 32; j++){
+  for (let i = 0, len = nums.length; i < len; i++) {
+    for (let j = 0; j < 32; j++) {
       arr[j] += nums[i] & 1
       nums[i] >>= 1
     }
   }
-  let res = 0, m = 3
-  for(let i = 0; i < 32; i++){
+  let res = 0,
+    m = 3
+  for (let i = 0; i < 32; i++) {
     // 使用左移运算，或运算来讲二进制转为十进制。这样就不用特殊判断负数了
     res <<= 1
-    
+
     res |= arr[31 - i] % m
   }
   return res
 }
 // console.log(singleNumber2([-2,-2,1,1,4,1,4,4,-4,-2]))
+
+/**
+ * 剑指 Offer II 083. 没有重复元素集合的全排列
+  (递归)
+ * @param nums
+ */
+function permute(nums: number[]): number[][] {
+  /**
+   nums = [1,2,3,4]的全排列为
+   1. 遍历nums
+   2. track = [1], 然后对[2,3,4]调用dfs算法
+      track = [2], 然后对[1,3,4]调用dfs算法
+      .
+      .
+   3. 当深度达到nums.length时，也就是到最后一位时，将track添加到res中
+
+   可以看做求nums.length个森林的叶子结点到根节点的路径。
+   */
+  const res: number[][] = []
+  const track: number[] = []
+
+  const dfs = (candidate: number[]) => {
+    // 遍历candidate，将其添加到track中，
+    // 将当前遍历的数字从candidate中去除
+    // 然后dfs(track, candidate)
+    if (track.length === nums.length) {
+      res.push([...track])
+      return
+    }
+    for (let i = 0; i < candidate.length; i++) {
+      track.push(candidate[i])
+      dfs([...candidate.slice(0, i), ...candidate.slice(i + 1)])
+      track.pop()
+    }
+  }
+  dfs(nums)
+  return res
+}
+
+// permute([2, 3])
