@@ -446,4 +446,24 @@ function maxProduct(words: string[]): number {
   return max
 }
 
-console.log(maxProduct(["abcw","baz","foo","bar","fxyz","abcdef"]))
+// console.log(maxProduct(["abcw","baz","foo","bar","fxyz","abcdef"]))
+
+
+/**
+ * 剑指 Offer II 006. 排序数组中两个数字之和
+  (双指针)
+ * @param numbers 
+ * @param target 
+ */
+function twoSum(numbers: number[], target: number): number[] {
+  for(let i = 0, j = numbers.length - 1; i < j;){
+    const sum = numbers[i] + numbers[j]
+    if(target === sum) {
+      return [i, j]
+    } else if (target > sum) {
+      i++
+    } else {
+      j --
+    }
+  }
+};
