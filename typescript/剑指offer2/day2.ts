@@ -171,29 +171,30 @@ function addBinary(a: string, b: string): string {
    3. carry = carry + a[i] + b[i], 此时carry = [0, 1, 2, 3], carry为奇数则res[i] = 1, 所以res[i] = carry % 2, 
    4. carry = carry >> 1.  carry只要>= 2, 则需要进位。
    */
-   const A = a.split("").reverse(),
-   B = b.split("").reverse()
-   const lena = A.length, lenb = B.length,
-   len = Math.max(lena, lenb),
+  const A = a.split('').reverse(),
+    B = b.split('').reverse()
+  const lena = A.length,
+    lenb = B.length,
+    len = Math.max(lena, lenb),
     res: number[] = []
-   let carry = 0
-   for(let i = 0; i < len; i++){
-     const ca = A[i] ? +A[i] : 0, cb = B[i] ? +B[i] : 0
-     carry += ca + cb
-     res[i] = carry % 2
-     carry >>= 1
-   }
-   if(carry){
-     res[len] = 1
-   }
-   return res.reverse().join("")
-};
-
+  let carry = 0
+  for (let i = 0; i < len; i++) {
+    const ca = A[i] ? +A[i] : 0,
+      cb = B[i] ? +B[i] : 0
+    carry += ca + cb
+    res[i] = carry % 2
+    carry >>= 1
+  }
+  if (carry) {
+    res[len] = 1
+  }
+  return res.reverse().join('')
+}
 
 /**
  * 剑指 Offer II 082. 含有重复元素集合的组合
- * @param candidates 
- * @param target 
+ * @param candidates
+ * @param target
  */
 function combinationSum2(candidates: number[], target: number): number[][] {
   /**
@@ -219,18 +220,18 @@ function combinationSum2(candidates: number[], target: number): number[][] {
      然后循环n次，每次令target -= x, track.push(x),  dfs(i + 1, target), 表示x数被添加了n次
      然后再循环n次，每次令target += x, dfs(i + 1, target), 
    */
-  
+
   // 1. 排序
   candidates.sort((a, b) => a - b)
 
   // 2. 使用map保存每个数字出现的次数
   const map = new Map<number, number[]>()
-  for(let i = 0, pos = -1, len = candidates.length; i < len; i++) {
+  for (let i = 0, pos = -1, len = candidates.length; i < len; i++) {
     const n = candidates[i]
     // 如果map里有这个数字，
-    if(map.size !== 0 && map.get(pos)[0] === n){
+    if (map.size !== 0 && map.get(pos)[0] === n) {
       map.set(pos, [n, map.get(pos)[1] + 1])
-    }else {
+    } else {
       map.set(++pos, [n, 1])
     }
   }
@@ -241,42 +242,101 @@ function combinationSum2(candidates: number[], target: number): number[][] {
   const track: number[] = []
 
   /**
-   * 
+   *
    * @param pos 当前访问到第几个元素（不重复元素）
    * @param target 访问当前元素时，还需要的求和target
-   * @returns 
+   * @returns
    */
   const dfs = (pos: number, target: number) => {
     // 正确结果
-    if(target === 0){
+    if (target === 0) {
       result.push([...track])
-      return 
+      return
     }
 
     // 没有元素要访问，获取当前需要的求和target, 已经小于当前要访问的数字，所以肯定不可能再对该数字求和
-    if(pos === map.size || target < map.get(pos)[0]){
+    if (pos === map.size || target < map.get(pos)[0]) {
       return
     }
 
     // 表示不选该数字
     dfs(pos + 1, target)
 
-
     // x 当前访问的数字， size 数字x出现的次数， n 表示要选择该数字的次数（不大于size， 也不大于target / x）
-    const l = map.get(pos), x = l[0], size = l[1], n = Math.min(size, target / x)
-    for(let i = 0; i < n; i++){
+    const l = map.get(pos),
+      x = l[0],
+      size = l[1],
+      n = Math.min(size, target / x)
+    for (let i = 0; i < n; i++) {
       target -= x
       track.push(x)
       dfs(pos + 1, target)
     }
 
     // 选择该数字的情况全部遍历，从track中把该数字全部弹出
-    for(let i = 0; i < n; i++){
+    for (let i = 0; i < n; i++) {
       track.pop()
     }
   }
   dfs(0, target)
   return result
-};
+}
 
 // combinationSum2([1,2,1,1,3,3,2], 8)
+
+/**
+ * 剑指 Offer II 004. 只出现一次的数字
+ * @param nums
+ */
+function singleNumber(nums: number[]): number {
+  /**
+   1. 使用arr保存每一位二进制的和
+   2. 遍历所有的数字n
+   3. 将n的每一位二进制数与arr中的对应位相加
+
+   4. 最后将arr的每一位与3取余
+   5. 判断是否是负数sign = arr[0] === 1 ? -1 : 1
+   6. 如果是负数，就要把二进制按位取反并减一
+   7. 将arr转为十进制
+   8. 返回结果res * sign 
+
+   将arr转为十进制
+   */
+  const arr = [...Array(32)].map(_ => 0)
+  for (let i = 0, len = nums.length; i < len; i++) {
+    let n = nums[i]
+    for (let i = 31; i >= 0 && n != 0; i--) {
+      arr[i] = (arr[i] + (n & 1)) % 3
+      n >>= 1
+    }
+  }
+  // 如果arr[0] == 1, 说明该数是负数，需要取反码并加一
+  let res = 0,
+    sign = arr[0] === 1 ? -1 : 1
+  if (sign === -1) {
+    // 按位取反
+    for (let i = 31; i >= 0; i--) {
+      if (arr[i] === 0) {
+        arr[i] = 1
+      } else {
+        arr[i] = 0
+      }
+    }
+    // 末位+1
+    arr[31] += 1
+    // 进位
+    for (let i = 31; i > 0; i--) {
+      arr[i - 1] += arr[i] >> 1
+      arr[i] %= 2
+    }
+  }
+
+  for (let i = 31; i >= 0; i--) {
+    res += arr[i] * Math.pow(2, 31 - i)
+  }
+  console.log(res * sign);
+  
+  return res * sign
+}
+
+// singleNumber([-2,-2,1,1,4,1,4,4,-4,-2])
