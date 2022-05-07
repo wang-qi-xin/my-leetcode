@@ -1,5 +1,4 @@
 import { TreeNode } from '../utils/数据结构/struct'
-import { binarySearch } from '../utils/查找/binarySearch'
 
 /**
  * 剑指 Offer 55 - II. 平衡二叉树
@@ -513,81 +512,53 @@ function generateParenthesis(n: number): string[] {
 
 /**
  * 剑指 Offer II 007. 数组中和为 0 的三个数
+ （定左边界，双指针查另外两个数）
  * @param nums
  */
 function threeSum(nums: number[]): number[][] {
   /**
   1. 先排序
-  2. 双指针执行首尾i, j
-  3. 在 i + 1 , j -1 中进行二分查找 -(nums[i] + nums[j])
+  2. 定左边界left,  0 <= left <= nums.length - 3; 并且当nums[left] > 0时，就可以结束了。因为右边的数都大于0
+  3. 在区间[left + 1, nums.length] 中使用双指针查找和为-nums[left]的两个数
   4. 如果找到了，就把这三个数添加到res中
-  5. i++, 和j--, 直到不重复
+  5. 如果nums[left] === nums[left - 1], continue  (不能使用nums[left] === nums[left + 1]判断，因为这样会导致left指向最后一个重复的数字，导致可能漏掉一个答案，比如-1, -1, 2)
    */
   nums.sort((a, b) => a - b)
-  console.log(nums)
-
+  const len = nums.length
   const res: number[][] = []
-  const recur = (i: number, j: number) => {
-    if (j <= i || nums[i] >0 || nums[j] < 0) return
-    const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
-    if (target != -1) {
-      console.log(target, nums[target + i + 1])
-      res.push([nums[i], nums[target + i + 1], nums[j]])
+
+  /**
+   * 在nums[i] --> nums[j]中寻找两个数字之和为target的两个数字，并添加到res中
+   * @param i 
+   * @param j 
+   * @param target 
+   */
+  const twoSum = (i: number, j: number, target: number) => {
+    while(i < j) {
+      const sum = nums[i] + nums[j]
+      if(sum === target){
+        res.push([-target, nums[i], nums[j]])
+        // 遇到[-2, -2, -1, 0, 1, ,1 ,1] 这种序列，如果taget = -1. 当第一组答案[-2, 1]找到了以后, 不能直接返回，因为还有[-1, 0]
+        // 但是不能简单的i++, j--
+        // 需要把i指向下一个不重复的数字（j也可以）
+        while(i < j && nums[i] === nums[i + 1]) i++
+        i++
+      } else if(sum > target) {
+        j--
+      } else {
+        i++
+      }
     }
-    let n = 1
-    while (i + n < j && nums[i] === nums[i + n]) n++
-    recur(i + n, j)
-    n = 1
-    while (i < j - n && nums[j] === nums[j - n]) n++
-    recur(i, j - n)
   }
-  recur(0, nums.length - 1)
-
-  // for (let i = 0, j = nums.length - 1; i < j; ) {
-  //   const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
-  //   if (target != -1) {
-  //     res.push([nums[i], nums[target + i + 1], nums[j]])
-  //   }
-  //   // 如果nums[i], nums[j] 有一个不是重复元素，那就只需要把该元素的下标移动一位就可以了
-  //   if (nums[i] !== nums[i + 1]) {
-  //     i++
-  //     continue
-  //   }
-  //   if (nums[j] !== nums[j - 1]) {
-  //     j--
-  //     continue
-  //   }
-  //   // 否则i++, 和j--, 直到不重复
-  //   while (i < j && nums[i] === nums[i + 1]) i++
-  //   while (i < j && nums[j] === nums[j - 1]) j--
-  //   i++
-  //   j--
-  // }
-  // for (let i = 0, j = nums.length - 1; i < j; ) {
-  //   const target = binarySearch(nums.slice(i + 1, j), -(nums[i] + nums[j]))
-  //   if (target != -1) {
-  //     res.push([nums[i], nums[target + i + 1], nums[j]])
-  //   }
-  //   // 如果nums[i], nums[j] 有一个不是重复元素，那就只需要把该元素的下标移动一位就可以了
-  //   if (nums[j] !== nums[j - 1]) {
-  //     j--
-  //     continue
-  //   }
-  //   if (nums[i] !== nums[i + 1]) {
-  //     i++
-  //     continue
-  //   }
-  //   // 否则i++, 和j--, 直到不重复
-  //   while (i < j && nums[i] === nums[i + 1]) i++
-  //   while (i < j && nums[j] === nums[j - 1]) j--
-  //   i++
-  //   j--
-  // }
-  console.log(res)
-
+  for(let left = 0; left < len - 2; left++){
+    if(nums[left] > 0) break
+    if(left > 0 && nums[left] === nums[left - 1]) continue
+    twoSum(left + 1, len - 1, -nums[left])
+  }
   return res
 }
 
-threeSum([-1, 0, 1, 2, -1, -4])
+// threeSum([0,0,0])
+// threeSum([-1, 0, 1, 2, -1, -4])
 // threeSum([-1, -1, -1, 1, 1, 0, 2])
 // threeSum([-2, 0, 1, 1, 2])
