@@ -98,7 +98,7 @@ function restoreIpAddresses(s: string): string[] {
     for (let j = pos; j < s.length; j++) {
       // 该for循环最多循环3次
       addr = addr * 10 + +s.charAt(j)
-      if (addr > 0 && addr <= 0xFF) {
+      if (addr > 0 && addr <= 0xff) {
         track[segId] = addr
         dfs(j + 1, segId + 1)
       } else {
@@ -110,3 +110,64 @@ function restoreIpAddresses(s: string): string[] {
   return res
 }
 // restoreIpAddresses('2552552551')
+
+/**
+ * 剑指 Offer II 008. 和大于等于 target 的最短子数组
+ * @param target
+ * @param nums
+ */
+function minSubArrayLen(target: number, nums: number[]): number {
+  /**
+  方法一: 前缀和+二分查找
+
+  1. 使用sum数组表示nums的前缀和，sum[i] 表示nums从0->i的和
+  2. 然后遍历sum，对于sum[i], 在sum中二分查找到一个左边界bound， 使得sum[bound] - sum[i - 1] >= target   （该题nums全部为正数，所以sum数组为递增）
+  3. 使用min记录最短的子数组。min = Math.min(min, bound - i)
+   */
+  const sum: number[] = []
+  sum[0] = 0
+  for (let i = 1; i <= nums.length; i++) {
+    sum[i] = sum[i - 1] + nums[i - 1]
+  }
+
+  let min = Number.MAX_SAFE_INTEGER
+
+  /**
+   * 二分查找第一个大于target的数。如果没找到返回-1.
+
+   * @param arr 
+   * @param target 
+   * @returns 
+   */
+  const binarySearch = (arr: number[], target: number) => {
+    let left = 0,
+      right = arr.length 
+    while (left < right) {
+      const mid = left + ((right - left) >> 1)
+      // 如果arr[mid] 比target小，那么左边界一定>= mid + 1
+      if (arr[mid] < target) {
+        left = mid + 1
+      } else {
+        // 如果令right = Mid - 1。 那么有可能丢失左边界
+        right = mid
+      }
+    }
+    return arr[left] >= target ? left : -1
+  }
+
+  for (let i = 1; i <= nums.length; i++) {
+    // 在sum数组中查找第一个>= target + sum[i - 1]的数。
+    let bound = binarySearch(sum, target + sum[i - 1])
+    if (bound != -1) {
+      min = Math.min(min, bound - i + 1)
+    }
+  }
+  if (min === Number.MAX_SAFE_INTEGER) {
+    min = 0
+  }
+  return min
+}
+
+// console.log(minSubArrayLen(15, [1, 2, 3, 4, 5]))
+// console.log(minSubArrayLen(11, [1, 1, 1, 1, 1, 1, 1, 1]))
+// console.log(minSubArrayLen(213, [12, 28, 83, 4, 25, 26, 25, 2, 25, 25, 25, 12]))
