@@ -17,7 +17,7 @@ interface compareFnType<T> {
 }
 
 interface optionType<T> {
-  mode?: 'accurate' | 'left_bound' | 'right_bound'
+  mode?: 'accurate' | 'left_bound' | 'right_bound' | 'insert'
   compare?: compareFnType<T>
 }
 
@@ -26,7 +26,7 @@ interface optionType<T> {
    默认精准查找，没有结果返回-1
  * @param arr 
  * @param target 
- * @param option {mode: 精准查找 | 左边界 | 右边界, compare: 比较函数}
+ * @param option {mode: accurate精准查找 | left_bound左边界 | right_bound右边界 | insert插入点, compare: 比较函数}
  * @returns 
  */
 export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): number {
@@ -45,7 +45,7 @@ export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): nu
     const mid = left + ((right - left) >> 1)
     const compareResult = option.compare(arr[mid], target)
     if (compareResult === 0) {
-      if (option.mode === 'accurate') {
+      if (option.mode === 'accurate' || option.mode === 'insert') {
         return mid
       } else if (option.mode === 'left_bound') {
         right = mid - 1
@@ -73,6 +73,8 @@ export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): nu
     // 当 target 比所有元素都小时，right 会被减到 -1，所以需要在最后防止越界：
     if (right < 0 || compare(arr[right], target) !== 0) return -1
     return right
+  } else if (option.mode === 'insert') {
+    return left
   }
 }
 // [1, 2, 3, 4, 4, 4, 4, 4, 4, 6, 7, 8, 9, 22] 4 的左边界：3， 右边界8.
