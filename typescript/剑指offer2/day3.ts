@@ -168,6 +168,34 @@ function minSubArrayLen(target: number, nums: number[]): number {
   return min
 }
 
-// console.log(minSubArrayLen(15, [1, 2, 3, 4, 5]))
+/**
+ * 剑指 Offer II 008. 和大于等于 target 的最短子数组
+ (滑动窗口)
+ * @param target 
+ * @param nums 
+ */
+function minSubArrayLen2(target: number, nums: number[]): number {
+  /**
+   1. start, end初始为0, len = nums.length 当end < len时循环
+   2. 令sum += nums[end]
+   3. 如果sum >= target, 就令start++，sum -= nums[start], 同时使用res记录(end - start)的最小值
+   4. 循环，直到sum < target, 然后end++
+   */
+  let sum = 0, start = 0, end = 0, len = nums.length,res = Number.MAX_SAFE_INTEGER
+  while(end < len){
+    sum += nums[end]
+    while(sum >= target){
+      sum -= nums[start]
+      console.log(sum ,res, end- start + 1);
+      res = Math.min(res, end - start + 1)
+      start++
+    }
+    end++
+  }
+  console.log(res);
+  
+  return res === Number.MAX_SAFE_INTEGER ? 0 : res
+}
+// console.log(minSubArrayLen2(15, [1, 2, 3, 4, 5]))
 // console.log(minSubArrayLen(11, [1, 1, 1, 1, 1, 1, 1, 1]))
 // console.log(minSubArrayLen(213, [12, 28, 83, 4, 25, 26, 25, 2, 25, 25, 25, 12]))
