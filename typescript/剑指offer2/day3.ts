@@ -199,3 +199,37 @@ function minSubArrayLen2(target: number, nums: number[]): number {
 // console.log(minSubArrayLen2(15, [1, 2, 3, 4, 5]))
 // console.log(minSubArrayLen(11, [1, 1, 1, 1, 1, 1, 1, 1]))
 // console.log(minSubArrayLen(213, [12, 28, 83, 4, 25, 26, 25, 2, 25, 25, 25, 12]))
+
+/**
+ * 剑指 Offer II 088. 爬楼梯的最少成本
+ * @param cost 
+ */
+function minCostClimbingStairs(cost: number[]): number {
+  /**
+   * 动态规划
+
+   dp[i]表示到达第i个台阶所需要的最小体力
+   1. 要么从i - 1 到达i, 花费体力dp[i - 1] + cost[i - 1]
+   2. 要么从i - 2 到达i, 花费体力dp[i - 2] + cost[i - 2]
+   3. dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2])
+   4. 由于可以选择从第0或1阶开始, 所以初始dp[0] = 0, dp[1] = 0
+   5. 返回dp[cost.length]
+   */
+  // const dp = [...Array(cost.length)].map(_ => 0)
+  // for(let i = 2; i <= cost.length; i++){
+  //   dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2])
+  // }
+  // return dp[cost.length]
+
+  /**
+   其实只需要使用2个变量
+   */
+   let pre = 0, next = 0
+   for(let i = 2; i <= cost.length; i++){
+     [pre, next] = [next, Math.min(next + cost[i - 1], pre + cost[i - 2])]
+   }
+   return next
+};
+
+// console.log(minCostClimbingStairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]));
+// console.log(minCostClimbingStairs([10, 15, 20]));
