@@ -141,7 +141,7 @@ function minSubArrayLen(target: number, nums: number[]): number {
    */
   const binarySearch = (arr: number[], target: number) => {
     let left = 0,
-      right = arr.length 
+      right = arr.length
     while (left < right) {
       const mid = left + ((right - left) >> 1)
       // 如果arr[mid] 比target小，那么左边界一定>= mid + 1
@@ -181,19 +181,23 @@ function minSubArrayLen2(target: number, nums: number[]): number {
    3. 如果sum >= target, 就令start++，sum -= nums[start], 同时使用res记录(end - start)的最小值
    4. 循环，直到sum < target, 然后end++
    */
-  let sum = 0, start = 0, end = 0, len = nums.length,res = Number.MAX_SAFE_INTEGER
-  while(end < len){
+  let sum = 0,
+    start = 0,
+    end = 0,
+    len = nums.length,
+    res = Number.MAX_SAFE_INTEGER
+  while (end < len) {
     sum += nums[end]
-    while(sum >= target){
+    while (sum >= target) {
       sum -= nums[start]
-      console.log(sum ,res, end- start + 1);
+      console.log(sum, res, end - start + 1)
       res = Math.min(res, end - start + 1)
       start++
     }
     end++
   }
-  console.log(res);
-  
+  console.log(res)
+
   return res === Number.MAX_SAFE_INTEGER ? 0 : res
 }
 // console.log(minSubArrayLen2(15, [1, 2, 3, 4, 5]))
@@ -202,7 +206,7 @@ function minSubArrayLen2(target: number, nums: number[]): number {
 
 /**
  * 剑指 Offer II 088. 爬楼梯的最少成本
- * @param cost 
+ * @param cost
  */
 function minCostClimbingStairs(cost: number[]): number {
   /**
@@ -224,12 +228,45 @@ function minCostClimbingStairs(cost: number[]): number {
   /**
    其实只需要使用2个变量
    */
-   let pre = 0, next = 0
-   for(let i = 2; i <= cost.length; i++){
-     [pre, next] = [next, Math.min(next + cost[i - 1], pre + cost[i - 2])]
-   }
-   return next
-};
+  let pre = 0,
+    next = 0
+  for (let i = 2; i <= cost.length; i++) {
+    ;[pre, next] = [next, Math.min(next + cost[i - 1], pre + cost[i - 2])]
+  }
+  return next
+}
 
 // console.log(minCostClimbingStairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]));
 // console.log(minCostClimbingStairs([10, 15, 20]));
+
+/**
+ * 剑指 Offer II 009. 乘积小于 K 的子数组
+ * @param nums
+ * @param k
+ */
+function numSubarrayProductLessThanK(nums: number[], k: number): number {
+  /**
+   滑动窗口
+
+   j每次+1,都要保证窗口[i,j]之间的乘积小于k， 
+   此时由于新增了一个nums[j], 那么子数组小于k的个数为窗口的长度j - i + 1.
+   比如([a, b] 增加一个c, 那么组合增加了([[c], [b,c], [a,b,c]])长度为3，刚好是新数组的长度)
+   */
+  let res = 0, len = nums.length, pos = 1
+  for(let i = 0, j = 0; j < len; j++){
+    pos *= nums[j]
+    // 如果nums[j] >= k
+    // 那么i需要一直递增到j + 1, 让pos把nums[j]也除掉
+    // 此时j - i + 1 = 0
+    while(pos >= k && i <= j) {
+      pos /= nums[i]
+      i++
+    }
+    // 
+    res += j - i + 1
+  }
+  return res
+}
+// console.log(numSubarrayProductLessThanK([10, 5, 2, 6], 100))
+// console.log(numSubarrayProductLessThanK([1,2,3], 0))
+
