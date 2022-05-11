@@ -288,7 +288,7 @@ function rob(nums: number[]): number {
    */
   const len = nums.length
   // 本题nums.length >= 1
-  if(len === 1) return nums[0]
+  if (len === 1) return nums[0]
   const dp = [...Array(len)].map(_ => 0)
   dp[0] = nums[0]
   // 第二天能偷到的最大值，是前两天的较大值。因为第二天可以选择不偷。
@@ -296,9 +296,45 @@ function rob(nums: number[]): number {
   for (let i = 2; i < len; i++) {
     dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i])
   }
-  console.log(dp);
-  
+  console.log(dp)
+
   return Math.max(dp[len - 1], dp[len - 2])
 }
 
 // console.log(rob([2,1,1,2]));
+
+/**
+ * 剑指 Offer II 010. 和为 k 的子数组
+ * @param nums
+ * @param k
+ */
+function subarraySum(nums: number[], k: number): number {
+  /**
+
+   pre[i]表示[0, i]的和。
+   那么[i, j]的和等于pre[j] - pre[i - 1],
+      令pre[j] - pre[i - 1] = k, 表示以j为结尾的子数组[i, j]和为k
+      而pre[j]已知, k已知。
+          即求i的个数，也就是[i, j]和为k的个数。
+      pre[i - 1] = pre[j] - k
+      由于i <= j。 所以当累加到pre[j]时, pre[i]已经计算过了。使用map保存每一个位置的pre[i]出现的个数。
+
+   */
+  let res = 0, pre = 0
+  const map = new Map<number, number>()
+  // 前缀和为0出现的次数默认为1，表示一个数也不选。
+  map.set(0, 1)
+  for (let i = 0; i < nums.length; i++) {
+    pre += nums[i]
+    if(map.has(pre - k)){
+      const n = map.get(pre - k)
+      res += n
+      map.set(pre, n + 1)
+    }else {
+      map.set(pre, 1)
+    }
+  }
+  return res
+}
+
+// console.log(subarraySum([-1,-1,1], 0))
