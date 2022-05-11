@@ -252,17 +252,19 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
    此时由于新增了一个nums[j], 那么子数组小于k的个数为窗口的长度j - i + 1.
    比如([a, b] 增加一个c, 那么组合增加了([[c], [b,c], [a,b,c]])长度为3，刚好是新数组的长度)
    */
-  let res = 0, len = nums.length, pos = 1
-  for(let i = 0, j = 0; j < len; j++){
+  let res = 0,
+    len = nums.length,
+    pos = 1
+  for (let i = 0, j = 0; j < len; j++) {
     pos *= nums[j]
     // 如果nums[j] >= k
     // 那么i需要一直递增到j + 1, 让pos把nums[j]也除掉
     // 此时j - i + 1 = 0
-    while(pos >= k && i <= j) {
+    while (pos >= k && i <= j) {
       pos /= nums[i]
       i++
     }
-    // 
+    //
     res += j - i + 1
   }
   return res
@@ -270,3 +272,33 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
 // console.log(numSubarrayProductLessThanK([10, 5, 2, 6], 100))
 // console.log(numSubarrayProductLessThanK([1,2,3], 0))
 
+/**
+ * 剑指 Offer II 089. 房屋偷盗
+ * @param nums
+ */
+function rob(nums: number[]): number {
+  /**
+   动态规划
+
+   dp[i]表示第i天能够偷到的最多金钱
+   由于第i天有两种情况，偷或不偷。
+   1. 偷：那么前一天i-1天就不能偷。dp[i] = dp[i - 2] + nums[i]
+   2. 不偷，那么昨天就可以偷。dp[i] = dp[i - 1]
+   dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])
+   */
+  const len = nums.length
+  // 本题nums.length >= 1
+  if(len === 1) return nums[0]
+  const dp = [...Array(len)].map(_ => 0)
+  dp[0] = nums[0]
+  // 第二天能偷到的最大值，是前两天的较大值。因为第二天可以选择不偷。
+  dp[1] = Math.max(nums[0], nums[1])
+  for (let i = 2; i < len; i++) {
+    dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i])
+  }
+  console.log(dp);
+  
+  return Math.max(dp[len - 1], dp[len - 2])
+}
+
+// console.log(rob([2,1,1,2]));
