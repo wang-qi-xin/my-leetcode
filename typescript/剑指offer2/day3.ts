@@ -320,17 +320,18 @@ function subarraySum(nums: number[], k: number): number {
       由于i <= j。 所以当累加到pre[j]时, pre[i]已经计算过了。使用map保存每一个位置的pre[i]出现的个数。
 
    */
-  let res = 0, pre = 0
+  let res = 0,
+    pre = 0
   const map = new Map<number, number>()
   // 前缀和为0出现的次数默认为1，表示一个数也不选。
   map.set(0, 1)
   for (let i = 0; i < nums.length; i++) {
     pre += nums[i]
-    if(map.has(pre - k)){
+    if (map.has(pre - k)) {
       const n = map.get(pre - k)
       res += n
       map.set(pre, n + 1)
-    }else {
+    } else {
       map.set(pre, 1)
     }
   }
@@ -355,23 +356,60 @@ function findMaxLength(nums: number[]): number {
    5. 如果nums[j]第一次出现，就存入nums[j]
    6. 由于每个sum[i]只和sum[i - 1]关联，所以可以优化为sum元素，然后更新sum就可以了。
    */
-  let res = 0, sum = 0
+  let res = 0,
+    sum = 0
   const map = new Map<number, number>()
   map.set(0, -1)
-  for(let i = 0; i < nums.length; i++){
-    if(nums[i] === 0){
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] === 0) {
       sum -= 1
-    }else {
+    } else {
       sum += 1
     }
-    if(map.has(sum)){
+    if (map.has(sum)) {
       res = Math.max(res, i - map.get(sum))
-    }else {
+    } else {
       map.set(sum, i)
     }
   }
   return res
-};
+}
 
 // console.log(findMaxLength([0,1,1,1,0,0,1,1,0])); 6
 // console.log(findMaxLength([1,1,0,0,1,0,1,0,1,1,1,0,0,1,1,1,0,0])); 16
+
+/**
+ * 剑指 Offer II 012. 左右两边子数组的和相等
+ * @param nums
+ */
+function pivotIndex(nums: number[]): number {
+  /**
+   使用left， right保存前缀和后缀和。
+
+   1. 求和。
+      left[i] = nums[0] + ... + nums[i]
+      right[i] = nums[i] + ... + nums[len - 1]
+   2. 如果right[1] == 0, 说明0就是中心
+   3. 遍历left[1, len - 2]
+        如果left[i - 1] == right[i + 1] 就返回i
+   4. 如果left[len - 2] == 0， 说明len - 1就是中心
+   5. 没有中心，返回-1
+   */
+  const len = nums.length
+  const left = [nums[0]],
+    right = []
+  for (let i = 1; i < len; i++) {
+    left[i] = left[i - 1] + nums[i]
+  }
+  right[0] = left[len - 1]
+  for (let i = 1; i < len; i++) {
+    right[i] = right[i - 1] - nums[i - 1]
+  }
+  if (right[1] === 0) return 0
+  for (let i = 1; i < len - 1; i++) {
+    if (left[i - 1] === right[i + 1]) return i
+  }
+  if (left[len - 2] === 0) return len - 1
+  return -1
+}
+// console.log(pivotIndex([-1, -1, 1, 1, 0, 0]))
