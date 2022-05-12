@@ -429,12 +429,47 @@ function pivotIndex2(nums: number[]): number {
    */
   const len = nums.length
   let total = 0
-  for(let i = 0; i < len; i++){
+  for (let i = 0; i < len; i++) {
     total += nums[i]
   }
-  for(let i = 0, sum = 0; i < len; i++){
-    if((sum * 2 + nums[i]) === total) return i
+  for (let i = 0, sum = 0; i < len; i++) {
+    if (sum * 2 + nums[i] === total) return i
     sum += nums[i]
   }
   return -1
+}
+
+/**
+ * 剑指 Offer II 013. 二维子矩阵的和
+ */
+class NumMatrix {
+  sum: number[][]
+  /**
+     * 初始化矩阵
+     sum[m+1][n+1]
+     sum[i][j] 表示[0][0] -> [i - 1][j - 1]子矩阵的和
+     * @param matrix 
+     */
+  constructor(matrix: number[][]) {
+    const m = matrix.length,
+      n = matrix[0].length
+    this.sum = [...Array(m + 1)].map(_ => Array(n + 1).fill(0))
+    // sum比matrix多一维，用来处理边界条件
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < n; j++) {
+        this.sum[i + 1][j + 1] = this.sum[i + 1][j] + matrix[i][j] + this.sum[i][j + 1] - this.sum[i][j]
+      }
+    }
+    console.log(this.sum);
+  }
+
+  /**
+     * @param row1 
+     * @param col1 
+     * @param row2 
+     * @param col2 
+     */
+  sumRegion(row1: number, col1: number, row2: number, col2: number): number {
+    return this.sum[row2 + 1][col2 + 1] - this.sum[row1][col2 + 1] - this.sum[row2 + 1][col1] + this.sum[row1][col1]
+  }
 }
