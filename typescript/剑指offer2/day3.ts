@@ -338,3 +338,40 @@ function subarraySum(nums: number[], k: number): number {
 }
 
 // console.log(subarraySum([-1,-1,1], 0))
+
+/**
+ * 剑指 Offer II 011. 0 和 1 个数相同的子数组
+  （前缀和+哈希表）
+ * @param nums 
+ */
+function findMaxLength(nums: number[]): number {
+  /**
+   如果将0转为-1， 即求和为0的最长子数组
+
+   1. 先求前缀和数组sums[]
+   2. 求sums[i] == sums[j] 且j - i 最大
+   3. 使用map保存sums[i], value为i (其实就是前缀和为sums[i]的第一次出现的下标)
+   4. 当访问nums[j]时，i = map.get(nums[j]), 使用res保存最大的j - i
+   5. 如果nums[j]第一次出现，就存入nums[j]
+   6. 由于每个sum[i]只和sum[i - 1]关联，所以可以优化为sum元素，然后更新sum就可以了。
+   */
+  let res = 0, sum = 0
+  const map = new Map<number, number>()
+  map.set(0, -1)
+  for(let i = 0; i < nums.length; i++){
+    if(nums[i] === 0){
+      sum -= 1
+    }else {
+      sum += 1
+    }
+    if(map.has(sum)){
+      res = Math.max(res, i - map.get(sum))
+    }else {
+      map.set(sum, i)
+    }
+  }
+  return res
+};
+
+// console.log(findMaxLength([0,1,1,1,0,0,1,1,0])); 6
+// console.log(findMaxLength([1,1,0,0,1,0,1,0,1,1,1,0,0,1,1,1,0,0])); 16
