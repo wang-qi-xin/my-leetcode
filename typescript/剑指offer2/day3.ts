@@ -413,3 +413,28 @@ function pivotIndex(nums: number[]): number {
   return -1
 }
 // console.log(pivotIndex([-1, -1, 1, 1, 0, 0]))
+
+/**
+ * 剑指 Offer II 012. 左右两边子数组的和相等
+ （前缀和优化）
+ * @param nums
+ */
+function pivotIndex2(nums: number[]): number {
+  /**
+
+   1. 求和total
+   2. 遍历nums[i].sum = nums[0, i - 1]之和
+   3. 如果sum * 2 + nums[i] === total， 说明i右侧的和也为sum，返回中心点i
+   4. 最后返回-1
+   */
+  const len = nums.length
+  let total = 0
+  for(let i = 0; i < len; i++){
+    total += nums[i]
+  }
+  for(let i = 0, sum = 0; i < len; i++){
+    if((sum * 2 + nums[i]) === total) return i
+    sum += nums[i]
+  }
+  return -1
+}
