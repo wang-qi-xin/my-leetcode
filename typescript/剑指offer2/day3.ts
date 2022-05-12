@@ -473,3 +473,33 @@ class NumMatrix {
     return this.sum[row2 + 1][col2 + 1] - this.sum[row1][col2 + 1] - this.sum[row2 + 1][col1] + this.sum[row1][col1]
   }
 }
+
+/**
+ * 剑指 Offer II 014. 字符串中的变位词
+ (模拟法)
+ * @param s1 
+ * @param s2 
+ */
+function checkInclusion(s1: string, s2: string): boolean {
+  if(s1.length > s2.length) return false
+  /**
+   1. 使用长度为26的数组a1保存s1每个字母出现的次数
+   2. 使用长度为26的数组a2保存s2的长度为s1.length的字串，的每个字母出现的次数
+   3. 如果a1 = a2, 返回true
+   4. s2的窗口向右滑动一格，重新计算a2,比较a1,a2
+   */
+   const a1 = [...Array(26)].map(i => 0), a2 = [...Array(26)].map(i => 0), len1 = s1.length, len2 = s2.length
+   let i = 0
+   for(;i < len1; i++){
+     a1[s1.charCodeAt(i) - 97] += 1
+     a2[s2.charCodeAt(i) - 97] += 1
+   }
+   if(a1.toString() === a2.toString()) return true
+   for(;i < len2; i++){
+     a2[s2.charCodeAt(i) - 97] += 1
+     a2[s2.charCodeAt(i - len1) - 97] -= 1
+     if(a1.toString() === a2.toString()) return true
+   }
+   return false
+};
+// checkInclusion("abca", "bbabc")
