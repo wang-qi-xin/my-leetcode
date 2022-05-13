@@ -460,15 +460,15 @@ class NumMatrix {
         this.sum[i + 1][j + 1] = this.sum[i + 1][j] + matrix[i][j] + this.sum[i][j + 1] - this.sum[i][j]
       }
     }
-    console.log(this.sum);
+    console.log(this.sum)
   }
 
   /**
-     * @param row1 
-     * @param col1 
-     * @param row2 
-     * @param col2 
-     */
+   * @param row1
+   * @param col1
+   * @param row2
+   * @param col2
+   */
   sumRegion(row1: number, col1: number, row2: number, col2: number): number {
     return this.sum[row2 + 1][col2 + 1] - this.sum[row1][col2 + 1] - this.sum[row2 + 1][col1] + this.sum[row1][col1]
   }
@@ -481,25 +481,83 @@ class NumMatrix {
  * @param s2 
  */
 function checkInclusion(s1: string, s2: string): boolean {
-  if(s1.length > s2.length) return false
+  if (s1.length > s2.length) return false
   /**
    1. 使用长度为26的数组a1保存s1每个字母出现的次数
    2. 使用长度为26的数组a2保存s2的长度为s1.length的字串，的每个字母出现的次数
    3. 如果a1 = a2, 返回true
    4. s2的窗口向右滑动一格，重新计算a2,比较a1,a2
    */
-   const a1 = [...Array(26)].map(i => 0), a2 = [...Array(26)].map(i => 0), len1 = s1.length, len2 = s2.length
-   let i = 0
-   for(;i < len1; i++){
-     a1[s1.charCodeAt(i) - 97] += 1
-     a2[s2.charCodeAt(i) - 97] += 1
-   }
-   if(a1.toString() === a2.toString()) return true
-   for(;i < len2; i++){
-     a2[s2.charCodeAt(i) - 97] += 1
-     a2[s2.charCodeAt(i - len1) - 97] -= 1
-     if(a1.toString() === a2.toString()) return true
-   }
-   return false
-};
+  const a1 = [...Array(26)].map(i => 0),
+    a2 = [...Array(26)].map(i => 0),
+    len1 = s1.length,
+    len2 = s2.length
+  let i = 0
+  for (; i < len1; i++) {
+    a1[s1.charCodeAt(i) - 97] += 1
+    a2[s2.charCodeAt(i) - 97] += 1
+  }
+  if (a1.toString() === a2.toString()) return true
+  for (; i < len2; i++) {
+    a2[s2.charCodeAt(i) - 97] += 1
+    a2[s2.charCodeAt(i - len1) - 97] -= 1
+    if (a1.toString() === a2.toString()) return true
+  }
+  return false
+}
 // checkInclusion("abca", "bbabc")
+
+/**
+ * 剑指 Offer II 014. 字符串中的变位词
+ (优化模拟法)
+ * @param s1 
+ * @param s2 
+ */
+function checkInclusion2(s1: string, s2: string): boolean {
+  if (s1.length > s2.length) return false
+  const a1 = [...Array(26)].map(i => 0),
+    len1 = s1.length,
+    len2 = s2.length
+  // a1[1] = 2， 表示s2的字串比s1，多了两个字符b
+  for (let i = 0; i < len1; i++) {
+    a1[s1.charCodeAt(i) - 97] -= 1
+    a1[s2.charCodeAt(i) - 97] += 1
+  }
+  // a1[i]表示字母char在s1,和s2的字串中，出现的次数之差。
+  // diff表示a1中不等于0的个数
+  let diff = 0
+  for(let i = 0; i < 26; i++){
+    if(a1[i] !== 0) diff++
+  }
+  if(diff === 0) return true
+
+  for(let i = len1; i < len2; i++){
+    const x = s2.charCodeAt(i) - 97, y = s2.charCodeAt(i - len1) - 97
+    if(x === y) continue
+
+    // 1. 在增加字符x之前，如果a1[x] == 0, 说明x字符在两个子串出现的次数一样。增加x以后，需要给diff+1
+    if(a1[x] === 0) {
+      diff++
+    }
+
+    // 2. s2的字串增加一个x，则a1[x] += 1
+    a1[x]++
+
+    // 3. 增加以后如果a1[x] === 0, 表示字符x在s1和s2字串出现的次数已经一样了。则diff需要-1
+    if(a1[x] === 0) {
+      diff--
+    }
+
+    // 4. y同理。不过y是从s2的字串中去除，所以a1[y]需要-1
+    if(a1[y] === 0) {
+      diff++
+    }
+    a1[y]--
+    if(a1[y] === 0) {
+      diff--
+    }
+    // 5. 如果s2的字串右移一位（也就是去除最左侧字符y，右侧增加新字符x）,s1和s2的新字串中字符的差diff===0， 就直接返回true
+    if(diff === 0) return true
+  }
+  return false
+}
