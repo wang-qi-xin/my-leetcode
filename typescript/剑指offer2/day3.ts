@@ -526,17 +526,18 @@ function checkInclusion2(s1: string, s2: string): boolean {
   // a1[i]表示字母char在s1,和s2的字串中，出现的次数之差。
   // diff表示a1中不等于0的个数
   let diff = 0
-  for(let i = 0; i < 26; i++){
-    if(a1[i] !== 0) diff++
+  for (let i = 0; i < 26; i++) {
+    if (a1[i] !== 0) diff++
   }
-  if(diff === 0) return true
+  if (diff === 0) return true
 
-  for(let i = len1; i < len2; i++){
-    const x = s2.charCodeAt(i) - 97, y = s2.charCodeAt(i - len1) - 97
-    if(x === y) continue
+  for (let i = len1; i < len2; i++) {
+    const x = s2.charCodeAt(i) - 97,
+      y = s2.charCodeAt(i - len1) - 97
+    if (x === y) continue
 
     // 1. 在增加字符x之前，如果a1[x] == 0, 说明x字符在两个子串出现的次数一样。增加x以后，需要给diff+1
-    if(a1[x] === 0) {
+    if (a1[x] === 0) {
       diff++
     }
 
@@ -544,20 +545,91 @@ function checkInclusion2(s1: string, s2: string): boolean {
     a1[x]++
 
     // 3. 增加以后如果a1[x] === 0, 表示字符x在s1和s2字串出现的次数已经一样了。则diff需要-1
-    if(a1[x] === 0) {
+    if (a1[x] === 0) {
       diff--
     }
 
     // 4. y同理。不过y是从s2的字串中去除，所以a1[y]需要-1
-    if(a1[y] === 0) {
+    if (a1[y] === 0) {
       diff++
     }
     a1[y]--
-    if(a1[y] === 0) {
+    if (a1[y] === 0) {
       diff--
     }
     // 5. 如果s2的字串右移一位（也就是去除最左侧字符y，右侧增加新字符x）,s1和s2的新字串中字符的差diff===0， 就直接返回true
-    if(diff === 0) return true
+    if (diff === 0) return true
   }
   return false
 }
+
+/**
+ * 剑指 Offer II 015. 字符串中的所有变位词
+ * @param s
+ * @param p
+ */
+function findAnagrams(s: string, p: string): number[] {
+  if (p.length > s.length) return []
+  const a1 = [...Array(26)].map(i => 0),
+    len1 = s.length,
+    len2 = p.length
+  // a1[1] = 2， 表示s2的字串比s1，多了两个字符b
+  for (let i = 0; i < len2; i++) {
+    a1[p.charCodeAt(i) - 97] -= 1
+    a1[s.charCodeAt(i) - 97] += 1
+  }
+  // a1[i]表示字母char在s1,和s2的字串中，出现的次数之差。
+  // diff表示a1中不等于0的个数
+  let diff = 0,
+    res = []
+  for (let i = 0; i < 26; i++) {
+    if (a1[i] !== 0) diff++
+  }
+  if (diff === 0) {
+    res.push(0)
+  }
+  
+  for (let i = len2; i < len1; i++) {
+    const x = s.charCodeAt(i) - 97,
+      y = s.charCodeAt(i - len2) - 97
+    if (x === y) {
+      // 如果x === y, 本次增添字符x,y不影响diff
+      if(diff === 0) {
+        // 如果diff此时刚好=== 0 ，就把当前的字串的左下标i - len2 + 1添加到res
+        res.push(i - len2 + 1)
+      }
+      continue
+    }
+
+    // 1. 在增加字符x之前，如果a1[x] == 0, 说明x字符在两个子串出现的次数一样。增加x以后，需要给diff+1
+    if (a1[x] === 0) {
+      diff++
+    }
+
+    // 2. s2的字串增加一个x，则a1[x] += 1
+    a1[x]++
+
+    // 3. 增加以后如果a1[x] === 0, 表示字符x在s1和s2字串出现的次数已经一样了。则diff需要-1
+    if (a1[x] === 0) {
+      diff--
+    }
+
+    // 4. y同理。不过y是从s2的字串中去除，所以a1[y]需要-1
+    if (a1[y] === 0) {
+      diff++
+    }
+    a1[y]--
+    if (a1[y] === 0) {
+      diff--
+    }
+    // 5. 如果s2的字串右移一位（也就是去除最左侧字符y，右侧增加新字符x）,s1和s2的新字串中字符的差diff===0， 
+    //   就给res添加当前匹配的s的字串的左下标i - len2 + 1
+    if (diff === 0) {
+      res.push(i - len2 + 1)
+    }
+  }
+  return res
+}
+
+// console.log(findAnagrams('cbaebabacd', 'abc'));
+
