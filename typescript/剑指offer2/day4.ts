@@ -210,3 +210,25 @@ function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
   p.next = p.next.next
   return h.next
 };
+
+/**
+ * 剑指 Offer II 022. 链表中环的入口节点
+ * @param head 
+ * @returns 
+ */
+function detectCycle(head: ListNode | null): ListNode | null {
+  /**
+   * 哈希表
+   */
+   const set = new Set<ListNode>()
+   let p = head
+   while(p && p.next){
+     if(set.has(p)){
+       console.log(p.val)
+       return p
+     }
+     set.add(p)
+     p = p.next
+   }
+   return null
+};
