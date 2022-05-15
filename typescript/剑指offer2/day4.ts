@@ -1,3 +1,5 @@
+import { ListNode } from "../utils/数据结构/struct"
+
 /**
  * 剑指 Offer II 016. 不含重复字符的最长子字符串
  (滑动窗口+set)
@@ -175,7 +177,6 @@ function countSubstrings(s: string): number {
       if (i === j) {
         dp[i][j] = true
         res++
-        continue
       } else {
         dp[i][j] = s.charAt(i) === s.charAt(j) 
         if(j - i > 2){
@@ -187,3 +188,25 @@ function countSubstrings(s: string): number {
   }
   return res
 }
+
+/**
+ * 剑指 Offer II 021. 删除链表的倒数第 n 个结点
+ * @param head 
+ * @param n 
+ */
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+  const h = new ListNode()
+  h.next = head
+  let p = head, q = head
+  while(n > 0){
+    q = q.next
+    n--
+  }
+  while(q.next !== null){
+    q = q.next
+    p = p.next
+  }
+
+  p.next = p.next.next
+  return h.next
+};
