@@ -136,19 +136,54 @@ function isPalindrome(s: string): boolean {
 
 /**
  * 剑指 Offer II 019. 最多删除一个字符得到回文
- * @param s 
+ * @param s
  */
 function validPalindrome(s: string): boolean {
   const valid = (s: string) => {
-    for(let l = 0, r = s.length - 1; l < r; l++, r--){
+    for (let l = 0, r = s.length - 1; l < r; l++, r--) {
       if (s.charAt(l) !== s.charAt(r)) return false
     }
     return true
   }
   for (let l = 0, r = s.length - 1; l < r; l++, r--) {
-    if (s.charAt(l) !== s.charAt(r)){
+    if (s.charAt(l) !== s.charAt(r)) {
       return valid(s.slice(l, r)) || valid(s.slice(l + 1, r + 1))
     }
   }
   return true
-};
+}
+
+/**
+ * 剑指 Offer II 020. 回文子字符串的个数
+ ( 动态规划)
+ * @param s
+ */
+function countSubstrings(s: string): number {
+  /**
+   动态规划
+
+   dp[i][j]表示从i->j的子串是否是回文串。
+
+   dp[i][j] = (s.charAt(i) === s.charAt(j)) && dp[i + 1][j - 1] 
+
+   */
+  let res = 0
+  const len = s.length,
+    dp = [...Array(len)].map(_ => Array(len).fill(false))
+  for (let i = len - 1; i >= 0; i--) {
+    for (let j = i; j < len; j++) {
+      if (i === j) {
+        dp[i][j] = true
+        res++
+        continue
+      } else {
+        dp[i][j] = s.charAt(i) === s.charAt(j) 
+        if(j - i > 2){
+          dp[i][j] = dp[i][j] && dp[i + 1][j - 1]
+        }
+        if(dp[i][j]) res++
+      }
+    }
+  }
+  return res
+}
