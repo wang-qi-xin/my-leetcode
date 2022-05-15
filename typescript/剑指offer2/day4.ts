@@ -213,6 +213,7 @@ function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
 
 /**
  * 剑指 Offer II 022. 链表中环的入口节点
+ （ 哈希表）
  * @param head 
  * @returns 
  */
@@ -229,6 +230,46 @@ function detectCycle(head: ListNode | null): ListNode | null {
      }
      set.add(p)
      p = p.next
+   }
+   return null
+};
+
+/**
+ * 剑指 Offer II 022. 链表中环的入口节点
+ （快慢指针）
+ * @param head 
+ * @returns 
+ */
+function detectCycle2(head: ListNode | null): ListNode | null {
+  /**
+   快慢指针
+
+   假设有环，slow == fast时，slow走过的路程s * 2 = f(fast走过的路程)
+
+   如果设进入环之前的路程（head到环的节点）为a，slow进入环之后走了b距离，与fast相遇。从b到环的交点的距离为c，则环长为b + c
+   则fast走的距离为f = a + n * (b + c) + b = a + (n + 1)b + n*c
+          又f = 2 * s = 2 * (a + b) = a + (n + 1)b + n*c
+          a = c + (n - 1)(b + c) 也就是从head到交点的距离a = 从slow与fast的相遇点，到交点的距离c + (n - 1)倍的环长
+   于是可以当slow与fast相遇时，令p = head， 然后p和slow同时移动，则经过a步，p和slow一定相遇。此时返回p
+   */
+   if(!head) return null
+   let slow = head, fast = head
+   while(fast){
+     slow = slow.next
+     if(fast.next){
+       fast = fast.next.next
+     }else{
+       return null
+     }
+
+     if(slow === fast){
+       let p = head
+       while(p != slow){
+         p = p.next
+         slow = slow.next
+       }
+       return slow
+     }
    }
    return null
 };
