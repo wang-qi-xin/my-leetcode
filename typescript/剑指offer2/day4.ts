@@ -53,7 +53,7 @@ function minWindow(s: string, t: string): string {
       4. 每次窗口变化，都更新S数组。
 
    使用长度为52的数组T保存t每一位出现的次数。
-   使用长度为52的数组S保存s的字串每一位出现的次数。
+   使用长度为52的数组S保存s的子串每一位出现的次数。
 
     令l = 0, r = -1为s的子串的起始和结束下标。x， y为对应位置的字符
      left = -1, right = -1为含有所有字符的最短字符串的起始下标
@@ -81,7 +81,8 @@ function minWindow(s: string, t: string): string {
   let left = -1,
     right = -1,
     len = Number.MAX_SAFE_INTEGER
-  let l = 0, r = -1
+  let l = 0,
+    r = -1
   //  更新最短字串下标
   while (r < lens) {
     r++
@@ -100,12 +101,35 @@ function minWindow(s: string, t: string): string {
       S[s.charCodeAt(l) - 65]--
       l++
     }
-
   }
-  
-  return left === -1 ? "" : s.slice(left, right)
+
+  return left === -1 ? '' : s.slice(left, right)
 }
 // let a = "ab", b = "b"
 // let a = "ADOBECODEBANC", b = "ABC"
 // let a = "ADOBECODEBANC", b = "ABC"
 // console.log(minWindow(a, b))
+
+/**
+ * 剑指 Offer II 018. 有效的回文
+ * @param s
+ */
+function isPalindrome(s: string): boolean {
+  /**
+   双指针l = 0,r = s.length
+
+   循环l++, r--， 直到l,r都指向数字或字母。
+   如果s[l] == s[r], 则l++, r--
+   否则返回false
+   */
+  const check = (c: string) => {
+    const code = c.charCodeAt(0)
+    return (code > 47 && code < 58) || (code > 64 && code < 91) || (code > 96 && code < 123)
+  }
+  for (let l = 0, r = s.length - 1; l < r; l++, r--) {
+    while (l < r && !check(s.charAt(l))) l++
+    while (l < r && !check(s.charAt(r))) r--
+    if (s.charAt(l).toLowerCase() !== s.charAt(r).toLowerCase()) return false
+  }
+  return true
+}
