@@ -133,3 +133,22 @@ function isPalindrome(s: string): boolean {
   }
   return true
 }
+
+/**
+ * 剑指 Offer II 019. 最多删除一个字符得到回文
+ * @param s 
+ */
+function validPalindrome(s: string): boolean {
+  const valid = (s: string) => {
+    for(let l = 0, r = s.length - 1; l < r; l++, r--){
+      if (s.charAt(l) !== s.charAt(r)) return false
+    }
+    return true
+  }
+  for (let l = 0, r = s.length - 1; l < r; l++, r--) {
+    if (s.charAt(l) !== s.charAt(r)){
+      return valid(s.slice(l, r)) || valid(s.slice(l + 1, r + 1))
+    }
+  }
+  return true
+};
