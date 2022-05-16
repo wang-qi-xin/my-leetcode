@@ -177,11 +177,11 @@ function countSubstrings(s: string): number {
         res++
         continue
       } else {
-        dp[i][j] = s.charAt(i) === s.charAt(j) 
-        if(j - i > 2){
+        dp[i][j] = s.charAt(i) === s.charAt(j)
+        if (j - i > 2) {
           dp[i][j] = dp[i][j] && dp[i + 1][j - 1]
         }
-        if(dp[i][j]) res++
+        if (dp[i][j]) res++
       }
     }
   }
@@ -194,12 +194,42 @@ function countSubstrings(s: string): number {
  * @param s
  */
 function countSubstrings2(s: string): number {
-  /**
-   
+  if (s.length === 0) return 0
+  let temp = '^'
+  for (let i = 0; i < s.length; i++) {
+    temp += `#${s.charAt(i)}`
+  }
+  temp += '#!'
 
-   */
-   return 0
+  let C = 0,
+    R = 0,
+    P = [],
+    len = temp.length,
+    res = 0
+  for (let i = 1; i < len - 1; i++) {
+    const i_mirror = C * 2 - i
+    if (R > i) {
+      P[i] = Math.min(R - i, P[i_mirror])
+    } else {
+      // 最短回文子串就是单个字符本身
+      P[i] = 1
+    }
 
+    while (temp.charAt(i - P[i]) === temp.charAt(i + P[i])) {
+      P[i]++
+    }
+
+    if (i + P[i] > R) {
+      C = i
+      R = i + P[i]
+    }
+    // P[i]表示temp字符串i位置的最长回文子串的半径
+    // 由于temp = 2 * s， 所以P[i] / 2表示s字符串i / 2位置，最长回文子串的半径
+    // 也就是该位置实际上贡献了P[i] / 2个回文子串。
+    res += Math.floor(P[i] / 2)
+    console.log(P[i]);
+  }
+  return res
 }
 
-
+console.log(countSubstrings2("aaa"));
