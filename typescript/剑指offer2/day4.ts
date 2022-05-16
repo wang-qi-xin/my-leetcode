@@ -187,3 +187,19 @@ function countSubstrings(s: string): number {
   }
   return res
 }
+
+/**
+ * 剑指 Offer II 020. 回文子字符串的个数
+ (manacher 马拉车算法)
+ * @param s
+ */
+function countSubstrings2(s: string): number {
+  /**
+   
+
+   */
+   return 0
+
+}
+
+
