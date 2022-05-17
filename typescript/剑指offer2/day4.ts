@@ -261,30 +261,53 @@ function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | nul
   }
   let i = 0,
     carry = 0
-  if(a.length < b.length){
+  if (a.length < b.length) {
     let t = a
     a = b
     b = t
   }
   for (; i < b.length; i++) {
     let temp = (a[i] + b[i] + carry) % 10
-      carry = Math.floor((a[i] + b[i] + carry) / 10)
+    carry = Math.floor((a[i] + b[i] + carry) / 10)
     a[i] = temp
   }
-  for(;i < a.length; i++){
+  for (; i < a.length; i++) {
     const temp = (a[i] + carry) % 10
     carry = Math.floor((a[i] + carry) / 10)
     a[i] = temp
   }
 
-  if(carry === 1){
+  if (carry === 1) {
     a[i] = 1
   }
   const head = new ListNode()
   let p = head
-  for(let i = a.length - 1; i >= 0; i--){
+  for (let i = a.length - 1; i >= 0; i--) {
     p.next = new ListNode(a[i])
     p = p.next
   }
   return head.next
+}
+
+/**
+ * 剑指 Offer II 026. 重排链表
+ * @param head
+ */
+function reorderList(head: ListNode | null): void {
+  const queue: ListNode[] = []
+  while (head) {
+    queue.push(head)
+    head = head.next
+  }
+  let i = 0,
+    j = queue.length - 1
+  while (i < j) {
+    queue[i].next = queue[j]
+    i++
+    if (i < j) {
+      queue[j].next = queue[i]
+      j--
+    }
+  }
+  queue[j].next = null
 }
