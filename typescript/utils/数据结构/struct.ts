@@ -7,6 +7,19 @@ export class ListNode {
   }
 }
 
+export class Node {
+  val: number
+  prev: Node | null
+  next: Node | null
+  child: Node | null
+  constructor(val?: number, prev?: Node, next?: Node, child?: Node) {
+    this.val = val === undefined ? 0 : val
+    this.prev = prev === undefined ? null : prev
+    this.next = next === undefined ? null : next
+    this.child = child === undefined ? null : child
+  }
+}
+
 export class TreeNode {
   val: number
   left: TreeNode | null
@@ -98,8 +111,8 @@ export class Heap<T> {
     */
   shiftUp(index: number) {
     const parentIndex = this.getParentIndex(index)
-    if(parentIndex < 0) {
-      return;
+    if (parentIndex < 0) {
+      return
     }
     const compareResult = this.compareFn(this.heap[parentIndex], this.heap[index])
     if (compareResult > 0 || compareResult === true) {

@@ -1,4 +1,4 @@
-import { ListNode } from '../utils/数据结构/struct'
+import { ListNode, Node } from '../utils/数据结构/struct'
 
 /**
  * 剑指 Offer II 016. 不含重复字符的最长子字符串
@@ -311,3 +311,44 @@ function reorderList(head: ListNode | null): void {
   }
   queue[j].next = null
 }
+
+/**
+ * 剑指 Offer II 028. 展平多级双向链表
+ (深度优先遍历)
+ * @param head 
+ */
+function flatten(head: Node | null): Node | null {
+  /**
+   遍历链表，如果某个节点的child不为null，则dfs(node.child)
+   然后将返回的单层双向链表插入node后面
+   */
+  const dfs = (node: Node | null): Node | null => {
+    // 使用last记录链表最后一个节点。
+    let last = node
+    while(node){
+      if(!node.next) last = node
+      if(node.child){
+        // 获取child打平之后的链表的尾结点。
+        let childLast = dfs(node.child)
+
+        // 如果当前节点不是尾结点，需要处理next节点
+        if(node.next){
+          let next = node.next
+          childLast.next = next
+          next.prev = childLast
+        }
+        node.next = node.child
+        node.child.prev = node
+
+        // 将当前节点的child置为null
+        node.child = null
+        node = childLast
+      } else {
+        node = node.next
+      }
+    }
+    return last
+  }
+  dfs(head)
+  return head
+};
