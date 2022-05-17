@@ -1,3 +1,5 @@
+import { ListNode } from '../utils/数据结构/struct'
+
 /**
  * 剑指 Offer II 016. 不含重复字符的最长子字符串
  (滑动窗口+set)
@@ -227,9 +229,62 @@ function countSubstrings2(s: string): number {
     // 由于temp = 2 * s， 所以P[i] / 2表示s字符串i / 2位置，最长回文子串的半径
     // 也就是该位置实际上贡献了P[i] / 2个回文子串。
     res += Math.floor(P[i] / 2)
-    console.log(P[i]);
+    console.log(P[i])
   }
   return res
 }
 
-console.log(countSubstrings2("aaa"));
+// console.log(countSubstrings2("aaa"));
+
+/**
+ * 剑指 Offer II 025. 链表中的两数相加
+ * @param l1
+ * @param l2
+ */
+function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+  /**
+   1. 将l1, l2两个链表转为数组a,b，逆序
+   2. 令a指向更长的那个数组。
+   3. 遍历数组a， 将对应位相加，再加上进位carry。b全部遍历以后，就忽略b数组
+   4. 如果最后carry等于1，则在a的最后一位再补1
+   4. 将数组a逆序转为链表。
+   */
+  let a = [],
+    b = []
+  while (l1) {
+    a.unshift(l1.val)
+    l1 = l1.next
+  }
+  while (l2) {
+    b.unshift(l2.val)
+    l2 = l2.next
+  }
+  let i = 0,
+    carry = 0
+  if(a.length < b.length){
+    let t = a
+    a = b
+    b = t
+  }
+  for (; i < b.length; i++) {
+    let temp = (a[i] + b[i] + carry) % 10
+      carry = Math.floor((a[i] + b[i] + carry) / 10)
+    a[i] = temp
+  }
+  for(;i < a.length; i++){
+    const temp = (a[i] + carry) % 10
+    carry = Math.floor((a[i] + carry) / 10)
+    a[i] = temp
+  }
+
+  if(carry === 1){
+    a[i] = 1
+  }
+  const head = new ListNode()
+  let p = head
+  for(let i = a.length - 1; i >= 0; i--){
+    p.next = new ListNode(a[i])
+    p = p.next
+  }
+  return head.next
+}
