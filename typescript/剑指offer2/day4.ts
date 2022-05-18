@@ -325,14 +325,14 @@ function flatten(head: Node | null): Node | null {
   const dfs = (node: Node | null): Node | null => {
     // 使用last记录链表最后一个节点。
     let last = node
-    while(node){
-      if(!node.next) last = node
-      if(node.child){
+    while (node) {
+      if (!node.next) last = node
+      if (node.child) {
         // 获取child打平之后的链表的尾结点。
         let childLast = dfs(node.child)
 
         // 如果当前节点不是尾结点，需要处理next节点
-        if(node.next){
+        if (node.next) {
           let next = node.next
           childLast.next = next
           next.prev = childLast
@@ -351,4 +351,76 @@ function flatten(head: Node | null): Node | null {
   }
   dfs(head)
   return head
-};
+}
+
+/**
+ * 剑指 Offer II 029. 排序的循环链表
+ * @param head
+ * @param insertVal
+ */
+function insert(head: Node | null, insertVal: number): Node | null {
+  /**
+   找到p，使得p <= insertVal 且p.next > insertVal
+   如果没找到，说明insertVal太大或太小，都应该插入到边界。
+   */
+  if (!head) {
+    head = new Node(insertVal)
+    head.next = head
+    return head
+  }
+  let p = head,
+    bound = head
+  while (p.val > insertVal || p.next.val <= insertVal) {
+    // 寻找边界。
+    if (p.next.val < p.val) {
+      bound = p
+    }
+    // 循环了一轮。
+    if (p.next === head) break
+    p = p.next
+  }
+  const insert = new Node(insertVal)
+  if (p.val <= insertVal && p.next.val > insertVal) {
+    insert.next = p.next
+    p.next = insert
+  } else {
+    insert.next = bound.next
+    bound.next = insert
+  }
+  return head
+}
+
+/**
+ * 剑指 Offer II 029. 排序的循环链表
+ (优化)
+ * @param head
+ * @param insertVal
+ */
+function insert2(head: Node | null, insertVal: number): Node | null {
+  /**
+   循环一轮链表。如果找到边界了，也就是p.next < p
+   此时判断insertVal, 是否小于p.next, 或者大于p, 是的话结束循环。将insertVal插入p后面。
+
+   如果找到p, 使得p.val <= insertVal <= p.next.val， 那么将insertVal插入p后面
+   */
+  if (!head) {
+    head = new Node(insertVal)
+    head.next = head
+    return head
+  }
+  let p = head
+  while (p.next !== head) {
+    // 寻找边界。
+    if (p.next.val < p.val && (insertVal <= p.next.val || insertVal >= p.val)) {
+      break
+    }
+    // 循环了一轮。
+    if (p.val <= insertVal && p.next.val >= insertVal) break
+    p = p.next
+  }
+  const insert = new Node(insertVal)
+
+  insert.next = p.next
+  p.next = insert
+  return head
+}
