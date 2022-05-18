@@ -499,12 +499,44 @@ class RandomizedSet {
     return false
   }
 
- /**
-  * 如果数组的长度为5，则获取随机下标i = [0-1) * 4 = [0 - 4), 然后向下取整
-  * @returns 
-  */
+  /**
+   * 如果数组的长度为5，则获取随机下标i = [0-1) * 4 = [0 - 4), 然后向下取整
+   * @returns
+   */
   getRandom(): number {
-    const randomIndex = Math.floor(Math.random() * (this.arr.length))
+    const randomIndex = Math.floor(Math.random() * this.arr.length)
     return this.arr[randomIndex]
   }
+}
+
+/**
+ * 剑指 Offer II 091. 粉刷房子
+ (动态规划)
+ * @param costs
+ */
+function minCost(costs: number[][]): number {
+  /**
+   动态规划
+
+   dp[i][j] 表示到第i个房子刷成某种颜色的最少成本。j = [0, 1, 2]表示 红蓝绿三个颜色
+
+   则dp[i][j] 取决于 dp[i - 1][[0, 1, 2] - j]的最小值。
+   */
+
+  const dp = [...Array(costs.length)].map(_ => Array(3).fill(0)),
+    color = [0, 1, 2]
+  dp[0] = costs[0]
+  for (let i = 1; i < costs.length; i++) {
+    for (let j = 0; j < 3; j++) {
+      // 当前颜色为j，则从color中把j去掉。
+      const k = color.filter(c => c !== j)
+      // 第i个房子涂j颜色，总花费dp[i][j]取决于第i-1个房子涂!j的颜色的最小值，加上第i个房子涂j颜色的花费。
+      dp[i][j] = Math.min(dp[i - 1][k[0]], dp[i - 1][k[1]]) + costs[i][j]
+    }
+  }
+  let min = dp[costs.length - 1][0]
+  for (let i = 1; i < 3; i++) {
+    min = Math.min(min, dp[costs.length - 1][i])
+  }
+  return min
 }
