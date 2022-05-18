@@ -540,3 +540,39 @@ function minCost(costs: number[][]): number {
   }
   return min
 }
+
+type f = string[]
+
+/**
+ * 剑指 Offer II 092. 翻转字符
+ (动态规划)
+ * @param s
+ */
+function minFlipsMonoIncr(s: string): number {
+  /**
+   动态规划
+
+   dp[i][j]表示翻转到第i个字符时，需要的最少翻转数。j = 0/1, 表示翻转完第i个字符为0或1
+
+   1. dp[i][0], 则第i-1位必须为0，如果当前第i为为0， 就不用翻转，否则翻转一次 
+      所以dp[i][0] = dp[i - 1][0] + +c
+   2. dp[i][1], 如果当前位要翻转为1， 则第i-1位0和1都可以。取翻转次数较小的那个。
+      如果当前位是0，就需要翻转一次，否则不需要翻转。使用(+c + 1) % 2来表示翻转次数
+      dp[i][1] = Math.min(dp[i - 1][1], dp[i - 1][0]) + (+c + 1) % 2
+
+   */
+  const dp = [...Array(s.length)].map(_ => Array(2).fill(0))
+  if (s.charAt(0) === '0') {
+    dp[0][1] = 1
+  } else {
+    dp[0][0] = 1
+  }
+  for (let i = 1; i < s.length; i++) {
+    const c = s.charAt(i)
+    dp[i][0] = dp[i - 1][0] + +c
+    dp[i][1] = Math.min(dp[i - 1][1], dp[i - 1][0]) + ((+c + 1) % 2)
+  }
+  return Math.min(dp[s.length - 1][0], dp[s.length - 1][1])
+}
+
+console.log(minFlipsMonoIncr('10011111110010111011'))
