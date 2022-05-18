@@ -575,4 +575,109 @@ function minFlipsMonoIncr(s: string): number {
   return Math.min(dp[s.length - 1][0], dp[s.length - 1][1])
 }
 
-console.log(minFlipsMonoIncr('10011111110010111011'))
+// console.log(minFlipsMonoIncr('10011111110010111011'))
+
+/**
+ * 双向链表
+ */
+class BiLinkedList<T> {
+  val: T
+  pre: BiLinkedList<T>
+  next: BiLinkedList<T>
+  key: T
+  constructor(key?: T, val?: T, pre?: BiLinkedList<T>, next?: BiLinkedList<T>) {
+    this.key = key
+    this.val = val
+    this.pre = pre
+    this.next = next
+  }
+}
+/**
+ * 剑指 Offer II 031. 最近最少使用缓存
+ (双向链表+map)
+ */
+class LRUCache {
+  head: BiLinkedList<number>
+  tail: BiLinkedList<number>
+  capacity: number
+  map: Map<number, BiLinkedList<number>>
+  /**
+   * 构建一个双向链表，map<key, node>
+   * @param capacity
+   */
+  constructor(capacity: number) {
+    this.head = new BiLinkedList(-1)
+    this.tail = new BiLinkedList(-1)
+    this.head.next = this.tail
+    this.tail.pre = this.head
+    this.capacity = capacity
+    this.map = new Map<number, BiLinkedList<number>>()
+  }
+
+  /**
+   * 通过map拿到node，将node从链表摘下，放到链表头
+   * @param key
+   */
+  get(key: number): number {
+    if (this.map.has(key)) {
+      const node = this.map.get(key)
+      this.pickNode(node)
+      this.putHead(node)
+      return node.val
+    } else {
+      return -1
+    }
+  }
+
+  /**
+     * 如果map不含有key，{
+       1. 如果map.size = capacity，就把链表尾结点扔掉，从map中也去掉
+       新建一个node插到链表头，并保存到map中
+     }
+       否则通过map拿到node，修改node.val，然后把node从链表摘下，放到链表头
+     * @param key 
+     * @param value 
+     */
+  put(key: number, value: number): void {
+    if (this.map.has(key)) {
+      const node = this.map.get(key)
+      node.val = value
+      this.pickNode(node)
+      this.putHead(node)
+    } else {
+      if (this.map.size === this.capacity) {
+        this.map.delete(this.tail.pre.key)
+        this.removeNode()
+      }
+      const node = new BiLinkedList(key, value)
+      this.putHead(node)
+      this.map.set(key, node)
+    }
+  }
+  /**
+   * 将node插入到双向链表头
+   * @param node
+   */
+  putHead(node: BiLinkedList<number>): void {
+    node.next = this.head.next
+    node.next.pre = node
+    this.head.next = node
+    node.pre = this.head
+  }
+  /**
+   * 从双向链表中移除node（尾结点）
+   */
+  removeNode(): void {
+    this.tail.pre.pre.next = this.tail
+    this.tail.pre = this.tail.pre.pre
+  }
+ 
+  /**
+   * 将node从链表摘下
+   * @param node 
+   */
+  pickNode(node: BiLinkedList<number>): void {
+    node.next.pre = node.pre
+    node.pre.next = node.next
+  }
+}
