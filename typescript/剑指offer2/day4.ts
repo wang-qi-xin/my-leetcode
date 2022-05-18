@@ -427,7 +427,7 @@ function insert2(head: Node | null, insertVal: number): Node | null {
 
 /**
  * 剑指 Offer II 090. 环形房屋偷盗
- * @param nums 
+ * @param nums
  */
 function rob(nums: number[]): number {
   /**
@@ -439,19 +439,72 @@ function rob(nums: number[]): number {
   
    使用动态规划解决两个单排问题，然后返回最大值。
    */
-   const rob2 = (i: number, j: number): number => {
-     let a = nums[i], b = Math.max(a, nums[i + 1])
-     for(i = i + 2; i <= j; i++){
-       const temp = Math.max(nums[i] + a, b)
-       a = b
-       b = temp
-     }
-     return b
-   }
-   const len = nums.length
-   if(len === 0) return 0
-   if(len === 1) return nums[0]
-   if(len === 2) return Math.max(nums[0], nums[1])
+  const rob2 = (i: number, j: number): number => {
+    let a = nums[i],
+      b = Math.max(a, nums[i + 1])
+    for (i = i + 2; i <= j; i++) {
+      const temp = Math.max(nums[i] + a, b)
+      a = b
+      b = temp
+    }
+    return b
+  }
+  const len = nums.length
+  if (len === 0) return 0
+  if (len === 1) return nums[0]
+  if (len === 2) return Math.max(nums[0], nums[1])
 
-   return Math.max(rob2(0, len - 2), rob2(1, len - 1))
-};
+  return Math.max(rob2(0, len - 2), rob2(1, len - 1))
+}
+
+/**
+ * 剑指 Offer II 030. 插入、删除和随机访问都是 O(1) 的容器
+ */
+class RandomizedSet {
+  map: Map<number, number>
+  arr: number[]
+  constructor() {
+    this.map = new Map<number, number>()
+    this.arr = []
+  }
+
+  /**
+   * 如果map有val，就返回false
+     否则，就把val放到arr的末尾，然后把val和val的下标存入map
+   * @param val 
+   * @returns 
+   */
+  insert(val: number): boolean {
+    if (this.map.has(val)) return false
+    this.arr.push(val)
+    this.map.set(val, this.arr.length - 1)
+    return true
+  }
+
+  /**
+   * 如果map中含有val， 就把数组的最后一位放到要删除的val上。
+     然后删除最后一位。再从map中删除val
+   * @param val 
+   * @returns 
+   */
+  remove(val: number): boolean {
+    if (this.map.has(val)) {
+      const index = this.map.get(val)
+      this.arr[index] = this.arr[this.arr.length - 1]
+      this.map.set(this.arr[index], index)
+      this.arr.pop()
+      this.map.delete(val)
+      return true
+    }
+    return false
+  }
+
+ /**
+  * 如果数组的长度为5，则获取随机下标i = [0-1) * 4 = [0 - 4), 然后向下取整
+  * @returns 
+  */
+  getRandom(): number {
+    const randomIndex = Math.floor(Math.random() * (this.arr.length))
+    return this.arr[randomIndex]
+  }
+}
