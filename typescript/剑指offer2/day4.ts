@@ -424,3 +424,34 @@ function insert2(head: Node | null, insertVal: number): Node | null {
   p.next = insert
   return head
 }
+
+/**
+ * 剑指 Offer II 090. 环形房屋偷盗
+ * @param nums 
+ */
+function rob(nums: number[]): number {
+  /**
+   如果只有一间房，就偷这间。
+   如果有两间房，偷钱多的那间。
+   如果三间以上，由于存在环，所以分为两种情况
+     1. 绕过第一家，此时最后一家可以选择偷
+     2. 绕过最后一家，此时第一家可以选择偷
+  
+   使用动态规划解决两个单排问题，然后返回最大值。
+   */
+   const rob2 = (i: number, j: number): number => {
+     let a = nums[i], b = Math.max(a, nums[i + 1])
+     for(i = i + 2; i <= j; i++){
+       const temp = Math.max(nums[i] + a, b)
+       a = b
+       b = temp
+     }
+     return b
+   }
+   const len = nums.length
+   if(len === 0) return 0
+   if(len === 1) return nums[0]
+   if(len === 2) return Math.max(nums[0], nums[1])
+
+   return Math.max(rob2(0, len - 2), rob2(1, len - 1))
+};
