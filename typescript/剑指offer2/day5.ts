@@ -35,3 +35,34 @@ function longestCommonSubsequence(s: string, t: string): number {
 
   return dp[s.length][t.length]
 }
+
+/**
+ * 剑指 Offer II 033. 变位词组
+ * @param strs
+ */
+function groupAnagrams(strs: string[]): string[][] {
+  /**
+   1. 遍历strs
+   2. 由于strs仅包含小写字母，创建长为26的数组num
+   3. 保存strs[i]每一位出现的次数。然后将num转为string
+   4. 将num存入map，value为数组[strs[i]]
+   5. 如果map.has(num), 说明存在同位词，则map.get(num).push(strs[i])
+   */
+  const map = new Map<string, string[]>()
+  for (let i = 0; i < strs.length; i++) {
+    const num: number[] = [...Array(26)].fill(0),
+      str = strs[i]
+
+    for (let j = 0; j < str.length; j++) {
+      num[str.charCodeAt(j) - 97]++
+    }
+
+    const numStr = num.toString()
+    if (map.has(numStr)) {
+      map.get(numStr).push(str)
+    } else {
+      map.set(numStr, [str])
+    }
+  }
+  return [...map.values()]
+}
