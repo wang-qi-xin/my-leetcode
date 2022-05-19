@@ -66,3 +66,49 @@ function groupAnagrams(strs: string[]): string[][] {
   }
   return [...map.values()]
 }
+
+/**
+ * 剑指 Offer II 096. 字符串交织
+ (动态规划)
+ * @param s1
+ * @param s2
+ * @param s3
+ */
+function isInterleave(s1: string, s2: string, s3: string): boolean {
+  /**
+   动态规划
+
+   dp[i][j] 表示s1[0-i]和s2[0-j]是否 可以交织成s3[0-(i + j + 1)]
+
+   假如s1[i] == s3[i + j], 只要dp[i - 1][j]为true，(也就是s1[0-(i - 1)]和s2[0 - j]可以交织成s3[0-(i + j + 1)])则dp[i][j] = true
+   同理s2[j] == s3[i + j], 只要dp[i][j - 1]为true, 则dp[i][j] = true
+
+   假如s1长度为len， 下标范围为0 - len - 1. 而s1与s2交织时，s1的子串可以是空字符串"", 只要s2 == s3。
+   所以dp[0][j], 表示s1取空串。dp[len]表示取整个s1。
+   */
+  const len1 = s1.length,
+    len2 = s2.length,
+    len3 = s3.length
+  if (len1 + len2 !== len3) return false
+  const dp = [...Array(len1 + 1)].map(i => [...Array(len2 + 1)].fill(false))
+
+  // 两个空串可以交织成空串
+  dp[0][0] = true
+
+  // s1[0 - > i]是否可以和空串交织成s3[0->i]取决于s1.charAt(i) === s3.charAt(i)
+  for (let i = 0; i < len1 && s1.charAt(i) === s3.charAt(i); i++) {
+    dp[i + 1][0] = true
+  }
+
+  // s2同理
+  for (let j = 0; j < len2 && s2.charAt(j) === s3.charAt(j); j++) {
+    dp[0][j + 1] = true
+  }
+
+  for (let i = 0; i < len1; i++) {
+    for (let j = 0; j < len2; j++) {
+      dp[i + 1][j + 1] = (s1.charAt(i) === s3.charAt(i + j + 1) && dp[i][j + 1]) || (s2.charAt(j) === s3.charAt(i + j + 1) && dp[i + 1][j])
+    }
+  }
+  return dp[len1][len2]
+}
