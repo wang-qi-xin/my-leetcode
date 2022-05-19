@@ -671,10 +671,10 @@ class LRUCache {
     this.tail.pre.pre.next = this.tail
     this.tail.pre = this.tail.pre.pre
   }
- 
+
   /**
    * 将node从链表摘下
-   * @param node 
+   * @param node
    */
   pickNode(node: BiLinkedList<number>): void {
     node.next.pre = node.pre
@@ -701,26 +701,67 @@ function lenLongestFibSubseq(arr: number[]): number {
 
    */
   const map = new Map<number, number>()
-  for(let i = 0; i < arr.length; i++){
+  for (let i = 0; i < arr.length; i++) {
     map.set(arr[i], i)
   }
 
   const dp = [...Array(arr.length)].map(_ => Array(arr.length - 1).fill(0))
-  
 
   let res = 0
-  for(let i = 0; i < arr.length; i++){
-    for(let j = 0; j < i; j++){
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < i; j++) {
       const ak = arr[i] - arr[j]
-      if(map.has(ak) && map.get(ak) < j){
+      if (map.has(ak) && map.get(ak) < j) {
         dp[i][j] = dp[j][map.get(ak)] + 1
-      }else {
+      } else {
         dp[i][j] = 2
       }
       res = Math.max(res, dp[i][j])
     }
   }
-   
-   return res < 3 ? 0 : res
 
-};
+  return res < 3 ? 0 : res
+}
+
+/**
+ * 剑指 Offer II 094. 最少回文分割
+ (动态规划)
+ * @param s
+ */
+function minCut(s: string): number {
+  if (s.length === 1) return 0
+  const len = s.length,
+    dp = [...Array(len)].map(_ => Array(len).fill(false))
+  for (let i = len - 1; i >= 0; i--) {
+    dp[i][i] = true
+    for (let j = i + 1; j < len; j++) {
+      dp[i][j] = s.charAt(i) === s.charAt(j)
+      if (j - i > 2) {
+        dp[i][j] = dp[i][j] && dp[i + 1][j - 1]
+      }
+    }
+  }
+
+  /**
+   f[i]表示从0-i的最少切割数。
+   则f[i] = min{f[j]} + 1， 其中j = 0->i - 1 且 dp[j + 1][i] = true
+   但如果dp[0][i] = true， 则f[i] = 0
+   */
+  const f = [...Array(len)].fill(len)
+
+  for (let i = 0; i < len; i++) {
+    if (dp[0][i]) {
+      f[i] = 0
+      continue
+    }
+    for (let j = 0; j < i; j++) {
+      if (dp[j + 1][i]) {
+        f[i] = Math.min(f[i], f[j])
+      }
+    }
+    f[i] += 1
+  }
+
+  return f[len - 1]
+}
+minCut('aabbacabc')
