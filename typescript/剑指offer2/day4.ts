@@ -764,4 +764,34 @@ function minCut(s: string): number {
 
   return f[len - 1]
 }
-minCut('aabbacabc')
+
+/**
+ * 剑指 Offer II 032. 有效的变位词
+ * @param s
+ * @param t
+ */
+function isAnagram(s: string, t: string): boolean {
+  if (s.length !== t.length || s === t) return false
+  const ms = new Map<string, number>()
+  for (let i = 0; i < s.length; i++) {
+    const sc = s.charAt(i)
+    if (ms.has(sc)) {
+      ms.set(sc, ms.get(sc) + 1)
+    } else {
+      ms.set(sc, 1)
+    }
+  }
+
+  for (let i = 0; i < t.length; i++) {
+    const st = t.charAt(i)
+    if (ms.has(st)) {
+      const n = ms.get(st)
+      if(n === 0) return false
+      ms.set(st, n - 1)
+    } else {
+      return false
+    }
+  }
+  return true
+}
+// isAnagram('ads', 'sda')
