@@ -681,3 +681,46 @@ class LRUCache {
     node.pre.next = node.next
   }
 }
+
+/**
+ * 剑指 Offer II 093. 最长斐波那契数列
+ (动态规划)
+ * @param arr 
+ */
+function lenLongestFibSubseq(arr: number[]): number {
+  /**
+  arr = [1,2,3,4,5,6,7,8]
+
+  dp[i][j] 表示该形式的斐波那契数列[..., arr[j], arr[i]]，以arr[j], arr[i]结尾
+  
+  1. 使用map保存所有数字和它们的下标
+  2. 遍历arr, 对于arr[i], 遍历arr[0 -> i - 1]，如果map中存在一个数arr[k], 使得arr[k] + arr[j] = arr[i]
+      则令dp[i][j] = dp[j][k] + 1
+  3. 如果不存在，则[arr[j], arr[i]]为一个斐波那契数列的前两个数字。dp[i][j] = 2
+  4. 令res = Math.max(res, dp[i][j])
+
+   */
+  const map = new Map<number, number>()
+  for(let i = 0; i < arr.length; i++){
+    map.set(arr[i], i)
+  }
+
+  const dp = [...Array(arr.length)].map(_ => Array(arr.length - 1).fill(0))
+  
+
+  let res = 0
+  for(let i = 0; i < arr.length; i++){
+    for(let j = 0; j < i; j++){
+      const ak = arr[i] - arr[j]
+      if(map.has(ak) && map.get(ak) < j){
+        dp[i][j] = dp[j][map.get(ak)] + 1
+      }else {
+        dp[i][j] = 2
+      }
+      res = Math.max(res, dp[i][j])
+    }
+  }
+   
+   return res < 3 ? 0 : res
+
+};
