@@ -219,7 +219,7 @@ function numDistinct(s: string, t: string): number {
   if (s.length < t.length) return 0
   const dp = [...Array(s.length + 1)].map(i => [...Array(t.length + 1)].fill(0))
   // 边界1：dp[i][0] = 1. 因为s[:i]包含空串的子序列为1
-  for(let i = 0; i < dp.length; i++) dp[i][0] = 1
+  for (let i = 0; i < dp.length; i++) dp[i][0] = 1
   for (let i = 1; i < dp.length; i++) {
     const sc = s.charAt(i - 1)
     // 边界2：当i < j时，dp[i][j] = 0. 因为短的字符串一定不包含长的字符串
@@ -233,4 +233,44 @@ function numDistinct(s: string, t: string): number {
     }
   }
   return dp[s.length][t.length]
+}
+
+/**
+ * 剑指 Offer II 037. 小行星碰撞
+ * @param asteroids
+ */
+function asteroidCollision(a: number[]): number[] {
+  /**
+  使用栈A: number[][], A[i]存储a[i]和下标i
+
+  1. 遍历a, 如果a[i] > 0, 直接把[a[i], i]压入A
+  2. 如果a[i] < 0.
+     从栈顶开始遍历栈A,如果|A[k][0]| < |a[i]|, 则移除栈顶A[k], 并把a[k] = 0
+     如果|A[k]| > |a[i]|, 则令a[i] = 0, 然后break
+     如果|A[k]| == |a[i]|, 则移除栈顶A[k]，且令a[k] = 0, 然后break
+  3. 把a[i] == 0 的过滤
+   */
+
+  const A: number[][] = []
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] > 0) {
+      A.push([a[i], i])
+      continue
+    }
+    while (A.length) {
+      const len = A.length - 1
+      if (Math.abs(A[len][0]) < -a[i]) {
+        a[A.pop()[1]] = 0
+      } else if (Math.abs(A[len][0]) > -a[i]) {
+        a[i] = 0
+        break
+      } else {
+        a[A.pop()[1]] = 0
+        a[i] = 0
+        break
+      }
+    }
+  }
+
+  return a.filter(i => i !== 0)
 }
