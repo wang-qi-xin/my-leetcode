@@ -1,3 +1,5 @@
+import { quickSort } from '../utils/排序/quickSort'
+
 /**
  * 剑指 Offer II 095. 最长公共子序列
  (动态规划)
@@ -112,3 +114,41 @@ function isInterleave(s1: string, s2: string, s3: string): boolean {
   }
   return dp[len1][len2]
 }
+
+/**
+ * 剑指 Offer II 035. 最小时间差
+ * @param timePoints
+ */
+function findMinDifference(timePoints: string[]): number {
+  /**
+   时间总共有24 * 60 = 1440个。
+   如果timePoints.length > 1440. 那么其中肯定有两个时间一样，此时返回0
+
+   1. 将timePoints转为二维数组。[[h, m], [h, m]]
+   2. 对二维数组进行排序，优先h
+   3. 遍历排序后的数组。找出间隔最小的时间差。
+
+   */
+  if (timePoints.length > 1440) return 0
+  let times: number[][] = timePoints.map(time => {
+    let t = time.split(':')
+    return [+t[0], +t[1]]
+  })
+  const compareFn = (a: number[], b: number[]) => {
+    if (a[0] === b[0]) return a[1] - b[1]
+    return a[0] - b[0]
+  }
+  quickSort(times, compareFn)
+  console.log(times)
+  let min = Number.MAX_SAFE_INTEGER
+  for (let i = 1; i < times.length; i++) {
+    const interval = (times[i][0] - times[i - 1][0]) * 60 + times[i][1] - times[i - 1][1]
+    min = Math.min(interval, min)
+  }
+  min = Math.min(min, times[0][0] * 60 + times[0][1] + (24 - times[times.length - 1][0]) * 60 - times[times.length - 1][1])
+  console.log(min)
+
+  return min
+}
+
+findMinDifference(['00:00', '12:18', '19:19', '23:11'])
