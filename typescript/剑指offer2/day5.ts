@@ -151,4 +151,44 @@ function findMinDifference(timePoints: string[]): number {
   return min
 }
 
-findMinDifference(['00:00', '12:18', '19:19', '23:11'])
+// findMinDifference(['00:00', '12:18', '19:19', '23:11'])
+/**
+ * 剑指 Offer II 036. 后缀表达式
+ * @param tokens
+ */
+function evalRPN(tokens: string[]): number {
+  /**
+   1. 将+-*\放入set用来判断
+   2. 遍历tokens， 如果token是数字，就将其压入栈中stack
+   2. 如果token是符号，就将栈顶两个数字取出，进行运算后压入栈中
+   */
+  const stack: number[] = []
+  for (let i = 0; i < tokens.length; i++) {
+    const c = tokens[i]
+    if (isNaN(+c)) {
+      let result = 0,
+        one = stack.pop(),
+        two = stack.pop()
+      if (c === '+') {
+        result = one + two
+      } else if (c === '-') {
+        result = two - one
+      } else if (c === '*') {
+        result = two * one
+      } else {
+        result = two / one
+        if (result < 0) {
+          result = Math.ceil(result)
+        } else {
+          result = Math.floor(two / one)
+        }
+      }
+      stack.push(result)
+    } else {
+      stack.push(+c)
+    }
+  }
+  console.log(stack)
+
+  return stack[0]
+}
