@@ -274,3 +274,31 @@ function asteroidCollision(a: number[]): number[] {
 
   return a.filter(i => i !== 0)
 }
+
+/**
+ * 剑指 Offer II 038. 每日温度
+ （逆向思考）
+ * @param temperatures
+ */
+function dailyTemperatures(temperatures: number[]): number[] {
+  /**
+   逆向思维: 对于每一天，向前看，把比该天气温低的都修改一下。
+
+   使用单调栈stack
+   1. 遍历t, 如果栈不为空，且栈顶元素j, t[j]小于t[i], 
+      就把栈顶元素对应的下标j取出。
+      令res[j] = i - j 
+   2. 然后把栈顶元素pop出去。直到栈顶元素小于t[i],或为空
+   3. 把当前元素下标i存入stack
+   */
+
+   const stack: number[] = [], res: number[] = [...Array(temperatures.length).fill(0)]
+   for(let i = 0; i < temperatures.length; i++) {
+     while(stack.length && temperatures[stack[stack.length - 1]] < temperatures[i]){
+       const j = stack.pop()
+       res[j] = i - j
+     }
+     stack.push(i)
+   }
+   return res
+}
