@@ -192,3 +192,45 @@ function evalRPN(tokens: string[]): number {
 
   return stack[0]
 }
+
+/**
+ * 剑指 Offer II 097. 子序列的数目---困难
+ （动态规划）
+ * @param s
+ * @param t
+ */
+function numDistinct(s: string, t: string): number {
+  /**
+  动态规划
+
+  dp[i][j] 表示s[:i]中子序列包含t[:j]的个数
+  1. 首先如果s[i] !== t[j], 则dp[i][j] = dp[i - 1][j]. 因为s[:i]的包含t[:j]的子序列，一定不包含s[i], 有没有s[i]无所谓。
+      所以等于s[:i - 1]中包含t[:j]的子序列数，也就是dp[i - 1][j]
+  2. 如果s[i] === t[j], 有2个情况
+      a. 包含s[i], 也就是s[:i]中包含t[:j]的子序列，的最后一位是s[i] == t[j], dp[i][j] = s[:i - 1]中包含t[:j - 1]的子序列数dp[i - 1][j - 1]
+      b. 不包含s[i], 也就是s[:i - 1]中包含t[:j]的子序列数，也就是dp[i - 1][j]
+  
+
+  边界
+  1. 当i < j时，dp[i][j] = 0. 因为短的字符串一定不包含长的字符串
+  2. dp[i][0] = 1. 因为s[:i]包含空串的子序列为1
+   */
+
+  if (s.length < t.length) return 0
+  const dp = [...Array(s.length + 1)].map(i => [...Array(t.length + 1)].fill(0))
+  // 边界1：dp[i][0] = 1. 因为s[:i]包含空串的子序列为1
+  for(let i = 0; i < dp.length; i++) dp[i][0] = 1
+  for (let i = 1; i < dp.length; i++) {
+    const sc = s.charAt(i - 1)
+    // 边界2：当i < j时，dp[i][j] = 0. 因为短的字符串一定不包含长的字符串
+    for (let j = 1; j <= i && j < dp[0].length; j++) {
+      const st = t.charAt(j - 1)
+      if (sc === st) {
+        dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]
+      } else {
+        dp[i][j] = dp[i - 1][j]
+      }
+    }
+  }
+  return dp[s.length][t.length]
+}
