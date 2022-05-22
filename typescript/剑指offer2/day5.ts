@@ -292,13 +292,58 @@ function dailyTemperatures(temperatures: number[]): number[] {
    3. 把当前元素下标i存入stack
    */
 
-   const stack: number[] = [], res: number[] = [...Array(temperatures.length).fill(0)]
-   for(let i = 0; i < temperatures.length; i++) {
-     while(stack.length && temperatures[stack[stack.length - 1]] < temperatures[i]){
-       const j = stack.pop()
-       res[j] = i - j
-     }
-     stack.push(i)
-   }
-   return res
+  const stack: number[] = [],
+    res: number[] = [...Array(temperatures.length).fill(0)]
+  for (let i = 0; i < temperatures.length; i++) {
+    while (stack.length && temperatures[stack[stack.length - 1]] < temperatures[i]) {
+      const j = stack.pop()
+      res[j] = i - j
+    }
+    stack.push(i)
+  }
+  return res
+}
+
+/**
+ * 剑指 Offer II 039. 直方图最大矩形面积
+ (单调栈)
+ * @param heights
+ */
+function largestRectangleArea(heights: number[]): number {
+  /**
+   单调栈
+
+   求出以heights[i]为高的面积最大的矩阵。需要以i为中心左右扩展，找到第一个比heights[i]小的柱子。
+   如果使用暴力法，时间复杂度O(N)
+
+   1. 使用单调栈保存单调递增的height，如果当前height[i]比栈顶元素大，则入栈。
+   2. 如果height[i] <= 栈顶元素height[j]，j = stack.pop(), 说明以height[j]为高的面积最大的矩阵的右边界就是i
+      而左边界就是stack.peek(), 因为stack单调递增，stack.peek()刚好就是第一个小于height[j]的数
+   3. 那么以height[j]为高的矩阵面积就是height[j] * (i - stack.peek() - 1)
+   4. 循环，直到stack中没有元素，或者height[i] 比栈顶元素大。
+
+   边界处理
+   1. 假设heights = [5, 1], 那么当i = 1时，栈中就一个0（height[0] = 5 < height[1]）
+      那么当stack.pop()，以后，stack.peek()就会报错
+      而正确的计算面积方式的width为（i - stack.peek() - 1） = 1
+      
+      * 所以给stack中提前放入一个-1，就可以省去判断边界了。
+   2. 假设heights = [1, 2, 3], 那么当for循环结束后，栈中还剩余[1,2,3], 而面积还未计算过。此时还需要额外判断
+
+      * 可以给heights末尾添加一个0.那么for循环结束以后，栈中一定为空。
+  
+   */
+
+  const stack: number[] = [-1]
+  heights.push(0)
+  let max = 0
+  for (let i = 0; i < heights.length; i++) {
+    while (stack.length > 1 && heights[stack[stack.length - 1]] >= heights[i]) {
+      const h = stack.pop()
+      max = Math.max(max, heights[h] * (i - stack[stack.length - 1] - 1))
+    }
+
+    stack.push(i)
+  }
+  return max
 }
