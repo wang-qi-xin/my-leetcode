@@ -347,3 +347,32 @@ function largestRectangleArea(heights: number[]): number {
   }
   return max
 }
+
+/**
+ * 剑指 Offer II 040. 矩阵中最大的矩形
+ * @param matrix
+ */
+function maximalRectangle(matrix: string[]): number {
+  /**
+   与 剑指 Offer II 039. 直方图最大矩形面积
+   息息相关
+
+   先使用动态规划对matrix进行预处理。然后对每一行都调用largestRectangleArea。求出最大值。
+   */
+  if (matrix.length === 0 || matrix[0].length === 0) return 0
+  const dp = [...Array(matrix.length + 1)].map(i => [...Array(matrix[0].length)].fill(0))
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[0].length; j++) {
+      const c = +matrix[i].charAt(j)
+      if (c === 1) {
+        dp[i + 1][j] = 1 + dp[i][j]
+      }
+    }
+  }
+
+  let max = 0
+  for (let i = 1; i < dp.length; i++) {
+    max = Math.max(max, largestRectangleArea(dp[i]))
+  }
+  return max
+}
