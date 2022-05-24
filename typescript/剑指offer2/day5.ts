@@ -501,3 +501,39 @@ dp[i][j] 表示能否从nums[0:i]中取出若干元素，使得它们的和为j
   }
   return dp[nums.length][target]
 }
+
+/**
+ * 剑指 Offer II 101. 分割等和子集
+ (动态规划-01背包)
+ * @param nums
+ */
+function canPartition2(nums: number[]): boolean {
+  /**
+   空间优化
+   */
+  if (nums.length < 2) return false
+  let sum = 0,
+    maxValue = Number.MIN_SAFE_INTEGER
+  for (let i = 0; i < nums.length; i++) {
+    sum += nums[i]
+    maxValue = Math.max(maxValue, nums[i])
+  }
+  if (sum & 1) return false
+
+  const target = sum / 2
+  if (target < maxValue) return false
+
+  // dp[i][j], 0 <= i <= nums.length, 表示选择nums里的元素数量
+  // 0 <= j <= target, 表示元素和为0 -> target
+  const dp = [...Array(target + 1)].fill(false)
+  dp[0] = true
+
+  for (let i = 1; i <= nums.length; i++) {
+    for (let j = dp.length - 1; j >= 0; j--) {
+      if (j - nums[i - 1] >= 0) {
+        dp[j] ||= dp[j - nums[i - 1]]
+      }
+    }
+  }
+  return dp[target]
+}
