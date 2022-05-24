@@ -376,3 +376,36 @@ function maximalRectangle(matrix: string[]): number {
   }
   return max
 }
+
+/**
+ * 剑指 Offer II 099. 最小路径之和
+ * @param grid
+ */
+function minPathSum(grid: number[][]): number {
+  /**
+  动态规划。
+  
+  dp[i][j] 表示从[0][0]到[i][j]格子的最小路径和。
+  dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1])
+
+  边界条件。
+  1. dp[0][0] = grid[0][0]
+  2. dp[i][0] += dp[i - 1][0], 第一列
+  3. dp[0][j] += dp[0][j - 1], 第一行
+  */
+  const m = grid.length,
+    n = grid[0].length
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i === 0 && j === 0) continue
+      if (i === 0) {
+        grid[i][j] += grid[i][j - 1]
+      } else if (j === 0) {
+        grid[i][j] += grid[i - 1][j]
+      } else if (i !== 0 && j !== 0) {
+        grid[i][j] += Math.min(grid[i - 1][j], grid[i][j - 1])
+      }
+    }
+  }
+  return grid[m - 1][n - 1]
+}
