@@ -409,3 +409,38 @@ function minPathSum(grid: number[][]): number {
   }
   return grid[m - 1][n - 1]
 }
+
+/**
+ * 剑指 Offer II 100. 三角形中最小路径之和
+ * @param triangle
+ */
+function minimumTotal(triangle: number[][]): number {
+  /**
+ dp[i][j] 表示自顶点到triangle[i][j]的最小路径和
+  
+ 每一点只能由上一层的j或j-1过来。
+ dp[i][j] = triangle[i][j] + Math.min(dp[i - 1][j], dp[i - 1][j - 1])
+
+ 边界值
+ 1. dp[0][0] = triangle[0][0]
+ 2. dp[i][0] += dp[i - 1][0], 第一列只能由上一层的第一列过来。
+ 3. dp[i][triangle[i].length - 1] += dp[i - 1][triangle[i - 1].length - 1]. 每一行最右边的点，只能由上一层最右边的点过来。
+ */
+  let min = Number.MAX_SAFE_INTEGER
+  for (let i = 1; i < triangle.length; i++) {
+    for (let j = 0; j < triangle[i].length; j++) {
+      if (j === 0) {
+        triangle[i][0] += triangle[i - 1][0]
+      } else if (j === triangle[i].length - 1) {
+        triangle[i][j] += triangle[i - 1][triangle[i - 1].length - 1]
+      } else {
+        triangle[i][j] += Math.min(triangle[i - 1][j], triangle[i - 1][j - 1])
+      }
+    }
+  }
+  for (let i = 0, last = triangle.length - 1; i < triangle[last].length; i++) {
+    min = Math.min(min, triangle[last][i])
+  }
+  return min
+}
+
