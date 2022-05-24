@@ -444,3 +444,60 @@ function minimumTotal(triangle: number[][]): number {
   return min
 }
 
+/**
+ * 剑指 Offer II 101. 分割等和子集
+ (动态规划-01背包)
+ * @param nums
+ */
+function canPartition(nums: number[]): boolean {
+  /**
+动态规划
+
+1. 首先如果nums.length < 2，肯定不能分割，直接返回false
+2. 遍历nums, 求和sum, 以及maxValue.
+   如果sum 是奇数，肯定不能分割，直接返回false
+   如果maxValue > sum / 2, 肯定不能分割，直接返回false
+
+dp[i][j] 表示能否从nums[0:i]中取出若干元素，使得它们的和为j
+对于nums[i][j] 有选或不选两种状态。所以dp[i][j]取决于nums[i][j]选或不选。
+1. 假如nums[i][j]需要选择，
+   dp[i - 1][j - nums[i][j]] = true表示能从nums[0:i - 1]中选出若干元素，使其和为j - nums[i][j], 
+   则再加上nums[i][j], 则dp[i][j] = true
+2. 假如nums[i][j]不需要选择
+   dp[i - 1][j] = true, 表示能从nums[0:i - 1]中选入若干元素，使其和为j，此时就不用nums[i][j]了
+ 
+
+边界值
+1. dp[i][0] = true， 从i个元素中，选择0个元素其和为0
+2. dp[0][j] = false, 不能从0个元素中，选择其和为j, (j > 0)
+ */
+  if (nums.length < 2) return false
+  let sum = 0,
+    maxValue = Number.MIN_SAFE_INTEGER
+  for (let i = 0; i < nums.length; i++) {
+    sum += nums[i]
+    maxValue = Math.max(maxValue, nums[i])
+  }
+  if (sum & 1) return false
+
+  const target = sum / 2
+  if (target < maxValue) return false
+
+  // dp[i][j], 0 <= i <= nums.length, 表示选择nums里的元素数量
+  // 0 <= j <= target, 表示元素和为0 -> target
+  const dp = [...Array(nums.length + 1)].map(i => [...Array(target + 1)].fill(false))
+
+  for (let i = 0; i < dp.length; i++) {
+    dp[i][0] = true
+  }
+  for (let i = 1; i < dp.length; i++) {
+    for (let j = 1; j < dp[0].length; j++) {
+      // 不选择nums[i - 1]
+      dp[i][j] = dp[i - 1][j]
+      if (j - nums[i - 1] >= 0) {
+        dp[i][j] ||= dp[i - 1][j - nums[i - 1]]
+      }
+    }
+  }
+  return dp[nums.length][target]
+}
