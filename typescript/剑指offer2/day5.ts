@@ -537,3 +537,80 @@ function canPartition2(nums: number[]): boolean {
   }
   return dp[target]
 }
+
+/**
+ * 剑指 Offer II 102. 加减的目标值
+ (回溯--超时)
+ * @param nums
+ * @param target
+ */
+function findTargetSumWays(nums: number[], target: number): number {
+  /**
+ 回溯
+ */
+  let res = 0,
+    sum = 0,
+    len = nums.length
+  const dfs = (pos: number) => {
+    if (pos === len) {
+      if (sum === target) res++
+      return
+    }
+    sum += nums[pos]
+    dfs(pos + 1)
+    sum -= 2 * nums[pos]
+    dfs(pos + 1)
+    sum += nums[pos]
+  }
+  dfs(0)
+  return res
+}
+
+/**
+ * 剑指 Offer II 102. 加减的目标值
+ (动态规划)
+ * @param nums
+ * @param target
+ */
+function findTargetSumWays2(nums: number[], target: number): number {
+  /**
+  假设某个符合条件的集合中，前面添加-的元素之和为neg, 添加+的元素和为sum - neg.
+  则右target = (sum - neg) - neg = sum - 2 * neg = target
+      neg = (sum - target) / 2
+  
+  由于nums全部为非负正整数，则neg也是非负正整数。则sum - target 需要为非负偶数。
+
+  相当于在nums中寻找若干个元素，使得元素和为neg。转化为01背包问题。
+
+  1. dp[i][j] 表示在nums[0:i]中选取若干元素，使其和为j的选择方式数量。
+  2. 对于nums[i], 有两种状态，选或不选。
+     选: 则dp[i][j] = dp[i - 1][j - nums[i]]
+     不选: 则dp[i][j] = dp[i - 1][j]
+  3. 所以dp[i][j] = dp[i - 1][j - nums[i]] + dp[i - 1][j]
+
+  边界条件
+  1. dp[0][0] = 1, 在0个元素中选择若干元素，使其和为0的选择方式只有一种。
+  2. dp[0][j] = 0,(j > 0), 在0个元素中选择若干元素，使其和为j > 0的选择方式为0。
+ */
+  let sum = 0
+  for (let i = 0; i < nums.length; i++) {
+    sum += nums[i]
+  }
+  
+  if ((sum - target) < 0 || (sum - target) & 1) return 0
+  const neg = (sum - target) / 2
+
+  const dp = [...Array(nums.length + 1)].map(i => [...Array(neg + 1)].fill(0))
+  dp[0][0] = 1
+
+  for (let i = 1; i < dp.length; i++) {
+    for (let j = 0; j < dp[i].length; j++) {
+      dp[i][j] = dp[i - 1][j]
+      if (j - nums[i - 1] >= 0) {
+        dp[i][j] += dp[i - 1][j - nums[i - 1]]
+      }
+    }
+  }
+
+  return dp[nums.length][neg]
+}
