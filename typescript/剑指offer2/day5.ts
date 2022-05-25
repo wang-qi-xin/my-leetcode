@@ -596,8 +596,8 @@ function findTargetSumWays2(nums: number[], target: number): number {
   for (let i = 0; i < nums.length; i++) {
     sum += nums[i]
   }
-  
-  if ((sum - target) < 0 || (sum - target) & 1) return 0
+
+  if (sum - target < 0 || (sum - target) & 1) return 0
   const neg = (sum - target) / 2
 
   const dp = [...Array(nums.length + 1)].map(i => [...Array(neg + 1)].fill(0))
@@ -614,3 +614,43 @@ function findTargetSumWays2(nums: number[], target: number): number {
 
   return dp[nums.length][neg]
 }
+
+/**
+ * 剑指 Offer II 103. 最少的硬币数目
+ （回溯）
+ * @param coins
+ * @param amount
+ */
+function coinChange(coins: number[], amount: number): number {
+  /**
+   回溯
+
+   在coins中选择若干硬币使得和为amount的最小数量s = 在coins中选择若干硬币使得和为(amount - coins[i])的最小数量 + 1, 取最小值。
+   也就是s(amount) = Math.min(s(amount - coins[i])) + 1
+
+   使用conut[i]表示凑齐和为i的最小硬币数量。
+
+   边界
+   1. s(0) = 0, 选择0个硬币，和为0
+   2. s(负数) = -1, 表示无法选择一个数量，使得和为负数 
+   */
+  if (amount < 1) return 0
+
+  const dfs = (rem: number, count: number[]): number => {
+    if (rem === 0) return 0
+    if (rem < 0) return -1
+
+    // 和为rem - 1的情况已经计算过了，就不用再算了。
+    if (count[rem - 1] !== 0) return count[rem - 1]
+    let min = Number.MAX_SAFE_INTEGER
+    for (let i = 0; i < coins.length; i++) {
+      const res = dfs(rem - coins[i], count)
+      if (res >= 0) min = Math.min(min, res)
+    }
+    count[rem - 1] = min === Number.MAX_SAFE_INTEGER ? -1 : min + 1
+    return count[rem - 1]
+  }
+  return dfs(amount, [...Array(amount)].fill(0))
+}
+
+coinChange([1, 2, 5], 11)
