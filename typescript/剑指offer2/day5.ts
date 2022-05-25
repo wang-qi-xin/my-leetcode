@@ -653,4 +653,35 @@ function coinChange(coins: number[], amount: number): number {
   return dfs(amount, [...Array(amount)].fill(0))
 }
 
-coinChange([1, 2, 5], 11)
+// coinChange([1, 2, 5], 11)
+
+/**
+ * 剑指 Offer II 104. 排列的数目
+ （动态规划）
+ * @param nums
+ * @param target
+ */
+function combinationSum4(nums: number[], target: number): number {
+  /**
+   dp[i] 表示从nums中选择若干元素，和为i的数量。 
+
+   遍历nums, 对于nums[i]来说，dp[i - nums[i]]表示从nums中选择若干元素，使得和为i - nums[i]的排列数。
+   如果在该排列后面添加一个nums[i], 则该排列的和刚好为i。对所有的dp[i - nums[i]]进行累加，就是dp[i]
+   所以dp[i] += dp[i - nums[i]]
+
+   边界：
+   1. dp[0] = 1, 和为0的排列数只有一种。
+   */
+  const dp = [...Array(target + 1)].fill(0)
+  dp[0] = 1
+
+  for (let i = 1; i <= target; i++) {
+    for (let j = 0; j < nums.length; j++) {
+      if (i - nums[j] >= 0) {
+        dp[i] += dp[i - nums[j]]
+      }
+    }
+  }
+
+  return dp[target]
+}
