@@ -685,3 +685,44 @@ function combinationSum4(nums: number[], target: number): number {
 
   return dp[target]
 }
+
+/**
+ * 剑指 Offer II 105. 岛屿的最大面积
+ (深度优先搜索)
+ * @param grid
+ */
+function maxAreaOfIsland(grid: number[][]): number {
+  /**
+  深度优先搜索
+
+   1. 遍历网格的每一个点grid[i][j], 计算包含该点的最大岛屿面积。
+   2. 使用max保存所有遍历结果的最大值。
+   3. 每当访问过某一点后，将该点置为0，防止重复访问。
+   */
+  let max = 0
+  const m = grid.length,
+    n = grid[0].length
+  const dfs = (i: number, j: number): number => {
+    if (i < 0 || j < 0 || i === m || j === n || grid[i][j] === 0) return 0
+    grid[i][j] = 0
+
+    let res = 1,
+      d = [
+        [0, 1],
+        [0, -1],
+        [1, 0],
+        [-1, 0]
+      ]
+    for (let index = 0; index < 4; index++) {
+      res += dfs(i + d[index][0], j + d[index][1])
+    }
+    return res
+  }
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      max = Math.max(max, dfs(i, j))
+    }
+  }
+
+  return max
+}
