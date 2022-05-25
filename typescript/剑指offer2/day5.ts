@@ -726,3 +726,56 @@ function maxAreaOfIsland(grid: number[][]): number {
 
   return max
 }
+
+/**
+ * 剑指 Offer II 105. 岛屿的最大面积
+ (深度优先搜索 - 使用栈模拟)
+ * @param grid
+ */
+function maxAreaOfIsland2(grid: number[][]): number {
+  /**
+  深度优先搜索
+
+   1. 遍历网格的每一个点grid[i][j], 计算包含该点的最大岛屿面积。
+   2. 使用max保存所有遍历结果的最大值。
+   3. 每当访问过某一点后，将该点置为0，防止重复访问。
+   */
+  let max = 0
+  const m = grid.length,
+    n = grid[0].length
+  // 方向向量
+  let d = [
+    [0, 1],
+    [0, -1],
+    [1, 0],
+    [-1, 0]
+  ]
+  const dfs = (i: number, j: number): number => {
+    const stacki = [i],
+      stackj = [j]
+    let area = 0
+    while (stacki.length) {
+      const curi = stacki.pop(),
+        curj = stackj.pop()
+      // 如果超出边界，或者该点已经访问过了。
+      if (curi < 0 || curj < 0 || curi === m || curj === n || grid[curi][curj] === 0) continue
+      // 该点尚未访问过。
+      area++
+      // 做标记，防止重复访问
+      grid[curi][curj] = 0
+      // 将当前访问点的四个相邻点，都添加到栈中。
+      for (let index = 0; index < 4; index++) {
+        stacki.push(curi + d[index][0])
+        stackj.push(curj + d[index][1])
+      }
+    }
+    return area
+  }
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      max = Math.max(max, dfs(i, j))
+    }
+  }
+
+  return max
+}
