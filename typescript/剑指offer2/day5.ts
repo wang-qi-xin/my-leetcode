@@ -779,3 +779,25 @@ function maxAreaOfIsland2(grid: number[][]): number {
 
   return max
 }
+
+/**
+ * 剑指 Offer II 041. 滑动窗口的平均值
+ */
+class MovingAverage {
+  queue: number[]
+  size: number
+  sum: number
+  constructor(size: number) {
+    this.queue = []
+    this.size = size
+    this.sum = 0
+  }
+
+  next(val: number): number {
+    this.queue.push(val)
+    this.sum += val
+    // 队列长度到达size，需要移除队首元素，且sum -= queue.shift()
+    if(this.queue.length > this.size) this.sum -= this.queue.shift()
+    return this.sum / this.queue.length
+  }
+}
