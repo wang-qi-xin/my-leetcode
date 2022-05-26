@@ -191,3 +191,31 @@ function updateMatrix2(mat: number[][]): number[][] {
 
   return dp.slice(1, dp.length - 1).map(row => row.slice(1, row.length - 1))
 }
+
+/**
+ * 剑指 Offer II 044. 二叉树每层的最大值
+ * @param root
+ */
+function largestValues(root: TreeNode | null): number[] {
+  /**
+ 层次遍历root
+ 1. 每一层之间用MAX_VALUE节点来分割。
+ 2. 用max来记录每一层的最大值
+ */
+  if (!root) return []
+  const queue: TreeNode[] = [root, new TreeNode(Number.MAX_SAFE_INTEGER)]
+  const res: number[] = []
+  while (queue.length > 1) {
+    let max = Number.MIN_SAFE_INTEGER
+    while (queue[0].val !== Number.MAX_SAFE_INTEGER) {
+      const node = queue.shift()
+      max = Math.max(max, node.val)
+      if (node.left) queue.push(node.left)
+      if (node.right) queue.push(node.right)
+    }
+    res.push(max)
+    queue.shift()
+    queue.push(new TreeNode(Number.MAX_SAFE_INTEGER))
+  }
+  return res
+}
