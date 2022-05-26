@@ -140,3 +140,54 @@ function updateMatrix(mat: number[][]): number[][] {
   }
   return mat
 }
+
+/**
+ * 剑指 Offer II 107. 矩阵中的距离
+ (动态规划)
+ * @param mat
+ */
+function updateMatrix2(mat: number[][]): number[][] {
+  /**
+  动态规划
+
+  求point[i][j]距离上下左右四个方向直线上和0的最短距离。再取最小值。
+
+  1. 先从左上角向右下角来一次动态规划。
+      dp[i][j]表示point[i][j]距离最近的0的距离。
+
+      如果mat[i][j] == 0, dp[i][j] = 0
+      否则dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1])
+  2. 从右下角向左上角来一次动态规划。这一次还要考虑dp[i][j]本身的大小。
+
+  边界:
+  1. 当位于边界时，只需要判断某一个方向的最小值。
+  2. 当位于左上角顶点时，如果mat[i][j] == 0, 那么dp[i][j] == 0, 
+      否则直接跳过。
+
+  优化：
+  1. 将dp的大小额外增加2，则不用判断边界条件。最后返回删减后的dp
+  */
+  const dp = [...Array(mat.length + 2)].map(i => [...Array(mat[0].length + 2)].fill(Number.MAX_SAFE_INTEGER))
+  for (let i = 1; i < dp.length - 1; i++) {
+    for (let j = 1; j < dp[0].length - 1; j++) {
+      if (mat[i - 1][j - 1] !== 0) {
+        dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + 1
+      } else {
+        dp[i][j] = 0
+      }
+    }
+  }
+
+  for (let i = dp.length - 2; i > 0; i--) {
+    for (let j = dp[0].length - 2; j > 0; j--) {
+      if (mat[i - 1][j - 1] === 0) {
+        dp[i][j] = 0
+      } else {
+        // dp[i][j]可能对于左上方向，有距离更近的0.
+        dp[i][j] = Math.min(dp[i][j], Math.min(dp[i + 1][j], dp[i][j + 1]) + 1)
+      }
+    }
+  }
+
+  return dp.slice(1, dp.length - 1).map(row => row.slice(1, row.length - 1))
+}
