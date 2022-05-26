@@ -1,3 +1,5 @@
+import { TreeNode } from '../utils/数据结构/struct'
+
 /**
  * 剑指 Offer II 106. 二分图
  (染色法。 深度优先遍历。)
@@ -41,3 +43,54 @@ function isBipartite(graph: number[][]): boolean {
   }
   return valid
 }
+
+/**
+ * 剑指 Offer II 043. 往完全二叉树添加节点
+ */
+class CBTInserter {
+  root: TreeNode
+  queue: TreeNode[]
+  /**
+   1. 使用层次遍历法，
+   2. 如果某个节点的右子树为空，或者该节点时叶子结点，就开始把后续的节点全部加入队列queue
+   * @param root 
+   */
+  constructor(root: TreeNode | null) {
+    this.root = root
+    this.queue = [root]
+    // 如果该节点的left为空，那该节点就是叶子结点。
+    while (this.queue[0].left !== null && this.queue[0].right !== null) {
+      const firstNode = this.queue.shift()
+      this.queue.push(firstNode.left)
+      this.queue.push(firstNode.right)
+    }
+    if (this.queue[0].left !== null) {
+      this.queue.push(this.queue[0].left)
+    }
+  }
+  /**
+     1. 从队首拿出一个节点node,将新节点加入queue，
+     2. 如果node节点的左子树为空，就将新节点当做node的左子树。
+     3. 如果node节点的右子树不为空，就将新节点当做node的右子树。将node从queue中取出
+     4. 并返回node
+     * 
+     * @param v 
+     */
+  insert(v: number): number {
+    const parentNode = this.queue[0]
+    const newNode = new TreeNode(v)
+    this.queue.push(newNode)
+    if (parentNode.left === null) {
+      parentNode.left = newNode
+    } else if (parentNode.right === null) {
+      parentNode.right = newNode
+      this.queue.shift()
+    }
+    return parentNode.val
+  }
+
+  get_root(): TreeNode | null {
+    return this.root
+  }
+}
+
