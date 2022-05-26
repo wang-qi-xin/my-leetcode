@@ -219,3 +219,31 @@ function largestValues(root: TreeNode | null): number[] {
   }
   return res
 }
+
+/**
+ * 剑指 Offer II 045. 二叉树最底层最左边的值
+ * @param root
+ */
+function findBottomLeftValue(root: TreeNode | null): number {
+  /**
+   层次遍历
+
+   1. 将root入队。
+   2. 当queue不为空时循环。
+   3. 记录queue的长度len，为该层的节点数，然后取queue的前len个元素
+   4. 使用left记录第一个元素的值，并且将所有的元素的子节点加入队列。
+   */
+
+  let left = 0
+  const queue: TreeNode[] = [root]
+  while (queue.length) {
+    const len = queue.length
+    for (let i = 0; i < len; i++) {
+      const node = queue.shift()
+      if (i === 0) left = node.val
+      if (node.left) queue.push(node.left)
+      if (node.right) queue.push(node.right)
+    }
+  }
+  return left
+}
