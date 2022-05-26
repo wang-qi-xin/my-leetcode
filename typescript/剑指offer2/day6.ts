@@ -94,3 +94,49 @@ class CBTInserter {
   }
 }
 
+/**
+ * 剑指 Offer II 107. 矩阵中的距离
+ (广度优先遍历。 超级源点0到其它节点的最短距离)
+ * @param mat
+ */
+function updateMatrix(mat: number[][]): number[][] {
+  /**
+   广度优先遍历。超级源点0到其它节点的最短距离。
+
+   1. 将所有的0看做一个整体，计算距离超级源点0距离为1的节点，将其打上访问标记。然后假如队列中。
+   2. 从队列中拿出一个点，如果改点已经访问过，就直接跳过。
+   */
+  const queue: number[][] = []
+  const d = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1]
+  ]
+  const visited = [...Array(mat.length)].map(i => [...Array(mat[0].length)].fill(false))
+
+  for (let i = 0; i < mat.length; i++) {
+    for (let j = 0; j < mat[0].length; j++) {
+      if (mat[i][j] === 0) {
+        queue.push([i, j])
+        visited[i][j] = true
+      }
+    }
+  }
+
+  while (queue.length) {
+    const point = queue.shift()
+    const i = point[0],
+      j = point[1]
+    for (let k = 0; k < 4; k++) {
+      const next_i = i + d[k][0],
+        next_j = j + d[k][1]
+      if (next_i >= 0 && next_i < mat.length && next_j >= 0 && next_j < mat[0].length && !visited[next_i][next_j]) {
+        mat[next_i][next_j] = mat[i][j] + 1
+        queue.push([next_i, next_j])
+        visited[next_i][next_j] = true
+      }
+    }
+  }
+  return mat
+}
