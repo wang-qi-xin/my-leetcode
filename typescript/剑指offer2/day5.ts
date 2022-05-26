@@ -797,7 +797,33 @@ class MovingAverage {
     this.queue.push(val)
     this.sum += val
     // 队列长度到达size，需要移除队首元素，且sum -= queue.shift()
-    if(this.queue.length > this.size) this.sum -= this.queue.shift()
+    if (this.queue.length > this.size) this.sum -= this.queue.shift()
     return this.sum / this.queue.length
+  }
+}
+
+/**
+ * 剑指 Offer II 042. 最近请求次数
+ */
+class RecentCounter {
+  queue: number[]
+  /**
+   * 初始化一个队列queue
+
+   1. 每次ping的时候，先把t放入队尾。
+   2. 然后当队列不为空时循环，然后把队首的first与t比较。比t - first > 3000时，就出队
+   3. 直到t- first >= 3000
+   4. 返回队列长度
+   */
+  constructor() {
+    this.queue = []
+  }
+
+  ping(t: number): number {
+    this.queue.push(t)
+    while (t - this.queue[0] > 3000) {
+      this.queue.shift()
+    }
+    return this.queue.length
   }
 }
