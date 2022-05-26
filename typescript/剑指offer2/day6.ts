@@ -247,3 +247,28 @@ function findBottomLeftValue(root: TreeNode | null): number {
   }
   return left
 }
+
+/**
+ * 剑指 Offer II 046. 二叉树的右侧视图
+ * @param root
+ */
+function rightSideView(root: TreeNode | null): number[] {
+  /**
+  层次遍历
+
+   也就是将每一层的最右侧节点按顺序添加到res中
+   */
+  if (!root) return []
+  const queue: TreeNode[] = [root],
+    res: number[] = []
+  while (queue.length) {
+    const len = queue.length
+    for (let i = 0; i < len; i++) {
+      const node = queue.shift()
+      if (i === len - 1) res.push(node.val)
+      if (node.left) queue.push(node.left)
+      if (node.right) queue.push(node.right)
+    }
+  }
+  return res
+}
