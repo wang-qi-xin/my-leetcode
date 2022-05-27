@@ -355,4 +355,107 @@ function ladderLength(beginWord: string, endWord: string, wordList: string[]): n
   return 0
 }
 
-console.log(ladderLength('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))
+/**
+ * 剑指 Offer II 108. 单词演变
+  (困难)
+ (双向广度优先遍历)
+ * @param beginWord
+ * @param endWord
+ * @param wordList
+ */
+function ladderLength2(beginWord: string, endWord: string, wordList: string[]): number {
+  /**
+   广度优先搜索
+   */
+  const wordId = new Map<string, number>(),
+    edge: number[][] = []
+
+  let nodeNum = 0
+  /**
+   *添加边
+
+   1.首先把word添加到map中，并拿到对应的单词id
+   2. 遍历单词，将每一位都变为*,构造为新单词newWord
+   3. 将newWord添加到map中，并拿到对应的单词id2
+   4. 在edge中添加双向边。
+   * @param word 
+   */
+  const addEdge = (word: string) => {
+    addWord(word)
+    const id1 = wordId.get(word)
+    for (let i = 0; i < word.length; i++) {
+      const newWord = `${word.slice(0, i)}*${word.slice(i + 1, word.length)}`
+      addWord(newWord)
+      const id2 = wordId.get(newWord)
+      edge[id1].push(id2)
+      edge[id2].push(id1)
+    }
+  }
+
+  /**
+    * 添加单词
+
+      key = word, value = wordId
+      并初始化对应的边为[]
+    * @param word 
+    */
+  const addWord = (word: string) => {
+    if (!wordId.has(word)) {
+      wordId.set(word, nodeNum++)
+      edge.push([])
+    }
+  }
+  for (let i = 0; i < wordList.length; i++) {
+    addEdge(wordList[i])
+  }
+  addEdge(beginWord)
+  // 如果单词列表里没有endWord，则一定无法转换
+  if (!wordId.has(endWord)) return 0
+
+  /**
+   将beginWord加入队列，进行搜索，如果搜索到了endWord,则返回搜索 层数
+   */
+  const beginId = wordId.get(beginWord),
+    endId = wordId.get(endWord)
+  const dBegin = [...Array(nodeNum)].fill(Number.MAX_SAFE_INTEGER)
+  dBegin[beginId] = 0
+  const queueBegin: number[] = [beginId]
+
+  const dEnd = [...Array(nodeNum)].fill(Number.MAX_SAFE_INTEGER)
+  dEnd[endId] = 0
+  const queueEnd: number[] = [endId]
+
+  while (queueBegin.length && queueEnd.length) {
+    const queueBeginLen = queueBegin.length
+    for (let i = 0; i < queueBeginLen; i++) {
+      const beginNodeId = queueBegin.shift()
+      // 如果该点在dEnd中已经访问过了，说明双向搜索已经有了交点
+      if (dEnd[beginNodeId] !== Number.MAX_SAFE_INTEGER) {
+        return (dBegin[beginNodeId] + dEnd[beginNodeId]) / 2 + 1
+      }
+      for (let j = 0; j < edge[beginNodeId].length; j++) {
+        if (dBegin[edge[beginNodeId][j]] === Number.MAX_SAFE_INTEGER) {
+          dBegin[edge[beginNodeId][j]] = dBegin[beginNodeId] + 1
+          queueBegin.push(edge[beginNodeId][j])
+        }
+      }
+    }
+    const queueEndLen = queueEnd.length
+    for (let i = 0; i < queueEndLen; i++) {
+      const endNodeId = queueEnd.shift()
+      // 如果该点在dBegin中已经访问过了，说明双向搜索已经有了交点
+      if (dBegin[endNodeId] !== Number.MAX_SAFE_INTEGER) {
+        return (dBegin[endNodeId] + dEnd[endNodeId]) / 2 + 1
+      }
+      for (let j = 0; j < edge[endNodeId].length; j++) {
+        if (dEnd[edge[endNodeId][j]] === Number.MAX_SAFE_INTEGER) {
+          dEnd[edge[endNodeId][j]] = dEnd[endNodeId] + 1
+          queueEnd.push(edge[endNodeId][j])
+        }
+      }
+    }
+  }
+  return 0
+}
+
+// console.log(ladderLength2('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))
