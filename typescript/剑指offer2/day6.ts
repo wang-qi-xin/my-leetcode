@@ -459,3 +459,20 @@ function ladderLength2(beginWord: string, endWord: string, wordList: string[]): 
 }
 
 // console.log(ladderLength2('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))
+
+/**
+ * 剑指 Offer II 047. 二叉树剪枝
+ * @return
+ */
+function pruneTree(root: TreeNode | null): TreeNode | null {
+  if (!root) return null
+  const left = pruneTree(root.left),
+    right = pruneTree(root.right)
+  // 只要有一个子树不为空，或者左右子树都为空，且root的值为1，就返回root
+  if (left || right || root.val === 1) {
+    root.left = left
+    root.right = right
+    return root
+  }
+  return null
+}
