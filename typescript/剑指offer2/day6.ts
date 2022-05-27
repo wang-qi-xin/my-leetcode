@@ -272,3 +272,87 @@ function rightSideView(root: TreeNode | null): number[] {
   }
   return res
 }
+
+/**
+ * 剑指 Offer II 108. 单词演变
+  (困难)
+ (广度优先遍历)
+ * @param beginWord
+ * @param endWord
+ * @param wordList
+ */
+function ladderLength(beginWord: string, endWord: string, wordList: string[]): number {
+  /**
+   广度优先搜索
+   */
+  const wordId = new Map<string, number>(),
+    edge: number[][] = []
+
+  let nodeNum = 0
+  /**
+   *添加边
+
+   1.首先把word添加到map中，并拿到对应的单词id
+   2. 遍历单词，将每一位都变为*,构造为新单词newWord
+   3. 将newWord添加到map中，并拿到对应的单词id2
+   4. 在edge中添加双向边。
+   * @param word 
+   */
+  const addEdge = (word: string) => {
+    addWord(word)
+    const id1 = wordId.get(word)
+    for (let i = 0; i < word.length; i++) {
+      const newWord = `${word.slice(0, i)}*${word.slice(i + 1, word.length)}`
+      console.log(word, newWord, i)
+
+      addWord(newWord)
+      const id2 = wordId.get(newWord)
+      edge[id1].push(id2)
+      edge[id2].push(id1)
+    }
+  }
+
+  /**
+    * 添加单词
+
+      key = word, value = wordId
+      并初始化对应的边为[]
+    * @param word 
+    */
+  const addWord = (word: string) => {
+    if (!wordId.has(word)) {
+      wordId.set(word, nodeNum++)
+      edge.push([])
+    }
+  }
+  for (let i = 0; i < wordList.length; i++) {
+    addEdge(wordList[i])
+  }
+  addEdge(beginWord)
+  // 如果单词列表里没有endWord，则一定无法转换
+  if (!wordId.has(endWord)) return 0
+
+  /**
+   将beginWord加入队列，进行搜索，如果搜索到了endWord,则返回搜索 层数
+   */
+  const d = [...Array(nodeNum)].fill(Number.MAX_SAFE_INTEGER)
+  const beginId = wordId.get(beginWord),
+    endId = wordId.get(endWord)
+  const queue: number[] = [beginId]
+  d[beginId] = 0
+  while (queue.length) {
+    const nodeId = queue.shift()
+    if (nodeId === endId) {
+      return d[nodeId] / 2 + 1
+    }
+    for (let i = 0; i < edge[nodeId].length; i++) {
+      if (d[edge[nodeId][i]] === Number.MAX_SAFE_INTEGER) {
+        d[edge[nodeId][i]] = d[nodeId] + 1
+        queue.push(edge[nodeId][i])
+      }
+    }
+  }
+  return 0
+}
+
+console.log(ladderLength('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))
