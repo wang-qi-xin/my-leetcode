@@ -1,3 +1,4 @@
+import { replace } from '../utils/utils'
 import { TreeNode } from '../utils/数据结构/struct'
 
 /**
@@ -475,4 +476,85 @@ function pruneTree(root: TreeNode | null): TreeNode | null {
     return root
   }
   return null
+}
+
+/**
+ * 剑指 Offer II 109. 开密码锁
+ （广度优先遍历）
+ * @param deadends
+ * @param target
+ */
+function openLock(deadends: string[], target: string): number {
+  if (target === '0000') return 0
+  const deadendsSet = new Set<string>()
+  for (let i = 0; i < deadends.length; i++) {
+    deadendsSet.add(deadends[i])
+  }
+  // 如果初始状态就不可以旋转，则直接返回-1
+  if (deadendsSet.has('0000')) return -1
+
+  /**
+   * queue保存状态，
+     visited保存所有已经遍历过的状态，防止重复旋转
+   */
+  const queue = ['0000'],
+    visited = new Set<string>()
+  visited.add('0000')
+
+  /**
+   * 根据数字生成前一位的旋转结果
+   * @param n
+   * @returns
+   */
+  const pre = (n: number): string => {
+    if (n === 0) return `9`
+    return `${n - 1}`
+  }
+
+  /**
+   * 根据数字生成下一位的旋转结果
+   * @param n
+   * @returns
+   */
+  const next = (n: number): string => {
+    if (n === 9) return `9`
+    return `${n + 1}`
+  }
+  /**
+   * 根据某一状态，生成所有可能的结果。
+   * @param status
+   * @returns
+   */
+  const getStatus = (status: string): string[] => {
+    const res = []
+    for (let i = 0; i < 4; i++) {
+      const c: number = +status.charAt(i)
+      res.push(replace(status, i, pre(c)))
+      res.push(replace(status, i, next(c)))
+    }
+    return res
+  }
+  let step = 0
+
+  while (queue.length) {
+    const len = queue.length
+    step++
+    for (let i = 0; i < len; i++) {
+      const status = queue.shift()
+      const nextStatusList = getStatus(status)
+      for (let i = 0; i < nextStatusList.length; i++) {
+        const nextStatus = nextStatusList[i]
+        // 如果下一个状态合法，且尚未访问过
+        if (!deadendsSet.has(nextStatus) && !visited.has(nextStatus)) {
+          if (nextStatus === target) {
+            return step
+          } else {
+            queue.push(nextStatus)
+            visited.add(nextStatus)
+          }
+        }
+      }
+    }
+  }
+  return -1
 }
