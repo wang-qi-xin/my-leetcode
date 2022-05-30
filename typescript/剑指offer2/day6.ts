@@ -1,5 +1,5 @@
 import { replace } from '../utils/utils'
-import { TreeNode } from '../utils/数据结构/struct'
+import { Heap, TreeNode } from '../utils/数据结构/struct'
 
 /**
  * 剑指 Offer II 106. 二分图
@@ -550,6 +550,113 @@ function openLock(deadends: string[], target: string): number {
             return step
           } else {
             queue.push(nextStatus)
+            visited.add(nextStatus)
+          }
+        }
+      }
+    }
+  }
+  return -1
+}
+
+/**
+ * 剑指 Offer II 109. 开密码锁
+ （A*算法）
+ * @param deadends
+ * @param target
+ */
+function openLock2(deadends: string[], target: string): number {
+  if (target === '0000') return 0
+  const deadendsSet = new Set<string>()
+  for (let i = 0; i < deadends.length; i++) {
+    deadendsSet.add(deadends[i])
+  }
+  // 如果初始状态就不可以旋转，则直接返回-1
+  if (deadendsSet.has('0000')) return -1
+
+  class AStar {
+    status: string
+    g: number
+    h: number
+    f: number
+    constructor(status: string, target: string, g: number) {
+      this.status = status
+      this.g = g
+      this.h = this.getH(status, target)
+      this.f = this.g + this.h
+    }
+    getH(status: string, target: string): number {
+      let diff = 0
+      for (let i = 0; i < 4; i++) {
+        const s = +status.charAt(i)
+        const t = +target.charAt(i)
+        const dist = Math.abs(s - t)
+        diff += Math.min(dist, 10 - dist)
+      }
+      return diff
+    }
+  }
+
+  /**
+   * queue保存状态，
+     visited保存所有已经遍历过的状态，防止重复旋转
+   */
+  const heap = new Heap<AStar>({
+      data: [new AStar('0000', target, 0)],
+      compareFn: (a, b) => {
+        return a.f - b.f
+      }
+    }),
+    visited = new Set<string>()
+  visited.add('0000')
+
+  /**
+   * 根据数字生成前一位的旋转结果
+   * @param n
+   * @returns
+   */
+  const pre = (n: number): string => {
+    if (n === 0) return `9`
+    return `${n - 1}`
+  }
+
+  /**
+   * 根据数字生成下一位的旋转结果
+   * @param n
+   * @returns
+   */
+  const next = (n: number): string => {
+    if (n === 9) return `9`
+    return `${n + 1}`
+  }
+  /**
+   * 根据某一状态，生成所有可能的结果。
+   * @param status
+   * @returns
+   */
+  const getStatus = (status: string): string[] => {
+    const res = []
+    for (let i = 0; i < 4; i++) {
+      const c: number = +status.charAt(i)
+      res.push(replace(status, i, pre(c)))
+      res.push(replace(status, i, next(c)))
+    }
+    return res
+  }
+
+  while (heap.size()) {
+    const len = heap.size()
+    for (let i = 0; i < len; i++) {
+      const node = heap.pop()
+      const nextStatusList = getStatus(node.status)
+      for (let i = 0; i < nextStatusList.length; i++) {
+        const nextStatus = nextStatusList[i]
+        // 如果下一个状态合法，且尚未访问过
+        if (!deadendsSet.has(nextStatus) && !visited.has(nextStatus)) {
+          if (nextStatus === target) {
+            return node.g + 1
+          } else {
+            heap.insert(new AStar(nextStatus, target, node.g + 1))
             visited.add(nextStatus)
           }
         }
