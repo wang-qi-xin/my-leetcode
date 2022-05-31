@@ -665,3 +665,50 @@ function openLock2(deadends: string[], target: string): number {
   }
   return -1
 }
+
+/**
+ * 剑指 Offer II 110. 所有路径
+ (构建节点+dfs)
+ * @param graph
+ */
+function allPathsSourceTarget(graph: number[][]): number[][] {
+  class Node {
+    v: number
+    adj: Node[]
+    constructor(v: number, adj: Node[]) {
+      this.v = v
+      this.adj = adj
+    }
+  }
+  const g: Node[] = []
+
+  const build = () => {
+    for (let i = 0; i < graph.length; i++) {
+      g[i] = new Node(i, [])
+    }
+    for (let i = 0; i < graph.length; i++) {
+      for (let j = 0; j < graph[i].length; j++) {
+        g[i].adj.push(g[graph[i][j]])
+      }
+    }
+  }
+  build()
+  const allPath: number[][] = []
+  const end = graph.length - 1
+  const trace: number[] = [0]
+  const dfs = () => {
+    const len = trace.length, curAdj = g[trace[len - 1]].adj
+    for(let i = 0; i < curAdj.length; i++){
+      trace.push(curAdj[i].v)
+      if(curAdj[i].v === end){
+        allPath.push([...trace])
+      }
+      dfs()
+      trace.pop()
+    }
+  }
+  dfs()
+  
+  return allPath
+}
+allPathsSourceTarget([[1, 2], [3], [3], []])
