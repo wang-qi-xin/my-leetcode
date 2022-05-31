@@ -711,4 +711,29 @@ function allPathsSourceTarget(graph: number[][]): number[][] {
   
   return allPath
 }
+
+/**
+ * 剑指 Offer II 110. 所有路径
+ (dfs)
+ * @param graph
+ */
+function allPathsSourceTarget2(graph: number[][]): number[][] {
+  const allPath: number[][] = []
+  const end = graph.length - 1
+  const trace: number[] = [0]
+  const dfs = () => {
+    const len = trace.length, curAdj = graph[trace[len - 1]]
+    for(let i = 0; i < curAdj.length; i++){
+      trace.push(curAdj[i])
+      if(curAdj[i] === end){
+        allPath.push([...trace])
+      }
+      dfs()
+      trace.pop()
+    }
+  }
+  dfs()
+  
+  return allPath
+}
 allPathsSourceTarget([[1, 2], [3], [3], []])
