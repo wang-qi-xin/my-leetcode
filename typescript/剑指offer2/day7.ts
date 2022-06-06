@@ -159,3 +159,29 @@ function sumNumbers(root: TreeNode | null): number {
   return res
 }
 
+/**
+ * 剑指 Offer II 049. 从根节点到叶节点的路径数字之和
+ (BFS)
+ * @param root
+ */
+function sumNumbers2(root: TreeNode | null): number {
+  const queue: TreeNode[] = [root]
+  const queueNum: number[] = [root.val]
+  let res = 0
+  while (queue.length) {
+    const node = queue.pop()
+    const nodeNum = queueNum.pop()
+    if (node.left === null && node.right === null) {
+      res += nodeNum
+    }
+    if (node.left) {
+      queue.push(node.left)
+      queueNum.push(nodeNum * 10 + node.left.val)
+    }
+    if (node.right) {
+      queue.push(node.right)
+      queueNum.push(nodeNum * 10 + node.right.val)
+    }
+  }
+  return res
+}
