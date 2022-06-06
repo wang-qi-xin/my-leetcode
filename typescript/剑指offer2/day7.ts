@@ -87,7 +87,7 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       for (let k = 0; k < n; k++) {
-        if(graph[j][k] > 0) continue
+        if (graph[j][k] > 0) continue
         if (graph[j][i] > 0 && graph[i][k] > 0) {
           /**
            若a / b = 2, b / c = 3
@@ -125,13 +125,37 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
   return res
 }
 
-calcEquation(
-  [
-    ['a', 'c'],
-    ['b', 'e'],
-    ['c', 'd'],
-    ['e', 'd']
-  ],
-  [2.0, 3.0, 0.5, 5.0],
-  [['a', 'b']]
-)
+// calcEquation(
+//   [
+//     ['a', 'c'],
+//     ['b', 'e'],
+//     ['c', 'd'],
+//     ['e', 'd']
+//   ],
+//   [2.0, 3.0, 0.5, 5.0],
+//   [['a', 'b']]
+// )
+
+/**
+ * 剑指 Offer II 049. 从根节点到叶节点的路径数字之和
+  (DFS)
+ * @param root
+ */
+function sumNumbers(root: TreeNode | null): number {
+  const stack: TreeNode[] = []
+  let res = 0
+  const pre = (root: TreeNode | null) => {
+    if (root) {
+      stack.push(root)
+      pre(root.left)
+      pre(root.right)
+      if (root.left === null && root.right === null) {
+        res += +stack.map(v => v.val).join('')
+      }
+      stack.pop()
+    }
+  }
+  pre(root)
+  return res
+}
+
