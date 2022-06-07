@@ -185,3 +185,63 @@ function sumNumbers2(root: TreeNode | null): number {
   }
   return res
 }
+
+/**
+ * 剑指 Offer II 112. 最长递增路径
+ ( 记忆化深度优先搜索)
+ * @param matrix 
+ * @returns 
+ */
+function longestIncreasingPath(matrix: number[][]): number {
+  /**
+   记忆化深度优先搜索
+
+   对每一个点进行深度优先搜索，时间复杂度太高。
+
+   在对某一条路径进行搜索时，实质上已经对该路径上所有的点搜索过了，
+   只需要在搜索时，对每个搜索的点进行赋值，并且搜索前判断该点是否搜索过了。
+
+   */
+  if (!matrix || matrix.length === 0 || matrix[0].length === 0) return 0
+
+  const d = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1]
+    ],
+    m = matrix.length,
+    n = matrix[0].length
+
+  let max = 0
+  const memo = [...Array(m)].map(i => [...Array(n)].fill(0))
+
+  const dfs = (i: number, j: number): number => {
+    if (memo[i][j]) {
+      return memo[i][j]
+    }
+    ++memo[i][j]
+
+    for (let k = 0; k < 4; k++) {
+      const nexti = i + d[k][0],
+        nextj = j + d[k][1]
+      if (nexti >= 0 && nexti < m && nextj >= 0 && nextj < n && matrix[nexti][nextj] > matrix[i][j]) {
+        memo[i][j] = Math.max(memo[i][j], dfs(nexti, nextj) + 1)
+      }
+    }
+    return memo[i][j]
+  }
+
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      max = Math.max(max, dfs(i, j))
+    }
+  }
+
+  return max
+}
+longestIncreasingPath([
+  [7, 8, 9],
+  [9, 7, 6],
+  [7, 2, 3]
+])
