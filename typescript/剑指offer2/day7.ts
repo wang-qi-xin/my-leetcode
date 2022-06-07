@@ -240,8 +240,40 @@ function longestIncreasingPath(matrix: number[][]): number {
 
   return max
 }
-longestIncreasingPath([
-  [7, 8, 9],
-  [9, 7, 6],
-  [7, 2, 3]
-])
+// longestIncreasingPath([
+//   [7, 8, 9],
+//   [9, 7, 6],
+//   [7, 2, 3]
+// ])
+
+/**
+ * 剑指 Offer II 051. 节点之和最大的路径
+ * @param root
+ * @returns
+ */
+function maxPathSum(root: TreeNode | null): number {
+  /**
+  1. 使用后序遍历，计算root的左右两个子树的最大路径之和。
+    使用max记录最大路径和。Max(max, root.val + left + right)
+    
+  2. 如果root为空，返回0.
+  否则返回root.val + Math.max(left, right) 表示以root为起点的最大路径。
+
+  3. 如果子树的路径和小于0，则忽略该值。
+    
+ */
+  let max = Number.MIN_SAFE_INTEGER
+
+  const order = (root: TreeNode | null): number => {
+    if (root) {
+      const left = Math.max(0, order(root.left)),
+        right = Math.max(0, order(root.right))
+      max = Math.max(max, left + right + root.val)
+      return root.val + Math.max(left, right)
+    } else {
+      return 0
+    }
+  }
+  order(root)
+  return max
+}
