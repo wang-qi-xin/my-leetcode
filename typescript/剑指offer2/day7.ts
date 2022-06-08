@@ -298,7 +298,6 @@ function findOrder(numCourses: number, prerequisites: number[][]): number[] {
    当该节点搜索完成，将该节点加入结果集，并且将其状态置为（搜索完成）
    */
 
-
   // visited[i] = {0 , 1, 2}表示三种状态，未搜索，搜索中，搜索完成
   const visited = Array(numCourses).fill(0),
     result = [], // 拓扑排序的结果
@@ -312,11 +311,11 @@ function findOrder(numCourses: number, prerequisites: number[][]): number[] {
   for (let i = 0; i < prerequisites.length; i++) {
     edge.get(prerequisites[i][1]).push(prerequisites[i][0])
   }
- 
+
   /**
    * 深度优先搜索
-   * @param u 
-   * @returns 
+   * @param u
+   * @returns
    */
   const dfs = (u: number) => {
     visited[u] = 1
@@ -347,6 +346,61 @@ function findOrder(numCourses: number, prerequisites: number[][]): number[] {
   return result
 }
 
+/**
+ * 剑指 Offer II 113. 课程顺序
+ (广度优先遍历)
+ * @param numCourses
+ * @param prerequisites
+ */
+function findOrder2(numCourses: number, prerequisites: number[][]): number[] {
+  /**
+   p = prerequisites[i]
+   则p = [1, 2] 表示必须先学2后学1.
+   构建一个有n个节点的图，则表示2 -> 1有一条有向边。
+
+   当构建好图之后，图中的节点u，如果u的入度为0，表名u没有前置课程了，可以添加到结果中了。
+
+   遍历所有的节点，将入度为0的节点全部添加到队列中。然后遍历队列。
+   每次取出一个节点u，先将u放入result中。
+   然后遍历u的所有出度节点v。将v的入度全部减一，如果减一以后等于0，就把v也添加到队列中。
+
+   当队列中入度为0的节点遍历完成后，如果result里的节点数量<numCoureses，说明存在环，直接返回[]
+   */
+
+  // visited[i] = {0 , 1, 2}表示三种状态，未搜索，搜索中，搜索完成
+  const indegree = Array(numCourses).fill(0),
+    result = [], // 拓扑排序的结果
+    edge = new Map<number, number[]>() // 存放有向边的集合
+
+  for (let i = 0; i < numCourses; i++) {
+    edge.set(i, [])
+  }
+
+  for (let i = 0; i < prerequisites.length; i++) {
+    edge.get(prerequisites[i][1]).push(prerequisites[i][0])
+    indegree[prerequisites[i][0]]++
+  }
+
+  const queue = []
+  for (let i = 0; i < indegree.length; i++) {
+    if (indegree[i] === 0) queue.push(i)
+  }
+
+  while (queue.length) {
+    const u = queue.pop()
+    result.push(u)
+    for (let i = 0, adj = edge.get(u); i < adj.length; i++) {
+      indegree[adj[i]]--
+      if (indegree[adj[i]] === 0) {
+        queue.push(adj[i])
+      }
+    }
+  }
+
+  if (result.length < numCourses) return []
+
+  return result
+}
 // findOrder(2, [
 //   [0, 1],
 //   [1, 0]
