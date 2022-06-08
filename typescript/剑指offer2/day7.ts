@@ -277,3 +277,77 @@ function maxPathSum(root: TreeNode | null): number {
   order(root)
   return max
 }
+
+/**
+ * 剑指 Offer II 113. 课程顺序
+ (深度优先遍历)
+ * @param numCourses
+ * @param prerequisites
+ */
+function findOrder(numCourses: number, prerequisites: number[][]): number[] {
+  /**
+   p = prerequisites[i]
+   则p = [1, 2] 表示必须先学2后学1.
+   构建一个有n个节点的图，则表示2 -> 1有一条有向边。
+
+   最终结果是在图中寻找一个拓扑排序。使用深度优先遍历，搜索图中每一个点。
+   1. 如果该节点尚未搜索过，则将该节点的状态置为（搜索中），然后搜索该节点的所有邻边。
+   2. 如果该节点的状态是（搜索中），表示产生了环。此时应立即退出，并返回[]
+   3. 如果该节点的状态是（搜索完成），表示该节点与当前搜索序列没有关系，直接忽略。
+      并且该节点肯定已经加入了结果集。
+   当该节点搜索完成，将该节点加入结果集，并且将其状态置为（搜索完成）
+   */
+
+
+  // visited[i] = {0 , 1, 2}表示三种状态，未搜索，搜索中，搜索完成
+  const visited = Array(numCourses).fill(0),
+    result = [], // 拓扑排序的结果
+    edge = new Map<number, number[]>() // 存放有向边的集合
+  let valid = false // 判断是否存在环
+
+  for (let i = 0; i < numCourses; i++) {
+    edge.set(i, [])
+  }
+
+  for (let i = 0; i < prerequisites.length; i++) {
+    edge.get(prerequisites[i][1]).push(prerequisites[i][0])
+  }
+ 
+  /**
+   * 深度优先搜索
+   * @param u 
+   * @returns 
+   */
+  const dfs = (u: number) => {
+    visited[u] = 1
+    // 搜索u的所有邻边
+    for (let i = 0, e = edge.get(u); i < e.length; i++) {
+      if (visited[e[i]] === 0) {
+        dfs(e[i])
+        if (valid) return
+      } else if (visited[e[i]] === 1) {
+        valid = true
+        return
+      }
+    }
+    // 当u的所有临界点搜索完成（添加到result中后）
+    // 标记u为搜索完成，然后把u添加到result中
+    visited[u] = 2
+    result.unshift(u)
+  }
+
+  for (let i = 0; i < numCourses; i++) {
+    if (visited[i] === 0) {
+      dfs(i)
+    }
+  }
+
+  if (valid) return []
+
+  return result
+}
+
+// findOrder(2, [
+//   [0, 1],
+//   [1, 0]
+// ])
