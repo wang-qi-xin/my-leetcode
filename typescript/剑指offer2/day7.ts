@@ -405,3 +405,31 @@ function findOrder2(numCourses: number, prerequisites: number[][]): number[] {
 //   [0, 1],
 //   [1, 0]
 // ])
+
+/**
+ * 剑指 Offer II 052. 展平二叉搜索树
+ (中序遍历)
+ * @param root
+ */
+function increasingBST(root: TreeNode | null): TreeNode | null {
+  let head = null, // 指向新链表的头节点
+    p = head // 指向新链表的尾结点
+  const order = (node: TreeNode | null) => {
+    if (node) {
+      order(node.left)
+      // 如果head已经存在。就把node拼接到p后面，并且令node.left = null
+      if (head) {
+        p.right = node
+        p = p.right
+        p.left = null
+      } else {
+        //  最左下角的最小元素，令head指向它
+        head = node
+        p = node
+      }
+      order(node.right)
+    }
+  }
+  order(root)
+  return head
+}
