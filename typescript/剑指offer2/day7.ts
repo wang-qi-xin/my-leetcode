@@ -433,3 +433,102 @@ function increasingBST(root: TreeNode | null): TreeNode | null {
   order(root)
   return head
 }
+
+/**
+ * 剑指 Offer II 114. 外星文字典
+  (深度优先搜索)
+ * @param words
+ */
+function alienOrder(words: string[]): string {
+  /**
+   1. 构图
+      遍历words，对于前后两个字符串p,a, 
+      p,a中首个不相同的字符p1和a1，则代表p1->a1有向边。
+
+      边界：如果a是p的前缀，且p比a长，则代表这个排序不合法，应该返回""
+    2. 深度优先搜索
+       每个节点（字符）,有三个状态，未搜索，已搜索，搜索中。
+       1. 每次搜索到某个节点u，先把该节点u状态标记为搜索中，
+       2. 然后开始搜索它的相邻节点。
+       3. 如果搜索过程中，碰到了搜索中的节点，则代表遇到了环，直接返回。
+       4. 如果碰到了搜索完成的节点，则忽略
+       5. 回溯过程把节点u拼接到result前面。
+   */
+  const edge = new Map<string, string[]>(), //记录有向边
+    length = words.length
+  let valid = false, // 判断是否有环
+    result = '' // 结果字典序
+
+  // 1. 设置节点
+  for (let i = 0; i < length; i++) {
+    for (let j = 0, word = words[i]; j < word.length; j++) {
+      const c = word.charAt(j)
+      if (!edge.has(c)) {
+        edge.set(c, [])
+      }
+    }
+  }
+
+  /**
+   * 添加有向边
+   * @param p
+   * @param a
+   */
+  const addEdge = (p: string, a: string) => {
+    const len1 = p.length,
+      len2 = a.length,
+      minLen = Math.min(len1, len2)
+    let index = 0
+    while (index < minLen) {
+      const p1 = p.charAt(index),
+        a1 = a.charAt(index)
+      if (p1 != a1) {
+        edge.get(p1).push(a1)
+        break
+      }
+      index++
+    }
+    // p比a长，并且a是p的前缀，说明这个排序不合格。
+    if (index === minLen && len1 > len2) {
+      valid = true
+    }
+  }
+
+  // 2. 添加有向边
+  for (let i = 0; i < length - 1; i++) {
+    addEdge(words[i], words[i + 1])
+    if (valid) return ''
+  }
+
+  /**
+   * 深度优先搜索
+   * @param u
+   * @returns
+   */
+  const dfs = (u: string) => {
+    // 每次搜索前，判断valid，如果valid = true，就没必要搜索了
+    if (valid) return
+    visited.set(u, 1)
+    for (let i = 0, adj = edge.get(u); i < adj.length; i++) {
+      if (!visited.has(adj[i])) {
+        dfs(adj[i])
+        // u的临界点正在被搜索，说明存在u -> v -> u的环
+      } else if (visited.get(adj[i]) === 1) {
+        valid = true
+        return
+      }
+    }
+    visited.set(u, 2)
+    result = u + result
+  }
+
+  const visited = new Map<string, number>() // 记录节点访问状态
+  for (let i = 0, chars = [...edge.keys()]; i < chars.length; i++) {
+    const u = chars[i]
+    if (!visited.has(u)) {
+      dfs(u)
+    }
+  }
+  if (valid) return ''
+  return result
+}
