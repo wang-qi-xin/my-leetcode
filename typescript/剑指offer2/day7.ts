@@ -532,3 +532,99 @@ function alienOrder(words: string[]): string {
   if (valid) return ''
   return result
 }
+
+/**
+ * 剑指 Offer II 114. 外星文字典
+  (拓扑排序 + 广度优先搜索)
+ * @param words
+ */
+function alienOrder2(words: string[]): string {
+  /**
+   拓扑排序都可以通过入度为0的节点开始搜索。
+   每添加一个入度为0的节点u，就把该节点的相邻节点v的入度都减1.
+   如果v的入度减1后也为0，表名v也可以开始搜索，把v也添加到搜索队列
+
+   1. 构图
+      遍历words，对于前后两个字符串p,a, 
+      p,a中首个不相同的字符p1和a1，则代表p1->a1有向边。
+      a1的入度 + 1
+
+      边界：如果a是p的前缀，且p比a长，则代表这个排序不合法，应该返回""
+    2. 广度优先搜索
+       1. 遍历入度数组，将入度为0的节点假如搜索队列queue
+       2. 遍历搜索队列，拿出一个节点，将节点u添加到result中
+       3. 遍历u的相邻节点v
+       4. 把v的入度减一，如果减1以后v的入度为0，把v也添加到queue中
+    
+    注意：
+       1. 广度搜索不一定能够搜索到所有的节点。(说明存在环，无法在环中找到入度为0的节点)此时应该返回""
+   */
+  const edge = new Map<string, string[]>(), //记录有向边
+    indegree = new Map<string, number>(), // 记录节点的入度
+    length = words.length
+  let valid = false, // 判断是否有环
+    result = '' // 结果字典序
+
+  // 1. 设置节点
+  for (let i = 0; i < length; i++) {
+    for (let j = 0, word = words[i]; j < word.length; j++) {
+      const c = word.charAt(j)
+      if (!edge.has(c)) {
+        edge.set(c, [])
+        indegree.set(c, 0)
+      }
+    }
+  }
+
+  /**
+   * 添加有向边
+   * @param p
+   * @param a
+   */
+  const addEdge = (p: string, a: string) => {
+    const len1 = p.length,
+      len2 = a.length,
+      minLen = Math.min(len1, len2)
+    let index = 0
+    while (index < minLen) {
+      const p1 = p.charAt(index),
+        a1 = a.charAt(index)
+      if (p1 != a1) {
+        edge.get(p1).push(a1)
+        // a1的入度加1
+        indegree.set(a1, indegree.get(a1) + 1)
+        break
+      }
+      index++
+    }
+    // p比a长，并且a是p的前缀，说明这个排序不合格。
+    if (index === minLen && len1 > len2) {
+      valid = true
+    }
+  }
+
+  // 2. 添加有向边
+  for (let i = 0; i < length - 1; i++) {
+    addEdge(words[i], words[i + 1])
+    if (valid) return ''
+  }
+
+  const queue = []
+  for (let [k, v] of indegree.entries()) {
+    if (v === 0) queue.push(k)
+  }
+
+  while (queue.length) {
+    const c = queue.pop()
+    result += c
+    for (let i = 0, adj = edge.get(c); i < adj.length; i++) {
+      const ind = indegree.get(adj[i])
+      indegree.set(adj[i], ind - 1)
+      if (ind === 1) {
+        queue.push(adj[i])
+      }
+    }
+  }
+  // 如果广搜有节点没搜到，说明这几个没搜到的节点是个环
+  return result.length === edge.size ? result : ''
+}
