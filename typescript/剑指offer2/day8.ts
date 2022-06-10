@@ -66,3 +66,78 @@ function inorderSuccessor2(root: TreeNode | null, p: TreeNode | null): TreeNode 
   }
   return parent
 }
+
+/**
+ * 剑指 Offer II 115. 重建序列
+ （深度优先搜索）
+ * @param org
+ * @param seqs
+ */
+function sequenceReconstruction(org: number[], seqs: number[][]): boolean {
+  /**
+   从seqs中构建最短超序列res，然后判断res是否与org相同。
+
+   建图
+      如果seqs[i]中j -> k, 则表示j 到 k有一条有向边。最终通过广搜找出一条唯一的序列res。
+      1. 
+   */
+
+  const set = new Set<number>(),
+    n = org.length
+  for (let i = 0; i < seqs.length; i++) {
+    for (let j = 0, seq = seqs[i]; j < seq.length; j++) {
+      set.add(seq[j])
+    }
+  }
+  // 原始序列只有一个数字，但是seqs中不含有1
+  if (n === 1 && !set.has(1)) return false
+  // seqs中的数字个数，不等于原始序列的数字个数。
+  if (set.size !== n) return false
+
+  //  1. 建图
+  const edges = [...Array(n + 1)].map(_ => new Set<number>()),
+    indegree = [...Array(n + 1)].fill(0)
+  for (let i = 0; i < seqs.length; i++) {
+    for (let j = 1, seq = seqs[i]; j < seq.length; j++) {
+      const from = seq[j - 1],
+        to = seq[j]
+      // 防止重复添加
+      if (!edges[from].has(to)) {
+        edges[from].add(to)
+        indegree[to]++
+      }
+    }
+  }
+
+  // 2. 深度优先搜索
+  const queue = []
+  for (let i = 1; i < indegree.length; i++) {
+    if (indegree[i] === 0) {
+      queue.push(i)
+    }
+  }
+  const res = []
+  while (queue.length) {
+    // 如果入度为0的节点个数超过1个。说明不是唯一的超序列
+    if (queue.length > 1) return false
+    const s = queue.pop()
+    res.push(s)
+    for (let i = 0, edge = [...edges[s].values()]; i < edge.length; i++) {
+      indegree[edge[i]] -= 1
+      if (indegree[edge[i]] === 0) {
+        queue.push(edge[i])
+      }
+    }
+  }
+
+  if (res.length !== n) return false
+
+  // 3. 判断是否等于org
+  for (let i = 0; i < n; i++) {
+    if (org[i] !== res[i]) return false
+  }
+
+  return true
+}
+
+// sequenceReconstruction([1], [])
