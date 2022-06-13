@@ -163,3 +163,54 @@ function convertBST(root: TreeNode | null): TreeNode | null {
   postOrder(root)
   return root
 }
+
+/**
+ * 剑指 Offer II 054. 所有大于等于节点的值之和
+ （morris遍历）
+ * @param root
+ */
+function convertBST2(root: TreeNode | null): TreeNode | null {
+  /**
+   反向中序遍历morris算法
+
+   利用二叉树中的空指针，指向该节点的前驱。
+
+   然后一边遍历，一边累加和。
+
+
+   */
+
+  const getSuc = (node: TreeNode | null) => {
+    let suc = node.right
+    while (suc.left && suc.left !== node) {
+      // 如果suc的left已经指向了node，说明suc的前驱就是node，直接返回suc
+      suc = suc.left
+    }
+    return suc
+  }
+  let sum = 0
+  let node = root
+  while (node) {
+    if (node.right) {
+      // 找到node的右子树的最小元素，令其left指向node(left的前驱节点)
+      const suc = getSuc(node)
+      if (suc.left) {
+        // 如果suc的left存在，说明suc已经遍历过了。 此时应该遍历node了。
+        sum += node.val
+        node.val = sum
+        suc.left = null // node遍历完成，将之前设置的suc的前驱重置为null
+        node = node.left
+      } else {
+        // suc就是node的右子树的最小元素，也就是node的后驱节点
+        suc.left = node
+        node = node.right
+      }
+    } else {
+      // 如果node的right为null，则从该节点开始累加
+      sum += node.val
+      node.val = sum
+      node = node.left // 如果node的left为空，说明已经遍历到了最小元素。因为非最小元素的left已经指向其前驱节点了。
+    }
+  }
+  return root
+}
