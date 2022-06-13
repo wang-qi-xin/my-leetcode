@@ -141,3 +141,25 @@ function sequenceReconstruction(org: number[], seqs: number[][]): boolean {
 }
 
 // sequenceReconstruction([1], [])
+
+/**
+ * 剑指 Offer II 054. 所有大于等于节点的值之和
+ （递归）
+ * @param root
+ */
+function convertBST(root: TreeNode | null): TreeNode | null {
+  /**
+   使用右-根-左的顺序遍历子树。并且记录所有节点的总和。
+   */
+  let res = 0
+  const postOrder = (node: TreeNode | null) => {
+    if (node) {
+      postOrder(node.right)
+      res += node.val
+      node.val = res
+      postOrder(node.left)
+    }
+  }
+  postOrder(root)
+  return root
+}
