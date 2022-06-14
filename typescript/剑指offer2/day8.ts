@@ -324,3 +324,41 @@ function numSimilarGroups(strs: string[]): number {
 }
 
 // numSimilarGroups(['tars', 'rats', 'arts'])
+
+/**
+ * 剑指 Offer II 118. 多余的边
+ (并查集)
+ * @param edges
+ */
+function findRedundantConnection(edges: number[][]): number[] {
+  const n = edges.length,
+    f = [...Array(n + 1)].map((_, i) => i)
+  /**
+   * 查找i的父节点
+   * @param i
+   * @returns
+   */
+  const find = (i: number) => {
+    return f[i] === i ? i : (f[i] = find(f[i]))
+  }
+
+  /**
+   1. 如果f1不等f2， 则表示a和b不是同一个集合，a和b尚未联通，
+
+      令f[f1] = f2， 表示添加edges[i]这条边后，将a和b联通
+   2. 如果f1等于f2，则表示a已经和b联通了，此时添加edges[i]这条边，将会构成环。
+      直接返回edges[i]
+   */
+  for (let i = 0; i < n; i++) {
+    const f1 = find(edges[i][0]),
+      f2 = find(edges[i][1])
+
+    if (f1 === f2) {
+      return edges[i]
+    }
+
+    f[f1] = f2
+  }
+  return []
+}
+
