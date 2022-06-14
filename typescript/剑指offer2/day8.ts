@@ -1,3 +1,4 @@
+import { quickSort } from '../utils/排序/quickSort'
 import { TreeNode } from '../utils/数据结构/struct'
 
 /**
@@ -378,4 +379,27 @@ function findTarget(root: TreeNode | null, k: number): boolean {
     return false
   }
   return dfs(root)
+}
+
+/**
+ * 剑指 Offer II 060. 出现频率最高的 k 个数字
+ * @param nums
+ * @param k
+ * @returns
+ */
+function topKFrequent(nums: number[], k: number): number[] {
+  const map = new Map<number, number>()
+  // 1. 统计每个数字出现的次数
+  for (let i = 0; i < nums.length; i++) {
+    if (map.has(nums[i])) {
+      map.set(nums[i], map.get(nums[i]) + 1)
+    } else {
+      map.set(nums[i], 1)
+    }
+  }
+
+  // 2. 将数字出现的次数构造成二维数组，按次数降序排序，截取前k个，转为一维数组
+  return quickSort([...map.entries()], (a, b) => b[1] - a[1])
+    .slice(0, k)
+    .map(v => v[0])
 }
