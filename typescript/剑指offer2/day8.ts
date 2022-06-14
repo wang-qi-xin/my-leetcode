@@ -214,3 +214,43 @@ function convertBST2(root: TreeNode | null): TreeNode | null {
   }
   return root
 }
+
+/**
+ * 剑指 Offer II 055. 二叉搜索树迭代器
+ */
+class BSTIterator {
+  stack: TreeNode[]
+  /**
+     使用栈保存节点的节点的后驱。
+      
+     */
+  constructor(root: TreeNode | null) {
+    this.stack = [root]
+    while (root.left) {
+      this.stack.push(root.left)
+      root = root.left
+    }
+  }
+
+  next(): number {
+    const nextNode = this.stack.pop()
+    if (nextNode.right) {
+      this.getSuc(nextNode)
+    }
+    return nextNode.val
+  }
+
+  hasNext(): boolean {
+    if (this.stack.length) return true
+    return false
+  }
+  getSuc(node: TreeNode | null) {
+    let suc = node.right
+    this.stack.push(suc)
+    while (suc.left) {
+      // 如果suc的left已经指向了node，说明suc的前驱就是node，直接返回suc
+      suc = suc.left
+      this.stack.push(suc)
+    }
+  }
+}
