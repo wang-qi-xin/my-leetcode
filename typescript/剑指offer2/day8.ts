@@ -403,3 +403,34 @@ function topKFrequent(nums: number[], k: number): number[] {
     .slice(0, k)
     .map(v => v[0])
 }
+
+/**
+ * 剑指 Offer II 119. 最长连续序列
+ (set集合)
+ * @param nums
+ */
+function longestConsecutive(nums: number[]): number {
+  /**
+   1. 使用set保存所有的数字
+   2. 遍历nums[i]， 假如set中含有nums[i] - 1, 则跳过nums[i]。  (因为nums[i] - 1 无论是否遍历过，都会在遍历时，下一步就遍历nums[i])
+   3. 如果set中不含有nums[i] - 1, 说明nums[i]就是一个连续序列的起始
+   4. 开始计算以nums[i]为起始的最长连续序列的长度。
+   */
+  const set = new Set<number>()
+  for (let i = 0; i < nums.length; i++) {
+    set.add(nums[i])
+  }
+  let longest = 0
+  for (let i = 0; i < nums.length; i++) {
+    if (!set.has(nums[i] - 1)) {
+      let curNum = nums[i],
+        curLen = 1
+      while (set.has(curNum + 1)) {
+        curNum += 1
+        curLen += 1
+      }
+      longest = Math.max(longest, curLen)
+    }
+  }
+  return longest
+}
