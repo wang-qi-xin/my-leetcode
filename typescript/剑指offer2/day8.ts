@@ -362,3 +362,20 @@ function findRedundantConnection(edges: number[][]): number[] {
   return []
 }
 
+/**
+ * 剑指 Offer II 056. 二叉搜索树中两个节点之和
+ * @param root
+ * @param k
+ */
+function findTarget(root: TreeNode | null, k: number): boolean {
+  const s = new Set<number>()
+  const dfs = (node: TreeNode | null): boolean => {
+    if (node) {
+      if (s.has(k - node.val)) return true
+      s.add(node.val)
+      return dfs(node.left) || dfs(node.right)
+    }
+    return false
+  }
+  return dfs(root)
+}
