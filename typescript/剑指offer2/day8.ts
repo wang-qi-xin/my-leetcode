@@ -254,3 +254,73 @@ class BSTIterator {
     }
   }
 }
+
+/**
+ * 剑指 Offer II 117. 相似的字符串
+ （并查集）
+ * @param strs
+ */
+function numSimilarGroups(strs: string[]): number {
+  /**
+  将strs看做图，如果strs[i]和strs[j]相似，则将i,j看做一个集合。
+
+  注意：
+   如果a和b相似，b和c相似。但是a != c。仍有a,b,c同属一个组。
+   */
+  let group = 0
+  /**
+   * 判断s和t是否是相似词
+   * @param s
+   * @param t
+   */
+  const simStr = (s: string, t: string): boolean => {
+    // 由于s和t已经时异位词，只要有两个以上位置的字符不一样，则s和t不是相似词
+    let n = 0
+    for (let i = 0; i < s.length; i++) {
+      if (s.charAt(i) !== t.charAt(i)) {
+        n++
+        if (n > 2) return false
+      }
+    }
+    return true
+  }
+  const n = strs.length
+  /**
+   * f[i]表示i的父节点，初始化为i
+   */
+  const f = [...Array(n)].map((_, i) => i)
+
+  /**
+   * 查找i的父节点
+   * @param i
+   * @returns
+   */
+  const find = (i: number) => {
+    return f[i] === i ? i : (f[i] = find(f[i]))
+  }
+
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const fi = find(i),
+        fj = find(j)
+      if (fi === fj) {
+        continue
+      }
+
+      // 如果fi != fj，则i和j不是同一个集合，此时判断i和j是否是相似词。如果是的话，就将其放入同一个集合f[fi] = fj
+      if (simStr(strs[i], strs[j])) {
+        f[fi] = fj
+      }
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    if (f[i] === i) {
+      group += 1
+    }
+  }
+
+  return group
+}
+
+// numSimilarGroups(['tars', 'rats', 'arts'])
