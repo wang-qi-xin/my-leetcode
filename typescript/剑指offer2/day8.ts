@@ -422,6 +422,7 @@ function longestConsecutive(nums: number[]): number {
   }
   let longest = 0
   for (let i = 0; i < nums.length; i++) {
+    // 如果集合中有nums[i] - 1，那么就不用以nums[i]为起点开始计算了，因为迟早都会以(nums[i] - 1)为起点计算最长序列的
     if (!set.has(nums[i] - 1)) {
       let curNum = nums[i],
         curLen = 1
@@ -429,8 +430,61 @@ function longestConsecutive(nums: number[]): number {
         curNum += 1
         curLen += 1
       }
+      // 统计以nums[i]为起点的最长序列。
       longest = Math.max(longest, curLen)
     }
   }
+  return longest
+}
+
+/**
+ * 剑指 Offer II 119. 最长连续序列
+ (并查集)
+ * @param nums
+ */
+function longestConsecutive2(nums: number[]): number {
+  /**
+   1. 使用map保存每一个num和它的parent。（初始化为自己）
+   2. 遍历nums, 如果对于num而言，num+1也存在于map中，则令num指向num+1
+   3. 遍历完成后，nums的每一个num在map中，都指向num + 1。（连续序列的最大值，指向自身）
+   4. 遍历nums, 查找num的父节点，并且在查找到过程中，将包含num的连续序列中的每一个元素，都指向最大的那个元素，然后返回max
+   5. 则max - num + 1就是从num到max的连续序列的长度。
+   6. 使用maxlen记录最长的序列长度
+   */
+  const map = new Map<number, number>()
+  for (let i = 0; i < nums.length; i++) {
+    map.set(nums[i], nums[i])
+  }
+
+  /**
+   * 如果map中存在y，则令x指向y
+   * @param x
+   * @param y
+   */
+  const union = (x: number, y: number) => {
+    if (map.has(y)) map.set(x, y)
+  }
+
+  for (let i = 0; i < nums.length; i++) {
+    // 如果map中存在nums[i] + 1, 则令nums[i]指向nums[i] + 1
+    union(nums[i], nums[i] + 1)
+  }
+
+  const find = (num: number) => {
+    // 如果num的父节点就是num，说明包含num的连续序列的最大值就是自己。
+    if (map.get(num) === num) return num
+
+    // 递归找到num + 1的父节点num + 2，令num也指向num + 2
+    // 最终会使得一个连续序列里，所有的元素都指向最大的元素
+    const parent = find(map.get(num))
+    map.set(num, parent)
+    return parent
+  }
+  let longest = 0
+  for (let i = 0; i < nums.length; i++) {
+    const max = find(nums[i])
+    longest = Math.max(longest, max - nums[i] + 1)
+  }
+
   return longest
 }
