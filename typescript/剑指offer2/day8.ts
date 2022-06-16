@@ -488,3 +488,46 @@ function longestConsecutive2(nums: number[]): number {
 
   return longest
 }
+
+/**
+ * 剑指 Offer II 057. 值和下标之差都在给定的范围内
+ （桶排序）
+ * @param nums
+ * @param k
+ * @param t
+ */
+function containsNearbyAlmostDuplicate(nums: number[], k: number, t: number): boolean {
+  const map = new Map<number, number>()
+
+  /**
+   * 根据x，计算x应该在桶中对应的id
+   * @param x
+   * @param w
+   * @returns
+   */
+  const getId = (x: number, w: number) => {
+    return Math.floor(x / w)
+  }
+
+  for (let i = 0, n = nums.length; i < n; i++) {
+    const x = nums[i]
+    // t 有可能为0，不能当除数。所以加一
+    const id = getId(x, t + 1)
+
+    // 如果桶中已经有x对应的id了，说明当前桶中id对应的数m和x的差小于等于t。直接返回true
+    if (map.has(id)) return true
+
+    // 如果桶里id的相邻的桶也有，并且相邻的m和x的差小于等于t，也直接返回true
+    if (map.has(id - 1) && Math.abs(x - map.get(id - 1)) <= t) return true
+    if (map.has(id + 1) && Math.abs(x - map.get(id + 1)) <= t) return true
+
+    // 将x放入桶中
+    map.set(id, x)
+
+    // 如果桶里元素大于k时，把最先加入桶中的那个元素删除
+    if (i >= k) {
+      map.delete(getId(nums[i - k], t + 1))
+    }
+  }
+  return false
+}
