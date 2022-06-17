@@ -32,7 +32,7 @@ export class TreeNode {
 }
 
 /**
-   小根堆
+   ### 小根堆
    主要方法：
       1. 插入元素：
           将元素放入堆底
@@ -58,7 +58,8 @@ interface heapOptionType<T> {
 }
 
 /**
- * 堆，默认小根堆
+ * ## 堆
+ * * 默认小根堆
  */
 export class Heap<T> {
   heap: T[]
