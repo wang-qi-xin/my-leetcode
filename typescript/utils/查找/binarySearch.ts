@@ -17,7 +17,7 @@ interface compareFnType<T> {
 }
 
 interface optionType<T> {
-  mode?: 'accurate' | 'left_bound' | 'right_bound' | 'insert'
+  mode?: 'accurate' | 'left_bound' | 'right_bound' | 'insert' | 'insert_right'
   compare?: compareFnType<T>
 }
 
@@ -26,7 +26,7 @@ interface optionType<T> {
    默认精准查找，没有结果返回-1
  * @param arr 
  * @param target 
- * @param option {mode: accurate精准查找 | left_bound左边界 | right_bound右边界 | insert插入点, compare: 比较函数}
+ * @param option {mode: accurate精准查找 | left_bound左边界 | right_bound右边界 | insert插入点 | insert_right 插入点(重复数字最右侧的插入点), compare: 比较函数}
  * @returns 
  */
 export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): number {
@@ -49,7 +49,7 @@ export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): nu
         return mid
       } else if (option.mode === 'left_bound') {
         right = mid - 1
-      } else if (option.mode === 'right_bound') {
+      } else if (option.mode === 'right_bound' || option.mode === 'insert_right') {
         left = mid + 1
       }
     } else if (compareResult > 0) {
@@ -74,6 +74,9 @@ export function binarySearch<T>(arr: T[], target: T, option?: optionType<T>): nu
     if (right < 0 || compare(arr[right], target) !== 0) return -1
     return right
   } else if (option.mode === 'insert') {
+    return left
+  } else if (option.mode === 'insert_right') {
+    // 此时left指向的数，一定不是target。假如数组最后一位是target, 则此时left等于arr.length
     return left
   }
 }
