@@ -40,26 +40,32 @@ class TrieNode {
     this.value = 0
   }
 }
-
 class MapSum {
   /**
    字典树
    */
   root: TrieNode
+  map: Map<string, number>
   constructor() {
     this.root = new TrieNode()
+    this.map = new Map<string, number>()
   }
 
   insert(key: string, val: number): void {
     let p = this.root
+    let diff = val
+    // 如果已经添加过key字符串了，就对字典树中key路径上的每个节点，都加上diff（val和map中保存的key的value之差）
+    // 如果当前val比旧的val要小，那么diff就小于0，相当于对每个节点都减去这个差值
+    if (this.map.has(key)) diff = val - this.map.get(key)
     for (let i = 0; i < key.length; i++) {
       const c = key.charCodeAt(i) - 97
       if (!p.kids[c]) {
         p.kids[c] = new TrieNode()
       }
       p = p.kids[c]
+      p.value += diff
     }
-    p.value = val
+    this.map.set(key, val)
   }
 
   sum(prefix: string): number {
@@ -72,18 +78,7 @@ class MapSum {
       }
       p = p.kids[c]
     }
-    let res = 0
-
-    // 2. 计算p的所有子节点的value和，包括p
-    const queue = [p]
-    while (queue.length) {
-      const q = queue.shift()
-      res += q.value
-      for (let i = 0; i < q.kids.length; i++) {
-        if (q.kids[i]) queue.push(q.kids[i])
-      }
-    }
-    return res
+    return p.value
   }
 }
 
