@@ -41,8 +41,8 @@ function minEatingSpeed(piles: number[], h: number): number {
 
   /**
    * 以speed的速度，吃完香蕉需要的时间。
-   * @param speed 
-   * @returns 
+   * @param speed
+   * @returns
    */
   const getTime = (speed: number) => {
     let time = 0
@@ -58,7 +58,7 @@ function minEatingSpeed(piles: number[], h: number): number {
   while (low < high) {
     const speed = low + ((high - low) >> 1)
     const time = getTime(speed)
-    console.log(low, high, speed,time)
+    console.log(low, high, speed, time)
     // 如果速度speed，可以在h时间内吃完香蕉。那么说明最小速度k小于等于speed
     // 令high = mid
     if (time <= h) {
@@ -69,6 +69,55 @@ function minEatingSpeed(piles: number[], h: number): number {
     }
   }
   return k
+}
+
+/**
+ * 优化：逻辑更清晰一点
+ * @param piles
+ * @param h
+ * @returns
+ */
+function minEatingSpeed2(piles: number[], h: number): number {
+  let low = 1,
+    high = 0
+  for (let i = 0; i < piles.length; i++) {
+    high = Math.max(high, piles[i])
+  }
+
+  /**
+   * 以speed的速度，吃完香蕉需要的时间。
+   * @param speed
+   * @returns
+   */
+  const getTime = (speed: number) => {
+    let time = 0
+    for (let i = 0; i < piles.length; i++) {
+      time += Math.ceil(piles[i] / speed)
+    }
+    return time
+  }
+
+  // 如果low = hight时，肯定会找到结果
+  while (low <= high) {
+    const speed = low + ((high - low) >> 1)
+    const time = getTime(speed)
+    console.log(low, high, speed, time)
+
+    if (time <= h) {
+      // 如果速度speed，可以在h时间内吃完香蕉。那么说明最小速度k小于等于speed
+
+      // 1. 如果speed已经为1了，那么直接返回speed
+      // 2. 如果使用speed - 1的速度吃香蕉花费的时间，比h大。说明speed就是最小速度。直接返回speed
+      if (speed === 1 || getTime(speed - 1) > h) {
+        return speed
+      }
+      // 3. 否则说明，最小速度在[low, speed - 1]之间。
+      high = speed - 1
+    } else {
+      low = speed + 1
+    }
+  }
+  return -1
 }
 
 minEatingSpeed([3, 6, 7, 11], 8)
