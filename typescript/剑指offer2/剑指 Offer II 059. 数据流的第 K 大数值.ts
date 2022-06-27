@@ -35,6 +35,7 @@ kthLargest.add(4);   // return 8
 题目数据保证，在查找第 k 大元素时，数组中至少有 k 个元素
  */
 
+import { Heap } from '../utils/数据结构/struct'
 import { binarySearch } from '../utils/查找/binarySearch'
 
 /**
@@ -73,3 +74,25 @@ console.log(kk.add(3))
  * var obj = new KthLargest(k, nums)
  * var param_1 = obj.add(val)
  */
+
+/**
+ * 最小堆。保持堆大小为k。则堆顶元素就是第k大元素
+ */
+class KthLargest2 {
+  k: number
+  h: Heap<number>
+  constructor(k: number, nums: number[]) {
+    this.k = k
+    this.h = new Heap<number>()
+    for (let i = 0; i < nums.length; i++) {
+      this.add(nums[i])
+    }
+  }
+
+  add(val: number): number {
+    this.h.insert(val)
+    // 如果插入val以后，堆的大小比k大，则弹出堆顶元素
+    if (this.h.size() > this.k) this.h.pop()
+    return this.h.peek()
+  }
+}
