@@ -85,4 +85,34 @@ function relativeSortArray2(arr1: number[], arr2: number[]): number[] {
   return arr1
 }
 
-relativeSortArray2([2, 3, 1, 3, 2, 4, 6, 72, 72, 9, 2, 19], [2, 1, 4, 3, 9, 6])
+/**
+ * 模拟数组
+ * @param arr1
+ * @param arr2
+ * @returns
+ */
+function relativeSortArray3(arr1: number[], arr2: number[]): number[] {
+  // 1. 使用数组hash来模拟map结构。保存arr1中所有元素出现的个数
+  const hash = [...Array(1001)].fill(0)
+  for (let i = 0; i < arr1.length; i++) {
+    hash[arr1[i]]++
+  }
+
+  // 2. 遍历arr2，将arr2中的元素先进行排序
+  let index = 0
+  for (let i = 0; i < arr2.length; i++) {
+    while(hash[arr2[i]]-- > 0){
+      arr1[index++] = arr2[i]
+    }
+  }
+
+  // 3. 遍历hash，将其中值不为0的下标添加到arr1的index位置
+  for (let i = 0; i < hash.length; i++) {
+    while(hash[i]-- > 0){
+      arr1[index++] = i
+    }
+  }
+  return arr1
+}
+console.log(relativeSortArray3([2, 3, 1, 3, 2, 4, 6, 72, 72, 9, 2, 19], [2, 1, 4, 3, 9, 6]));
+
