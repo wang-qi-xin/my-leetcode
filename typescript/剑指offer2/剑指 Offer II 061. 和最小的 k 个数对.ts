@@ -61,4 +61,44 @@ function kSmallestPairs(nums1: number[], nums2: number[], k: number): number[][]
   return h.heap.map(a => [a[1], a[2]])
 }
 
-kSmallestPairs([1, 1, 2], [1, 2, 3], 2)
+/**
+ * 优化，减少重复判断
+ * @param nums1
+ * @param nums2
+ * @param k
+ * @returns
+ */
+function kSmallestPairs2(nums1: number[], nums2: number[], k: number): number[][] {
+  /**
+   第一对最小和的下标一定是[0, 0], 第二小的下标一定是[1, 0]或[0, 1]
+
+   假如第i对最小和的下标时[ai, bi], 第i + 1小的下标一定是[ai + 1, bi]或[ai, bi + 1]
+   这是因为两个数组都是升序的原因。
+   */
+  // 1. 新建小根堆，保存每一对最小和的下标
+  const h = new Heap<number[]>({ compareFn: (a, b) => nums1[a[0]] + nums2[a[1]] - nums1[b[0]] - nums2[b[1]] })
+  const m = nums1.length,
+    n = nums2.length
+
+  /**
+   如果每次都将[ai + 1, bi]和[ai, bi + 1]加入最小堆，则可能出现重复的情况
+   所以需要添加标记位。
+
+   也可以先将nums1的前k个下标添加到h中。然后每次只对nums2的下标进行增加。
+   */
+  for (let i = 0, min = Math.min(m, k); i < min; i++) {
+    h.insert([i, 0])
+  }
+  const res = []
+  while (h.size() && k-- > 0) {
+    const pair = h.pop()
+    res.push([nums1[pair[0]], nums2[pair[1]]])
+    // 比当前pair还要大的，最小的一对有可能是[pair[0], pair[1] + 1]，而其它可能最小的数对，已经处于h中了。
+    if (pair[1] + 1 < n) {
+      h.insert([pair[0], pair[1] + 1])
+    }
+  }
+  return res
+}
+
+kSmallestPairs2([1, 1, 2], [1, 2, 3], 2)
