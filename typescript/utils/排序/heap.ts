@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:39:31
  * @LastEditors: one
- * @LastEditTime: 2022-04-17 13:37:28
+ * @LastEditTime: 2022-06-28 14:27:10
  */
 /**
    小根堆
@@ -304,22 +304,36 @@ class MaxHeap<T> {
 }
 
 type modeType = 'big' | 'little'
+interface compareFnType<T> {
+  (a: T, b: T): boolean | number
+}
 interface heapOptionType<T> {
   data?: T[]
   mode?: modeType
+  compareFn?: compareFnType<T>
 }
 
 /**
- * 堆，默认小根堆
+ * ## 堆
+ * * 默认小根堆
  */
 class Heap<T> {
   heap: T[]
   data: T[]
   mode: modeType
-  constructor(option: heapOptionType<T>) {
+  compareFn: compareFnType<T>
+  constructor(option: heapOptionType<T> = {}) {
     this.heap = []
     // 默认小根堆
     this.mode = option.mode ? option.mode : 'little'
+    if (option.compareFn) {
+      this.compareFn = option.compareFn
+    } else {
+      this.compareFn = (a: any, b: any): boolean | number => {
+        if (this.mode === 'little') return a - b
+        return b - a
+      }
+    }
     if (option.data) {
       this.data = option.data
       this.buildHeap()
@@ -341,11 +355,8 @@ class Heap<T> {
    */
   insert(value: T) {
     this.heap.push(value)
-    this.shiftUp(this.heap.length - 1)
-  }
-  compare(a: T, b: T): boolean {
-    if (this.mode === 'little') return a > b
-    return a < b
+    if (this.size() === 1) return
+    this.shiftUp(this.size() - 1)
   }
   /**
     * 从index开始上移节点。
@@ -357,7 +368,11 @@ class Heap<T> {
     */
   shiftUp(index: number) {
     const parentIndex = this.getParentIndex(index)
-    if (this.compare(this.heap[parentIndex], this.heap[index])) {
+    if (parentIndex < 0) {
+      return
+    }
+    const compareResult = this.compareFn(this.heap[parentIndex], this.heap[index])
+    if (compareResult > 0 || compareResult === true) {
       this.swap(parentIndex, index)
       this.shiftUp(parentIndex)
     }
@@ -380,15 +395,17 @@ class Heap<T> {
     }
     // 2. 两个子节点
     if (rightChildIndex < this.heap.length) {
-      const maxIndex = this.getIndex(leftChildIndex, rightChildIndex)
-      if (this.compare(this.heap[index], this.heap[maxIndex])) {
-        this.swap(maxIndex, index)
-        this.shiftDown(maxIndex)
+      const swapIndex = this.getIndex(leftChildIndex, rightChildIndex)
+      const compareResult = this.compareFn(this.heap[index], this.heap[swapIndex])
+      if (compareResult > 0 || compareResult === true) {
+        this.swap(swapIndex, index)
+        this.shiftDown(swapIndex)
       }
       return
     }
     // 3. 单节点（肯定是左节点）
-    if (this.compare(this.heap[leftChildIndex], this.heap[index])) {
+    const compareResult = this.compareFn(this.heap[index], this.heap[leftChildIndex])
+    if (compareResult > 0 || compareResult === true) {
       this.swap(leftChildIndex, index)
       this.shiftDown(leftChildIndex)
     }
@@ -400,12 +417,13 @@ class Heap<T> {
    * @param j
    * @returns
    */
-  getIndex(i: number, j: number) {
+  getIndex(i: number, j: number): number {
     if (this.mode === 'big') {
-      if (this.heap[i] > this.heap[j]) return i
+      if (this.compareFn(this.heap[i], this.heap[j]) < 0) return i
       return j
     }
-    if (this.heap[i] > this.heap[j]) return j
+    // 小根堆: i - j > 0 说明i > j 返回j
+    if (this.compareFn(this.heap[i], this.heap[j]) > 0) return j
     return i
   }
   /**
@@ -438,31 +456,39 @@ class Heap<T> {
   /**
    * 弹出堆顶元素
    */
-  pop() {
+  pop(): T {
     if (this.heap.length === 0) {
       throw new Error('没有元素了')
     }
     if (this.heap.length === 1) {
       return this.heap.pop()
     }
-    const max = this.heap[0]
+    const top = this.heap[0]
     // 把堆底元素填充到堆顶元素
     this.heap[0] = this.heap.pop()
     // 然后开始下移
     this.shiftDown(0)
-    return max
+    return top
   }
 
   /**
    * 返回堆顶最小元素
    * @returns
    */
-  peek() {
+  peek(): T {
     return this.heap[0]
+  }
+
+  /**
+   * 返回堆大小
+   * @returns
+   */
+  size(): number {
+    return this.heap.length
   }
 }
 
-const h = new Heap({data: [1,2,3,4,5], mode: "little"})
+const h = new Heap({ data: [1, 2, 3, 4, 5], mode: 'little' })
 
 function testHeap() {
   const range = 2_000_000
