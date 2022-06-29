@@ -59,9 +59,47 @@ function findCircleNum(isConnected: number[][]): number {
 
   return res
 }
+
+function findCircleNum2(isConnected: number[][]): number {
+  /**
+   并查集
+
+   初始时，每个点都是一个单独的联通分量。
+   遍历isConnected，如果a和b是相连，则将a与b放入同一个联通分量
+   */
+  let res = 0
+  const parent = [],
+    n = isConnected.length
+  // 1. 初始化parent，parent[i] = i， 表示每个节点的父亲都是自己
+  for (let i = 0; i < n; i++) {
+    parent[i] = i
+  }
+  const findParent = (p: number) => {
+    if (parent[p] !== p) parent[p] = findParent(parent[p])
+    return parent[p]
+  }
+  const union = (i: number, j: number) => {
+    parent[findParent(i)] = findParent(j)
+  }
+
+  // 2. 如果节点i和j联通，就将i和j放入同一个集合
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      if (isConnected[i][j]) {
+        union(i, j)
+      }
+    }
+  }
+
+  // 3. 计算parent中的联通分量数
+  for (let i = 0; i < n; i++) {
+    if (parent[i] === i) res++
+  }
+  return res
+}
 const isConnected = [
-  [1, 0, 0],
-  [0, 1, 0],
+  [1, 1, 0],
+  [1, 1, 0],
   [0, 0, 1]
 ]
-findCircleNum(isConnected)
+findCircleNum2(isConnected)
