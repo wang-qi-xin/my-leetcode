@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:07:56
  * @LastEditors: one
- * @LastEditTime: 2022-04-20 15:03:11
+ * @LastEditTime: 2022-06-30 15:00:38
  */
 
 /**
@@ -28,7 +28,7 @@ function defaultCompareFn(a: any, b: any): number {
  * @param compareFn 复杂对象的排序，需要自定义比较函数。
  * @returns newArr
  */
-export function quickSort<T>(arr: T[], compareFn: compareFnType<T> = defaultCompareFn): T[] {
+function quickSort<T>(arr: T[], compareFn: compareFnType<T> = defaultCompareFn): T[] {
   const quickSort = (arr: T[], l: number, r: number): T[] => {
     if (l < r) {
       const pos = partition(arr, l, r)
@@ -75,6 +75,8 @@ export function quickSort<T>(arr: T[], compareFn: compareFnType<T> = defaultComp
   }
   return quickSort(arr, 0, arr.length - 1)
 }
+
+export default quickSort
 
 function testQuickSort() {
   const range = 2_0000

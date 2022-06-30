@@ -61,7 +61,7 @@ interface heapOptionType<T> {
  * ## 堆
  * * 默认小根堆
  */
-export class Heap<T> {
+class Heap<T> {
   heap: T[]
   data: T[]
   mode: modeType
@@ -231,3 +231,5 @@ export class Heap<T> {
     return this.heap.length
   }
 }
+
+export { Heap }

@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-20 20:27:33
  * @LastEditors: one
- * @LastEditTime: 2022-04-22 10:25:53
+ * @LastEditTime: 2022-06-30 15:01:41
  */
 /**
  * 比较函数的类型，返回布尔值
@@ -26,7 +26,7 @@ function defaultCompareFn(a: any, b: any): number {
  * @param arr 
  * @param compareFn (比较函数，返回数字或Boolean值)
  */
-export function mergeSort<T>(arr: T[], compareFn: compareFnType<T> = defaultCompareFn) {
+function mergeSort<T>(arr: T[], compareFn: compareFnType<T> = defaultCompareFn) {
   const mergeSort = (left: number, right: number) => {
     if (left < right) {
       let mid = left + ((right - left) >> 1)
@@ -99,6 +99,7 @@ export function mergeSort<T>(arr: T[], compareFn: compareFnType<T> = defaultComp
   }
   mergeSort(0, arr.length - 1)
 }
+export default mergeSort
 
 function testMergeSort() {
   const range = 2_000
