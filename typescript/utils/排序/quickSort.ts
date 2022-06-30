@@ -4,7 +4,7 @@
  * @Autor: one
  * @Date: 2022-04-15 11:07:56
  * @LastEditors: one
- * @LastEditTime: 2022-06-30 15:00:38
+ * @LastEditTime: 2022-06-30 15:08:16
  */
 
 /**
@@ -145,4 +145,4 @@ function testObjectSort() {
   end = Date.now()
   console.log(arr2.slice(0, 2), `\n sort spendTime = ${end - start}ms`)
 }
-// testObjectSort()
+testObjectSort()
