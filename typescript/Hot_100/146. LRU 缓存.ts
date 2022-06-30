@@ -155,3 +155,47 @@ console.log(l.get(2))
  * var param_1 = obj.get(key)
  * obj.put(key,value)
  */
+
+/**
+ * 利用js语言特性，省略链表
+ */
+class LRUCache2 {
+  map: Map<number, number>
+  capacity: number
+  constructor(capacity: number) {
+    this.map = new Map<number, number>()
+    this.capacity = capacity
+  }
+
+  get(key: number): number {
+    if (this.map.has(key)) {
+      const v = this.map.get(key)
+      // 先删除该key，重新set后，该key在map中排在后面
+      this.map.delete(key)
+      this.map.set(key, v)
+      return v
+    } else {
+      return -1
+    }
+  }
+
+  put(key: number, value: number): void {
+    if (this.map.has(key)) {
+      this.map.delete(key)
+      this.map.set(key, value)
+    } else {
+      if (this.capacity === 0) {
+        // 获取第一个key
+        const firstKey = (() => {
+          for (const k of this.map.keys()) {
+            return k
+          }
+        })()
+        this.map.delete(firstKey)
+        this.capacity += 1
+      }
+      this.map.set(key, value)
+      this.capacity -= 1
+    }
+  }
+}
