@@ -1,3 +1,4 @@
 test*.*
 *.class
 tempCodeRunnerFile*.*
+*\node_modules\
