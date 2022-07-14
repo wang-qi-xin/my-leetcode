@@ -68,10 +68,10 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
 
 /**
  * 递归--
- * @param root 
- * @param p 
- * @param q 
- * @returns 
+ * @param root
+ * @param p
+ * @param q
+ * @returns
  */
 function lowestCommonAncestor2(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
   const dfs = (node: TreeNode): TreeNode => {
@@ -105,6 +105,28 @@ function lowestCommonAncestor2(root: TreeNode | null, p: TreeNode | null, q: Tre
       // 理同左子树
       return right
     }
+  }
+
+  return dfs(root)
+}
+
+/**
+ * 对方法二（递归）进行优化
+ * @param root
+ * @param p
+ * @param q
+ * @returns
+ */
+function lowestCommonAncestor3(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
+  const dfs = (node: TreeNode): TreeNode => {
+    if (!node || node === p || node === q) return node
+
+    const left = dfs(node.left)
+    const right = dfs(node.right)
+    
+    if (!left) return right
+    if (!right) return left
+    return node
   }
 
   return dfs(root)
