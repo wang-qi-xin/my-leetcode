@@ -1,3 +1,5 @@
+import { TrieNode } from "../utils/数据结构/struct"
+
 /**
 208. 实现 Trie (前缀树)
 Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。
@@ -34,15 +36,7 @@ trie.search("app");     // 返回 True
 word 和 prefix 仅由小写英文字母组成
 insert、search 和 startsWith 调用次数 总计 不超过 3 * 104 次
  */
-class TrieNode {
-  childs: TrieNode[]
-  end: boolean
-  constructor() {
-    this.childs = []
-    this.end = false
-  }
-}
-class Trie {
+class Trie2 {
   root: TrieNode
   constructor() {
     this.root = new TrieNode()
@@ -52,10 +46,10 @@ class Trie {
     let p = this.root
     for (let i = 0; i < word.length; i++) {
       const c = word.charCodeAt(i) - 97
-      if (!p.childs[c]) {
-        p.childs[c] = new TrieNode()
+      if (!p.kids[c]) {
+        p.kids[c] = new TrieNode()
       }
-      p = p.childs[c]
+      p = p.kids[c]
     }
     p.end = true
   }
@@ -64,10 +58,10 @@ class Trie {
     let p = this.root
     for (let i = 0; i < word.length; i++) {
       const c = word.charCodeAt(i) - 97
-      if (!p.childs[c]) {
+      if (!p.kids[c]) {
         return false
       }
-      p = p.childs[c]
+      p = p.kids[c]
     }
     return p.end
   }
@@ -76,12 +70,52 @@ class Trie {
     let p = this.root
     for (let i = 0; i < prefix.length; i++) {
       const c = prefix.charCodeAt(i) - 97
-      if (!p.childs[c]) {
+      if (!p.kids[c]) {
         return false
       }
-      p = p.childs[c]
+      p = p.kids[c]
     }
     return true
+  }
+  
+  /**
+   * 寻找符合前缀prefix的所有单词
+   * @param prefix 
+   * @returns 
+   */
+  searchPrefix(prefix: string): string[] {
+    let p = this.root
+    for (let i = 0; i < prefix.length; i++) {
+      const c = prefix.charCodeAt(i) - 97
+      if (!p.kids[c]) {
+        return []
+      }
+      p = p.kids[c]
+    }
+    return this.getWord(p).map(word => prefix + word)
+  }
+  
+  /**
+   * 获取字典树中节点node开始的所有单词。
+   * @param node 
+   */
+  getWord(node: TrieNode): string[] {
+    const trace = [], result = []
+    const dfs = (node: TrieNode) => {
+      if(!node) return
+      if(node.end) {
+        result.push(trace.join(""))
+      }
+      for(let i = 0, kids = node.kids; i < kids.length; i++){
+        if(kids[i]){
+          trace.push(String.fromCharCode(97 + i))
+          dfs(kids[i])
+          trace.pop()
+        }
+      }
+    }
+    dfs(node)
+    return result
   }
 }
 
@@ -92,3 +126,13 @@ class Trie {
  * var param_2 = obj.search(word)
  * var param_3 = obj.startsWith(prefix)
  */
+const build = (words: string[]): Trie2 => {
+  const trie = new Trie2()
+  for (let i = 0; i < words.length; i++) {
+    trie.insert(words[i])
+  }
+  return trie
+}
+
+const trie = build(['a', 'b', 'ab','abc','bc','abdf','aqweoij','awq','aqweilkjlj','cdfd'])
+console.log(trie.searchPrefix("aqw"))

@@ -31,6 +31,15 @@ export class TreeNode {
   }
 }
 
+export class TrieNode {
+  kids: TrieNode[] // 子节点
+  end: boolean // 是否结束
+
+  constructor() {
+    this.kids = []
+    this.end = false
+  }
+}
 /**
    ### 小根堆
    主要方法：
@@ -233,3 +242,4 @@ class Heap<T> {
 }
 
 export { Heap }
+
