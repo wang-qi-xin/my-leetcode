@@ -41,3 +41,66 @@ function numSquares(n: number): number {
   }
   return dp[n]
 }
+
+
+function numSquares2(n: number): number {
+  /**
+   方法一：动态规划
+
+   类似于给定硬币面值，问购买价格为n的物品，最少需要多少硬币。
+   
+   */
+  const coins = [0, 1]
+  // 1. 定制硬币面值1 4 9 16 。。。一直到n
+  for (let i = 2; i * i <= n; i++) {
+    coins[i] = i * i
+  }
+
+  const dp = [0]
+  for (let i = 1; i <= n; i++) {
+    // 2. 价格为i的物品，最多需要i个面值为1的硬币
+    dp[i] = i
+    // 3. 判断价格为i的物品，是否能由一个面值为coins[j]的硬币，加上dp[i - coins[j]]个硬币获取。
+    for (let j = 1; coins[j] <= i; j++) {
+      dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1)
+    }
+  }
+
+  return dp[n]
+}
+
+
+function numSquares3(n: number): number {
+  /**
+   方法三：数学
+
+   四平方和定理: 1. 任意一个数，最多由4个平方和组成。
+                2. 如果n != 4 ^ k * (8m + 7), 则n最多由3个平方和组成。
+   
+   所以使用排除法
+
+
+   */
+  const isPerfect = (n: number): boolean => {
+    return n === Math.pow(Math.floor(Math.sqrt(n)), 2)
+  }
+
+  const isChecked4 = (n: number): boolean => {
+    while (n % 4 === 0) {
+      n /= 4
+    }
+    return n % 8 === 7
+  }
+  // 1. n 是完全平方数
+  if (isPerfect(n)) return 1
+  // 2. 如果n != 4 ^ k * (8m + 7), 则n最多由3个平方和组成。
+  if (isChecked4(n)) return 4
+
+  // 3. n = a ^ 2 + b ^ 2.
+  for (let i = 1; i * i < n; i++) {
+    // 计算n - i * i是否是完全平方数
+    if (isPerfect(n - i * i)) return 2
+  }
+  // 4. 排除了1 2 4
+  return 3
+}
