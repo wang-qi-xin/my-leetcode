@@ -40,7 +40,7 @@ function searchMatrix(matrix: number[][], target: number): boolean {
    4. 如果遇到了target则返回true
    5. 如果找到了右下角，还没有找到，则返回false
    */
-  while (i < n && j >= 0) {
+  while (i < m && j >= 0) {
     let left = 0,
       right = j
 
