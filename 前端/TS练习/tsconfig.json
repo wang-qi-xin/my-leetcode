@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "ES2019",
+    "noImplicitAny": false,
+    "jsx": "react",
+    "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@containers/*": ["src/containers/*"],
+      "@components/*": ["src/components/*"]
+    },
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "lib": ["es2020", "dom"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
