@@ -51,6 +51,11 @@ function isValid(s: string): boolean {
   
   遍历结束后，如果栈为空，则返回true
    */
+   /**
+    * 获取括号c对应在m里的下标
+    * @param c 
+    * @returns 
+    */
   const getIndex = (c: string): number => {
     for (let i = 0; i < m.length; i++) {
       if (c === m[i]) return i
@@ -59,7 +64,9 @@ function isValid(s: string): boolean {
   const stack = []
   for (let i = 0; i < s.length; i++) {
     const index = getIndex(s.charAt(i))
+    // 如果index是奇数, 说明i位置时右括号。
     if (index & 1) {
+      // 如果栈顶是对应的左括号, 则把栈顶元素pop()
       if (stack[stack.length - 1] === index - 1) {
         stack.pop()
       } else {
