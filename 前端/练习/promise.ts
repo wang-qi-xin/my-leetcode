@@ -61,6 +61,7 @@ class Promise2<T> implements Promise<T> {
     onfulfilled?: onFulfilled<T, TResult1>,
     onrejected?: onRejected<TResult2>
   ): Promise2<TResult1 | TResult2> {
+    // 进行值的穿透
     const onfulfilledFn = typeof onfulfilled === 'function' ? onfulfilled : (v: T | TResult1) => v as TResult1
     const onrejectedFn =
       typeof onrejected === 'function'
@@ -68,6 +69,7 @@ class Promise2<T> implements Promise<T> {
         : (r: any) => {
             throw r
           }
+    // 返回promise对象，可以进行链式调用
     const promise2 = new Promise2<TResult1 | TResult2>((resolve, reject) => {
       if (this.status === Status.FULFILLED) {
         setTimeout(() => {
@@ -123,13 +125,15 @@ class Promise2<T> implements Promise<T> {
 }
 
 function resolvePromise<T>(promise2: Promise2<T>, x: T | PromiseLike<T>, resolve: Resolve<T>, reject: any) {
+  // 如果两个promise相同，说明进入了循环
   if (x === promise2) {
     const e = new TypeError('TypeError: Chaining cycle detected for promise!')
-    console.log(e)
     return reject(e)
   }
+  // 防止重复调用
   let call = false
 
+  // 如果x是thenable对象
   if (isPromise(x)) {
     try {
       const then = x.then
