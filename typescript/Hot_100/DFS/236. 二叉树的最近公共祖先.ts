@@ -1,4 +1,4 @@
-import { TreeNode } from '../utils/数据结构/struct'
+import { TreeNode } from '../../utils/数据结构/struct'
 
 /**
 236. 二叉树的最近公共祖先
