@@ -30,15 +30,16 @@ class Watcher {
     this.watchers.push(watchProp)
   }
 }
-
 class Vue{
+  [method: string]: any
   $watch: any
   $data: any
+  $method: any
   constructor(option){
-    const {data, computed, watch} = option
+    const {data, computed, watch, method} = option
     // 将数据对象挂载到vue实例的$data中。
     this.$data = data()
-    this.init(this, computed, watch)
+    this.init(this, computed, watch, method)
   }
   
   /**
@@ -46,12 +47,16 @@ class Vue{
    * @param vm vue实例
    * @param computed 计算属性方法对象
    * @param watch 监听方法对象
+   * @param method 方法
    */
-  init(vm, computed, watch) {
+  init(vm, computed, watch, method) {
     this.initData(vm)
     const watcherIns = this.initWatcher(vm, watch)
     this.$watch = watcherIns.invoke.bind(watcherIns)
-    
+
+    for(let _methodFn in method) {
+      vm[_methodFn] = method[_methodFn].bind(vm)
+    }
   }
   
   /**
@@ -125,13 +130,21 @@ const vm = new Vue({
       console.log('total', newValue, oldValue)
     },
     a(newValue, oldValue) {
-      console.log('a', newValue, oldValue)
+      console.log('watch a', newValue, oldValue)
     },
     b(newValue, oldValue) {
       console.log('b', newValue, oldValue)
     },
   },
+  method: {
+    update(key, value) {
+      setInterval(() => {
+        this[key] += value
+      }, 1000)
+    }
+  }
 })
-// console.log(vm['a'])
-vm['a'] = 22
+console.log(vm)
 
+
+vm.update("b",1)
