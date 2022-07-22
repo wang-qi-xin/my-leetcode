@@ -1,10 +1,9 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
   </div>
 </template>
 
 <script setup lang="ts">
-import HelloWorld from '@/components/auto-complete.vue'; // @ is an alias to /src
+import HelloWorld from '@/components/auto-complete/index.vue'; // @ is an alias to /src
 </script>
