@@ -1,4 +1,4 @@
-import { quickSort } from '../utils/排序/quickSort'
+import quickSort from "../utils/排序/quickSort"
 
 /**
  * 剑指 Offer II 095. 最长公共子序列
