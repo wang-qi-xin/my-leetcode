@@ -241,5 +241,19 @@ class Heap<T> {
   }
 }
 
-export { Heap }
+/**
+ * 扩展Map结构。实现getOrDefault(key, defaultValue)方法。
+   如果有key的话, 返回key对应的value
+   否则返回传入的默认值。
+ */
+class mMap<K, V> extends Map<K, V> {
+  getOrDefault(key: K, defaultValue: V) {
+    if (this.has(key)) {
+      return this.get(key)
+    } else {
+      return defaultValue
+    }
+  }
+}
+export { Heap, mMap }
 
